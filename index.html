@@ -1,0 +1,1535 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Joe Meier</title>
+<link rel="icon" id="fav" href="data:,">
+<meta name="description" content="Portfolio of Joe Meier. Every project is told through the case study written by someone I made it with.">
+<style>
+/* Concept: the site is a shared design file. The people who wrote the case studies are "in the file"
+   as live cursors, doing the work: dragging jo's text into place, striking out old jobs, looking after
+   their own case studies. jo's cursor just follows the visitor around. */
+:root {
+  --canvas: #1d1d1d;
+  --label: #9c9c9c;
+  --paper: #ffffff;
+  --soft: #f1f1ef;
+  --ink: #0d0d0d;
+  --grey: #6d6d6d;
+  --red: #ff3b1f;
+  --yellow: #ffd400;
+  --pink: #ff8fc8;
+  --green: #00b36b;
+  --blue: #2f45ff;
+  --guide: #ff1fb4;
+  --font: "Helvetica Neue", Helvetica, "Nimbus Sans", Arial, sans-serif;
+  --ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+  --bar: 52px;
+  --gutter: clamp(12px, 3vw, 40px);
+  --pad: clamp(22px, 4vw, 64px);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { overflow-x: clip; scroll-padding-top: calc(var(--bar) + 40px); }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+body {
+  position: relative; margin: 0; overflow-x: clip;
+  background: var(--canvas); color: var(--paper);
+  font-family: var(--font); letter-spacing: -0.02em; line-height: 1.1;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--guide); outline-offset: 3px; }
+.placeholder { background: var(--yellow); color: var(--ink); padding: 0 .15em; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+
+/* Top bar, like the header of a shared file */
+.bar {
+  position: fixed; z-index: 30; top: 0; left: 0; right: 0;
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  height: calc(var(--bar) + env(safe-area-inset-top, 0px));
+  padding: env(safe-area-inset-top, 0px) var(--gutter) 0;
+  background: rgba(24, 24, 24, .92);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  border-bottom: 1px solid #2d2d2d;
+  font: 500 14px/1 var(--ui); letter-spacing: 0;
+}
+.bar a { text-decoration: none; }
+.bar .right { display: flex; align-items: center; gap: clamp(12px, 2vw, 24px); }
+.bar nav { display: flex; gap: 18px; }
+.bar nav a { color: #d6d6d6; }
+.bar nav a:hover { color: #fff; }
+.people { display: flex; }
+.av {
+  all: unset; cursor: pointer; box-sizing: border-box;
+  display: grid; place-items: center;
+  width: 28px; height: 28px; margin-left: -6px; border-radius: 50%;
+  background: var(--cc); color: var(--ct);
+  box-shadow: 0 0 0 2px #181818;
+  font: 600 10.5px/1 var(--ui); letter-spacing: .01em;
+  transition: transform .15s ease;
+}
+.av:first-child { margin-left: 0; }
+.av:hover, .av:focus-visible { transform: translateY(-2px); z-index: 1; }
+.av:focus-visible { outline: 2px solid var(--guide); outline-offset: 2px; }
+/* The overflow count, like a file with too many people in it. */
+.av.more { width: auto; min-width: 28px; padding: 0 8px; border-radius: 14px; background: #3d3d3d; color: #fff; font-variant-numeric: tabular-nums; animation: pop .35s cubic-bezier(.2, 1.2, .4, 1); }
+
+/* Frames on the canvas */
+main { padding: calc(var(--bar) + clamp(36px, 7vh, 88px)) 0 clamp(80px, 12vh, 160px); }
+.fw { --w: 1400px; position: relative; width: min(var(--w), calc(100% - 2 * var(--gutter))); margin: 0 auto; }
+.fw + .fw { margin-top: clamp(110px, 18vh, 220px); }
+.flabel {
+  display: flex; justify-content: space-between; gap: 16px;
+  margin-bottom: 8px;
+  font: 500 12px/1.2 var(--ui); letter-spacing: 0; color: var(--label);
+}
+.flabel .dim { opacity: .6; font-variant-numeric: tabular-nums; }
+.frame { position: relative; background: var(--paper); color: var(--ink); padding: var(--pad); }
+@media (min-width: 900px) {
+  .about-w { --w: 1120px; margin-left: 7vw; }
+  .hero-w { --w: 1180px; margin-right: 5vw; margin-left: auto; }
+  .work-w { --w: 1360px; }
+  .li-w { --w: 1100px; margin-left: 10vw; }
+}
+
+/* About */
+.about { min-height: min(76vh, 740px); display: flex; flex-direction: column; justify-content: center; gap: clamp(28px, 4vw, 56px); }
+.about .intro { margin: 0; font-size: clamp(30px, 4.7vw, 78px); font-weight: 700; line-height: 1; letter-spacing: -0.05em; }
+.about .fine { font-size: max(11px, .19em); font-weight: 400; letter-spacing: 0; }
+.about s { text-decoration: line-through; text-decoration-thickness: .08em; }
+.about .notes { display: grid; gap: 14px; margin-left: 14%; font-size: clamp(15px, 1.3vw, 19px); line-height: 1.3; letter-spacing: -0.01em; }
+.about .notes p { margin: 0; }
+/* Before the crew arrives: the text sits a little out of place and the old jobs aren't struck yet. */
+.js:not(.reduce) #intro { translate: 38px 26px; }
+.js:not(.reduce) #notes { translate: 64px 96px; }
+.js:not(.reduce) .about s:not(.struck) {
+  text-decoration: none;
+  background: linear-gradient(var(--hlc, transparent), var(--hlc, transparent)) no-repeat 0 0 / 0% 100%;
+  box-decoration-break: clone; -webkit-box-decoration-break: clone;
+  transition: background-size var(--dur, .45s) linear;
+}
+.js:not(.reduce) .about s.hl { background-size: 100% 100%; }
+
+/* Hero */
+.hero { min-height: min(80vh, 800px); display: flex; flex-direction: column; justify-content: center; padding-bottom: calc(var(--pad) + 56px); }
+.hero h1 { margin: 0; font-size: clamp(30px, 4.9vw, 84px); font-weight: 700; line-height: 1; letter-spacing: -0.05em; }
+.hero .punch { color: var(--blue); }
+#theirs { display: inline-block; }
+
+/* Work */
+.work-f h2 { margin: 0 0 clamp(28px, 4vw, 56px); font-size: clamp(72px, 12vw, 220px); font-weight: 700; line-height: .8; letter-spacing: -0.075em; }
+.cards { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(28px, 3vw, 40px) clamp(16px, 2vw, 28px); }
+.card { grid-column: span var(--span); display: flex; flex-direction: column; gap: 14px; color: var(--ink); text-decoration: none; cursor: pointer; }
+.card .img { position: relative; display: block; height: var(--h); overflow: hidden; background: var(--c) center / cover no-repeat; }
+.card .img video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--focus, 50% 50%); }
+.card .go { z-index: 1; }
+.card.big { --h: clamp(240px, 27vw, 430px); }
+.card.small { --h: clamp(200px, 19vw, 300px); }
+.card .go {
+  position: absolute; left: 12px; bottom: 12px;
+  padding: 11px 15px; border-radius: 999px;
+  background: var(--ink); color: #fff;
+  font: 700 14px/1 var(--font); letter-spacing: -0.01em;
+  opacity: 0; transform: translateY(8px); transition: opacity .2s, transform .25s;
+}
+.card:hover .go, .card:focus-visible .go { opacity: 1; transform: none; }
+.card:focus-visible { outline: 2px solid var(--guide); outline-offset: 6px; }
+.card .cap { display: grid; gap: 5px; }
+.card .client { font-size: 13px; color: var(--grey); letter-spacing: 0; }
+.card .title { font-size: clamp(26px, 2.6vw, 44px); font-weight: 700; line-height: .95; letter-spacing: -0.05em; }
+.card .by { font-size: 15px; letter-spacing: -0.01em; }
+@media (hover: none) { .card .go { opacity: 1; transform: none; } }
+
+/* LinkedIn: jo's followers show up in the file as a crowd of tiny cursors that follow his. */
+.crowd-f {
+  --c: var(--paper); --t: var(--ink);
+  min-height: min(94vh, 920px); overflow: hidden;
+  display: flex; flex-direction: column; justify-content: space-between; gap: clamp(48px, 7vw, 96px);
+}
+.crowd-f h2 { margin: 0; font-size: clamp(44px, 9.4vw, 164px); font-weight: 700; line-height: .86; letter-spacing: -0.07em; }
+.crowd-f h2 .punch { color: var(--blue); }
+.crowd-foot { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px 32px; flex-wrap: wrap; }
+.crowd-foot p { margin: 0; }
+.crowd-hint { max-width: 25ch; font-size: clamp(18px, 1.7vw, 24px); line-height: 1.15; letter-spacing: -0.02em; }
+.lurk { margin-top: 10px !important; font: 500 12px/1.3 var(--ui); letter-spacing: 0; color: var(--grey); }
+#crowd { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; pointer-events: none; }
+
+/* LinkedIn numbers: an impressions chart jo draws live with the pen tool, and his notable posts. */
+.nums-w { --w: 1360px; display: flex; align-items: flex-start; gap: clamp(28px, 4vw, 64px); }
+.nums-w .sub { min-width: 0; }
+.imp-s { flex: 1.7 1 0; }
+.np-s { flex: 1 1 0; margin-top: clamp(64px, 10vw, 160px); }
+.imp-f { display: grid; gap: clamp(24px, 3vw, 40px); }
+.imp-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px 32px; flex-wrap: wrap; }
+.imp-head p { margin: 0; }
+.imp-k { font: 500 13px/1.4 var(--ui); letter-spacing: 0; color: var(--grey); }
+.imp-total { margin-top: 8px !important; font-size: clamp(72px, 10vw, 164px); font-weight: 700; line-height: .8; letter-spacing: -0.07em; }
+.imp-note { max-width: 22ch; font-size: clamp(16px, 1.4vw, 20px); line-height: 1.15; letter-spacing: -0.02em; }
+.imp-chart { position: relative; }
+#imp-svg { display: block; width: 100%; overflow: visible; touch-action: pan-y; }
+#imp-svg:focus { outline: none; }
+#imp-svg:focus-visible { outline: 2px solid var(--guide); outline-offset: 6px; }
+.imp-grid { stroke: #e7e7e4; stroke-width: 1; }
+.imp-axis text { font: 500 12px var(--ui); fill: var(--grey); letter-spacing: 0; font-variant-numeric: tabular-nums; }
+.imp-area { fill: var(--blue); opacity: .1; }
+.imp-line { fill: none; stroke: var(--blue); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.imp-pt { fill: var(--blue); stroke: #fff; stroke-width: 2; }
+.imp-pt.cur { fill: #fff; stroke: var(--blue); stroke-width: 2; }
+.imp-x { stroke: var(--ink); stroke-width: 1; opacity: .3; }
+.imp-end { font: 700 15px var(--ui); fill: var(--ink); letter-spacing: 0; opacity: 0; transition: opacity .3s; }
+.imp-end.on { opacity: 1; }
+.imp-tip {
+  position: absolute; left: 0; top: 0; z-index: 3; pointer-events: none;
+  padding: 8px 10px; border-radius: 8px; white-space: nowrap;
+  background: var(--ink); color: #c9c9c9;
+  font: 500 12px/1.3 var(--ui); letter-spacing: 0;
+  transform: translate(-50%, calc(-100% - 14px));
+}
+.imp-tip b { display: block; color: #fff; font-size: 15px; font-weight: 700; }
+.imp-foot { display: flex; justify-content: space-between; align-items: baseline; gap: 12px 24px; flex-wrap: wrap; font: 500 12px/1.3 var(--ui); letter-spacing: 0; color: var(--grey); }
+.imp-table summary { cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.imp-table summary:hover { color: var(--ink); }
+.imp-table table { margin-top: 10px; border-collapse: collapse; color: var(--ink); font-variant-numeric: tabular-nums; }
+.imp-table th, .imp-table td { padding: 4px 18px 4px 0; text-align: left; font-weight: 500; }
+.imp-table th { color: var(--grey); }
+.imp-table td + td, .imp-table th + th { text-align: right; padding-right: 0; }
+
+/* Notable posts: instances of one component, like everything else in a design file. */
+.np { list-style: none; margin: 0; padding: 0; display: grid; }
+.np li { display: grid; justify-items: start; gap: 10px; padding: clamp(22px, 2.4vw, 32px) 0; border-top: 1px solid #e7e7e4; }
+.np li:first-child { padding-top: 0; border-top: 0; }
+.np li:last-child { padding-bottom: 0; }
+.np-c { font: 500 11px/1 var(--ui); letter-spacing: 0; color: #9747ff; }
+.np-hook { margin: 0; font-size: clamp(22px, 2vw, 30px); font-weight: 700; line-height: 1; letter-spacing: -0.04em; }
+.np-meta { font: 500 13px/1.3 var(--ui); letter-spacing: 0; color: var(--grey); }
+.np-meta b { color: var(--ink); font-weight: 600; }
+.np-bar { justify-self: stretch; height: 6px; }
+.np-bar::before { content: ""; display: block; width: var(--share); height: 100%; border-radius: 0 3px 3px 0; background: var(--blue); }
+.np-go { font: 700 15px/1 var(--font); letter-spacing: -0.01em; color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+.np-go:hover { color: var(--blue); }
+
+.btn {
+  all: unset; box-sizing: border-box; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 16px 24px; border-radius: 999px;
+  background: var(--t); color: var(--c);
+  font: 700 clamp(16px, 1.4vw, 19px)/1 var(--font); letter-spacing: -0.02em;
+}
+.btn.ghost { background: transparent; color: var(--t); box-shadow: inset 0 0 0 2px currentColor; }
+.btn:focus-visible { outline: 2px solid var(--guide); outline-offset: 3px; }
+
+footer {
+  display: flex; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap;
+  padding: 0 var(--gutter) calc(32px + env(safe-area-inset-bottom, 0px));
+  font: 500 12px/1.4 var(--ui); letter-spacing: 0; color: var(--label);
+}
+
+/* The people in the file */
+#layer { position: absolute; inset: 0; overflow: clip; pointer-events: none; }
+.cur { position: absolute; left: 0; top: 0; z-index: 40; will-change: transform; }
+.cur.joe { z-index: 60; }
+.cur .in { position: relative; transform-origin: 0 0; }
+.cur svg {
+  position: absolute; left: -3px; top: -2px; width: 24px; height: 24px; overflow: visible;
+  transform-origin: 3px 2px; transition: transform .12s ease;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .35));
+}
+.cur svg path { fill: var(--cc); stroke: #fff; stroke-width: 1.5; stroke-linejoin: round; }
+.cur .pen-i { display: none; }
+.cur .pen-i circle { fill: #fff; }
+.cur.pen .pen-i { display: block; }
+.cur.pen .arrow-i { display: none; }
+.cur.down svg { transform: scale(.8); }
+.cur .pill {
+  position: absolute; left: 14px; top: 19px; white-space: nowrap;
+  padding: 5px 9px 6px; border-radius: 999px;
+  background: var(--cc); color: var(--ct);
+  font: 600 12px/1 var(--ui); letter-spacing: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .25);
+}
+.sel { position: absolute; left: 0; top: 0; z-index: 35; border: 1.5px solid var(--cc); }
+.sel i { position: absolute; width: 8px; height: 8px; background: #fff; border: 1.5px solid var(--cc); }
+.sel i:nth-child(1) { left: -5px; top: -5px; }
+.sel i:nth-child(2) { right: -5px; top: -5px; }
+.sel i:nth-child(3) { left: -5px; bottom: -5px; }
+.sel i:nth-child(4) { right: -5px; bottom: -5px; }
+.sel b {
+  position: absolute; left: 50%; top: calc(100% + 7px); transform: translateX(-50%);
+  padding: 3px 6px; border-radius: 4px; white-space: nowrap;
+  background: var(--cc); color: var(--ct);
+  font: 600 11px/1 var(--ui); letter-spacing: 0; font-variant-numeric: tabular-nums;
+}
+.sel .who { position: absolute; left: -2px; bottom: calc(100% + 6px); display: flex; }
+.sel .who span { width: 13px; height: 13px; margin-right: -3px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 2px #fff; }
+.guide { position: absolute; left: 0; top: 0; z-index: 36; background: var(--guide); animation: guide 1s ease forwards; }
+.guide b {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  padding: 2px 4px; border-radius: 3px;
+  background: var(--guide); color: #fff;
+  font: 600 10px/1 var(--ui); letter-spacing: 0;
+}
+@keyframes guide { 0%, 70% { opacity: 1; } 100% { opacity: 0; } }
+
+/* Leaving / coming back */
+.leave {
+  position: fixed; inset: 0; z-index: 50;
+  display: grid; place-items: center;
+  padding: calc(16px + env(safe-area-inset-top, 0px)) var(--gutter) calc(16px + env(safe-area-inset-bottom, 0px));
+  background: rgba(12, 12, 12, .82);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  overflow: auto;
+}
+.lwrap { width: min(1040px, 100%); animation: pop .35s cubic-bezier(.2, 1.2, .4, 1); }
+.lwrap .flabel { color: #c4c4c4; }
+.lwrap .flabel button { all: unset; cursor: pointer; }
+.lframe { display: grid; gap: clamp(18px, 3vw, 32px); padding: var(--pad); background: var(--c); color: var(--t); }
+.lframe h2 { margin: 0; font-size: clamp(56px, 10vw, 168px); font-weight: 700; line-height: .86; letter-spacing: -0.07em; }
+.lframe p { margin: 0; max-width: 32ch; font-size: clamp(19px, 2vw, 30px); line-height: 1.12; letter-spacing: -0.025em; }
+.lframe .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
+@keyframes pop { from { opacity: 0; transform: translateY(12px) scale(.97); } }
+body.locked { overflow: hidden; }
+
+@media (max-width: 899px) {
+  .card { grid-column: 1 / -1; }
+  .card.big, .card.small { --h: auto; }
+  .card .img { aspect-ratio: 4 / 3; }
+  .about .notes { margin-left: 0; }
+  .crowd-f { min-height: 84vh; }
+  .nums-w { flex-direction: column; align-items: stretch; }
+  .np-s { margin-top: 0; }
+  .cur .in { transform: scale(.88); }
+}
+@media (max-width: 520px) {
+  .bar nav { display: none; }
+  .about { min-height: 64vh; }
+  .hero { min-height: 56vh; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+<script>
+  document.documentElement.classList.add("js");
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentElement.classList.add("reduce");
+</script>
+
+<header class="bar">
+  <a class="name" href="#top" id="top">Joe Meier</a>
+  <div class="right">
+    <div class="people" id="people"></div>
+    <nav><a href="#about">About</a><a href="#work">Work</a></nav>
+  </div>
+</header>
+
+<main id="stack">
+  <section class="fw about-w" id="about">
+    <div class="flabel"><span>About</span><span class="dim"></span></div>
+    <div class="frame about">
+      <p class="intro" id="intro">My name is Joe Meier*. I'm currently a <span class="fine" id="assoc">(associate)</span> Creative Director at <s id="s1">Havas Saatchi</s> <s id="s2">Mojo Supermarket</s> Tombras.</p>
+      <div class="notes" id="notes">
+        <p class="footnote">*Too dumb for NYC, Too ugly for LA. (in nyc though)</p>
+        <p class="contact"><span class="placeholder">Placeholder: how to reach you (email, LinkedIn, Instagram).</span></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="fw hero-w">
+    <div class="flabel"><span>Portfolio, 2026</span><span class="dim"></span></div>
+    <div class="frame hero">
+      <h1>I've worked with some really talented people to make some really good work. Then they went and made really good case studies about it <span class="punch">so I'm using <span id="theirs">theirs</span> because I don't want to make my own.</span></h1>
+    </div>
+  </section>
+
+  <section class="fw work-w" id="work">
+    <div class="flabel"><span>Selected projects</span><span class="dim"></span></div>
+    <div class="frame work-f">
+      <h2>Work</h2>
+      <div class="cards" id="cards"></div>
+    </div>
+  </section>
+
+  <section class="fw li-w" id="writing">
+    <div class="flabel"><span>On LinkedIn</span><span class="dim"></span></div>
+    <div class="frame crowd-f" id="crowd-f">
+      <h2 id="li-h">21K followers.<br>Millions of likes.<br><span class="punch">Zero case studies.</span></h2>
+      <div class="crowd-foot">
+        <div>
+          <p class="crowd-hint" id="crowd-hint">Those are my followers. Move around and they'll follow. Click and they'll like it.</p>
+          <p class="lurk">Showing <span id="crowd-n">300</span> of 21K. The rest are lurking.</p>
+        </div>
+        <a class="btn" id="follow" href="#" target="_blank" rel="noopener">Become follower 21,001 ↗</a>
+      </div>
+      <canvas id="crowd" aria-hidden="true"></canvas>
+    </div>
+  </section>
+
+  <section class="fw nums-w" id="numbers">
+    <div class="sub imp-s">
+      <div class="flabel"><span>Impressions</span><span class="dim"></span></div>
+      <div class="frame imp-f">
+        <div class="imp-head">
+          <div>
+            <p class="imp-k" id="imp-k">LinkedIn impressions, all time</p>
+            <p class="imp-total" id="imp-total">0</p>
+          </div>
+          <p class="imp-note">Drawn live by me, with the pen tool. The one thing on this site I made myself.</p>
+        </div>
+        <div class="imp-chart" id="imp-chart">
+          <svg id="imp-svg" role="img" tabindex="0"></svg>
+          <div class="imp-tip" id="imp-tip" hidden></div>
+        </div>
+        <div class="imp-foot">
+          <span id="imp-asof"></span>
+          <details class="imp-table"><summary>See the numbers</summary><table id="imp-table"></table></details>
+        </div>
+      </div>
+    </div>
+    <div class="sub np-s">
+      <div class="flabel"><span>Notable posts</span><span class="dim"></span></div>
+      <div class="frame np-f">
+        <ol class="np" id="np"></ol>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>© Joe Meier</span>
+  <span>Case studies belong to the people who wrote them. Thank you for writing them.</span>
+</footer>
+
+<div id="layer" aria-hidden="true"></div>
+
+<div class="leave" id="leave" hidden role="dialog" aria-modal="true" aria-labelledby="leave-h">
+  <div class="lwrap">
+    <div class="flabel"><span id="leave-where"></span><button type="button" id="leave-x">Close ✕</button></div>
+    <div class="lframe">
+      <h2 id="leave-h"></h2>
+      <p id="leave-p"></p>
+      <div class="actions" id="leave-actions"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const WORKS = [
+  {
+    id: "yescouch",
+    title: "Yes, Couch!",
+    client: "Facebook",
+    author: "Damian Antonio",
+    role: "Creative",
+    url: "https://www.damianantoniocreative.com/?page_id=3133",
+    // Covers live in the covers/ folder next to this file. video = looping cover, image = still (also shown before the video plays).
+    video: "covers/yescouch.mp4",
+    image: "covers/yescouch.jpg",
+    c: "var(--yellow)", t: "var(--ink)", size: "big", span: 7
+  },
+  {
+    id: "diablo",
+    title: "Vases of Hatred",
+    client: "Diablo IV · Activision Blizzard",
+    author: "Qendrim Hoti",
+    role: "Art Director, Social",
+    url: "https://www.qendrimhoti.com/works/diablo",
+    video: "covers/diablo.mp4",
+    image: "covers/diablo.jpg",
+    c: "var(--ink)", t: "var(--red)", size: "big", span: 5
+  },
+  {
+    id: "socialmarket",
+    title: "SocialMarket",
+    client: "Mojo Supermarket",
+    author: "Damian Antonio",
+    role: null,
+    url: "https://www.damianantoniocreative.com/?page_id=2765",
+    video: "covers/socialmarket.mp4",
+    image: "covers/socialmarket.jpg",
+    c: "var(--pink)", t: "var(--ink)", size: "small", span: 4
+  },
+  {
+    id: "rxbar",
+    title: "B.S. Ad Blocker",
+    client: "RXBAR",
+    author: "Chris Brailey",
+    role: "Associate Creative Director",
+    url: "https://www.chrisbraileysthingys.com/rxbar-bs-blocker",
+    image: "covers/rxbar.jpg",
+    c: "var(--green)", t: "var(--ink)", size: "small", span: 4
+  },
+  {
+    id: "feeld",
+    title: "Feeld",
+    client: "Feeld",
+    author: "Sandra Jurado",
+    role: "Art Director",
+    url: "https://www.sandrajurado.com/feeld/",
+    video: "covers/feeld.mp4",
+    image: "covers/feeld.jpg",
+    focus: "50% 62%", // portrait cover: keep the ad in frame
+    c: "var(--blue)", t: "var(--paper)", size: "small", span: 4
+  }
+];
+
+// Everyone "in the file". Cursor colors.
+const PEOPLE = [
+  { name: "Damian Antonio", initials: "DA", color: "#3d6bff", ink: "#fff" },
+  { name: "Qendrim Hoti",   initials: "QH", color: "#ff4433", ink: "#fff" },
+  { name: "Chris Brailey",  initials: "CB", color: "#10b26a", ink: "#fff" },
+  { name: "Sandra Jurado",  initials: "SJ", color: "#a35cff", ink: "#fff" }
+];
+const JOE = { name: "Joe Meier", initials: "JM", color: "#ffd400", ink: "#0d0d0d" };
+
+// One line per project for the "please come back" screen.
+const PLEAS = [
+  "It's a great read. Not so great that you forget about me, though.",
+  "Read it, nod approvingly, then come straight back. I'll keep your seat warm.",
+  "Grab a snack on the way. Bring it back here.",
+  "Go ahead. I'll just be here, in this tab, waiting. Totally normal."
+];
+
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const ph = (s) => `<span class="placeholder">${s}</span>`;
+const host = (u) => new URL(u).hostname.replace(/^www\./, "");
+const first = (name) => name.split(" ")[0];
+const REDUCE = document.documentElement.classList.contains("reduce");
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const rand = (a, b) => a + Math.random() * (b - a);
+
+/* ---------- Content ---------- */
+$("#cards").innerHTML = WORKS.map((w) => `
+  <a class="work card ${w.size}" href="${esc(w.url)}" target="_blank" rel="noopener" data-id="${w.id}" style="--c:${w.c};--t:${w.t};--span:${w.span}">
+    <span class="img" style="${w.image ? `background-image:url('${esc(w.image)}');` : ""}${w.focus ? `background-position:${w.focus};--focus:${w.focus}` : ""}">${w.video
+      ? `<video${w.image ? ` poster="${esc(w.image)}"` : ""} muted loop playsinline${REDUCE ? "" : " autoplay"} preload="${REDUCE ? "none" : "auto"}" aria-hidden="true">
+          <source src="${esc(w.video)}" type='video/mp4; codecs="avc1.64001F"'>
+          <source src="${esc(w.video.replace(/\.mp4$/, ".webm"))}" type='video/webm; codecs="vp9"'>
+        </video>` : ""}<span class="go">Read it, then come back ↗</span></span>
+    <span class="cap">
+      <span class="client">${esc(w.client)}</span>
+      <span class="title">${esc(w.title)}</span>
+      <span class="by">Case Study by ${esc(w.author)}</span>
+    </span>
+  </a>`).join("");
+
+const LINKEDIN_PROFILE = "https://www.linkedin.com/in/josephlmeier/";
+
+// LinkedIn impressions: your all-time running total at the end of each month. Add a row each month; the last row is "now".
+// Set sample to false once these are your real numbers.
+const IMPRESSIONS = {
+  sample: true,
+  months: [
+    ["Dec 2025", 2100000],
+    ["Jan 2026", 2600000],
+    ["Feb 2026", 3000000],
+    ["Mar 2026", 3900000],
+    ["Apr 2026", 4300000],
+    ["May 2026", 5600000],
+    ["Jun 2026", 6200000],
+    ["Jul 2026", 7100000],
+    ["Aug 2026", 8900000],
+    ["Sep 2026", 9600000],
+    ["Oct 2026", 11200000],
+    ["Nov 2026", 12400000]
+  ]
+};
+
+// Posts worth bragging about. url: the post's link ("..." menu > Copy link to post). hook: its opening line.
+// impressions and reactions are plain numbers. Leave anything null and it shows as a placeholder.
+const NOTABLE = [
+  { url: null, hook: null, date: null, impressions: null, reactions: null },
+  { url: null, hook: null, date: null, impressions: null, reactions: null },
+  { url: null, hook: null, date: null, impressions: null, reactions: null }
+];
+if (LINKEDIN_PROFILE) $("#follow").href = LINKEDIN_PROFILE;
+
+$("#people").innerHTML = [...PEOPLE, JOE].map((p) =>
+  `<button type="button" class="av" data-who="${esc(p.name)}" title="${esc(p.name)}" aria-label="${esc(p.name)}" style="--cc:${p.color};--ct:${p.ink}">${p.initials}</button>`
+).join("") +
+  `<button type="button" class="av more" id="more" data-who="followers" title="21K followers on LinkedIn" aria-label="21K followers on LinkedIn"${REDUCE ? "" : " hidden"}>+21K</button>`;
+
+// Frame sizes next to each frame name, like a design file.
+function sizeLabels() {
+  document.querySelectorAll("main .flabel .dim").forEach((d) => {
+    const f = d.parentElement.nextElementSibling;
+    d.textContent = `${Math.round(f.offsetWidth)} × ${Math.round(f.offsetHeight)}`;
+  });
+}
+sizeLabels();
+addEventListener("resize", sizeLabels);
+
+/* ---------- Motion engine ---------- */
+const layer = $("#layer");
+const R = (el) => { const r = el.getBoundingClientRect(); return { x: r.left + scrollX, y: r.top + scrollY, w: r.width, h: r.height }; };
+const easeIO = (p) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
+const tweens = new Set();
+function tween(dur, update, ease = easeIO) {
+  return new Promise((res) => {
+    if (REDUCE || dur <= 0) { update(1); res(); return; }
+    tweens.add({ t0: performance.now(), dur, update, ease, res });
+  });
+}
+
+const ARROW = "M3 2 L3 19 L7.6 14.8 L10.9 22 L14 20.6 L10.8 13.6 L17.2 13.6 Z";
+const PEN = "M3 2 L13.5 6.5 L18.5 11.5 L11.5 18.5 L6.5 13.5 Z"; // a pen nib, tip at the same spot as the arrow's
+class Cursor {
+  constructor(p, isJoe = false) {
+    Object.assign(this, { name: p.name, color: p.color, ink: p.ink, cards: [], token: 0, mode: "script" });
+    this.el = document.createElement("div");
+    this.el.className = "cur" + (isJoe ? " joe" : "");
+    this.el.style.setProperty("--cc", p.color);
+    this.el.style.setProperty("--ct", p.ink);
+    this.el.innerHTML = `<div class="in"><svg class="arrow-i" viewBox="0 0 24 24"><path d="${ARROW}"/></svg><svg class="pen-i" viewBox="0 0 24 24"><path d="${PEN}"/><circle cx="10.6" cy="10.6" r="1.7"/></svg><span class="pill">${esc(p.name)}</span></div>`;
+    layer.appendChild(this.el);
+    this.set(-200, -200);
+  }
+  set(x, y) {
+    this.x = x; this.y = y;
+    this.el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
+  }
+  // Glides along a gentle curve. Resolves false if something else took the cursor over meanwhile.
+  move(x, y, dur, opts = {}) {
+    if (this.mode === "hover" && !opts.force) return Promise.resolve(false);
+    const token = ++this.token;
+    const x0 = this.x, y0 = this.y, dx = x - x0, dy = y - y0, dist = Math.hypot(dx, dy) || 1;
+    if (dur == null) dur = Math.min(1300, 380 + dist * 0.55);
+    const bend = opts.straight ? 0 : (Math.random() < 0.5 ? 1 : -1) * Math.min(150, dist * 0.18);
+    const cx = x0 + dx / 2 - (dy / dist) * bend, cy = y0 + dy / 2 + (dx / dist) * bend;
+    return tween(dur, (p) => {
+      if (token !== this.token) return;
+      const q = 1 - p;
+      this.set(q * q * x0 + 2 * q * p * cx + p * p * x, q * q * y0 + 2 * q * p * cy + p * p * y);
+    }).then(() => token === this.token);
+  }
+  press() { this.el.classList.add("down"); }
+  release() { this.el.classList.remove("down"); }
+  async click() { this.press(); await wait(130); this.release(); }
+}
+
+// Selection box with corner handles and a size badge, in the person's color.
+const selections = new Set();
+function select(el, who, opts = {}) {
+  const box = document.createElement("div");
+  box.className = "sel";
+  box.style.setProperty("--cc", who.color);
+  box.style.setProperty("--ct", who.ink);
+  box.innerHTML = "<i></i><i></i><i></i><i></i>" + (opts.badge === false ? "" : "<b></b>") + (opts.extra || "");
+  layer.appendChild(box);
+  const s = { el, box, badge: box.querySelector("b") };
+  selections.add(s);
+  placeSel(s);
+  return () => { selections.delete(s); box.remove(); };
+}
+function placeSel(s) {
+  const r = R(s.el);
+  s.box.style.transform = `translate3d(${(r.x - 4).toFixed(1)}px, ${(r.y - 4).toFixed(1)}px, 0)`;
+  s.box.style.width = r.w + 8 + "px";
+  s.box.style.height = r.h + 8 + "px";
+  if (s.badge) s.badge.textContent = `${Math.round(r.w)} × ${Math.round(r.h)}`;
+}
+
+// Pink alignment guides that flash when something snaps into place.
+function guide(x1, y1, x2, y2, label) {
+  const g = document.createElement("div");
+  g.className = "guide";
+  const flat = Math.abs(y2 - y1) < 1;
+  g.style.transform = `translate3d(${Math.min(x1, x2).toFixed(1)}px, ${Math.min(y1, y2).toFixed(1)}px, 0)`;
+  g.style.width = flat ? Math.abs(x2 - x1) + "px" : "1px";
+  g.style.height = flat ? "1px" : Math.abs(y2 - y1) + "px";
+  if (label != null) g.innerHTML = `<b>${label}</b>`;
+  layer.appendChild(g);
+  setTimeout(() => g.remove(), 1000);
+}
+
+/* ---------- The people ---------- */
+const crew = PEOPLE.map((p) => new Cursor(p));
+const byName = Object.fromEntries(crew.map((c) => [c.name, c]));
+document.querySelectorAll(".card").forEach((card) => {
+  byName[WORKS.find((w) => w.id === card.dataset.id).author].cards.push(card);
+});
+const joe = new Cursor(JOE, true);
+joe.mode = "wait";
+
+// Everyone starts just off the edges of the first screen.
+[[1.04, 0.22], [0.58, -0.06], [-0.04, 0.6], [1.04, 0.9]].forEach(([fx, fy], i) => crew[i].set(innerWidth * fx, scrollY + innerHeight * fy));
+joe.set(innerWidth + 40, scrollY + innerHeight * 0.8);
+
+const intro = $("#intro"), notes = $("#notes"), s1 = $("#s1"), s2 = $("#s2"), assoc = $("#assoc");
+const aboutFrame = $("#about .frame"), theirs = $("#theirs");
+
+// Drags a slightly misplaced block into place, then flashes the guides it snapped to.
+async function dragIn(c, el, frame, ctx) {
+  if (!ctx.live()) return;
+  const [dx, dy] = getComputedStyle(el).translate.split(" ").map(parseFloat);
+  const r = R(el);
+  if (!await c.move(r.x + Math.min(48, r.w * 0.2), r.y + Math.min(20, r.h * 0.3))) return;
+  if (!ctx.live()) return;
+  c.press();
+  const unsel = ctx.sel(el, c);
+  const sx = c.x, sy = c.y;
+  await tween(700, (p) => {
+    if (!ctx.live()) return;
+    el.style.translate = `${(dx * (1 - p)).toFixed(1)}px ${((dy || 0) * (1 - p)).toFixed(1)}px`;
+    c.set(sx - dx * p, sy - (dy || 0) * p);
+  });
+  if (!ctx.live()) return;
+  el.style.translate = "0px 0px";
+  const a = R(el), f = R(frame);
+  guide(f.x, a.y + 10, a.x, a.y + 10, Math.round(a.x - f.x));
+  guide(a.x, f.y, a.x, f.y + f.h);
+  c.release();
+  await wait(650);
+  unsel();
+}
+
+// Selects a company name with a drag, then strikes it out.
+async function strike(c, s, ctx) {
+  if (!ctx.live()) return;
+  const rects = s.getClientRects();
+  const a = rects[0], b = rects[rects.length - 1];
+  if (!await c.move(a.left + scrollX, a.top + scrollY + a.height * 0.62)) return;
+  if (!ctx.live()) return;
+  c.press();
+  s.style.setProperty("--hlc", `color-mix(in srgb, ${c.color} 32%, transparent)`);
+  s.style.setProperty("--dur", "0.45s");
+  s.classList.add("hl");
+  await c.move(b.right + scrollX, b.top + scrollY + b.height * 0.62, 450, { straight: true });
+  c.release();
+  await wait(260);
+  if (!ctx.live()) return;
+  s.style.setProperty("--dur", "0s");
+  s.classList.remove("hl");
+  s.classList.add("struck");
+}
+
+const FINAL = {
+  1: () => {
+    intro.style.translate = "0px 0px";
+    notes.style.translate = "0px 0px";
+    [s1, s2].forEach((s) => { s.classList.remove("hl"); s.classList.add("struck"); });
+  },
+  2: () => {},
+  3: () => startIdle()
+};
+
+const SCENES = {
+  // About: Damian places the bio, Qendrim strikes out the old jobs, Chris places the footnote, Sandra checks the tiny type.
+  1: async (ctx) => {
+    const [D, Q, C, S] = crew;
+    await Promise.all([
+      (async () => { await wait(250); await dragIn(D, intro, aboutFrame, ctx); })(),
+      (async () => { await wait(950); await strike(Q, s1, ctx); await strike(Q, s2, ctx); })(),
+      (async () => { await wait(1700); await dragIn(C, notes, aboutFrame, ctx); })(),
+      (async () => {
+        await wait(2500);
+        if (!ctx.live()) return;
+        const r = R(assoc);
+        if (!await S.move(r.x + r.w * 0.5, r.y + r.h * 0.7)) return;
+        await S.click();
+        const un = ctx.sel(assoc, S);
+        await wait(1400);
+        un();
+      })()
+    ]);
+    if (!ctx.live()) return;
+    // Then they wander off toward the next frame.
+    const f = R(aboutFrame);
+    crew.forEach((c, i) => { c.move(f.x + f.w * (0.18 + i * 0.2) + rand(-30, 30), f.y + f.h + rand(40, 120)); });
+  },
+  // Hero: everyone clicks "theirs" (it stays selected by all four of them), then they hang out under the sentence.
+  2: async (ctx) => {
+    const h1 = theirs.closest("h1");
+    const dots = `<span class="who">${crew.map((c) => `<span style="--c:${c.color}"></span>`).join("")}</span>`;
+    let grouped = false;
+    const park = (i) => {
+      const h = R(h1), r = R(theirs);
+      const span = Math.min(h.w - 130, Math.max(r.w * 2.4, 440)); // leave room for the last name tag
+      const x0 = Math.max(h.x, Math.min(r.x - 20, h.x + h.w - 130 - span));
+      return [x0 + span * (i / 3) * 0.9, h.y + h.h + 16 + (i % 2) * 24];
+    };
+    await Promise.all(crew.map(async (c, i) => {
+      await wait(i * 150);
+      if (!ctx.live()) return;
+      const r = R(theirs);
+      if (!await c.move(r.x + r.w * (0.2 + i * 0.2), r.y + r.h * 0.6)) return;
+      await c.click();
+      if (!ctx.live()) return;
+      if (!grouped) { grouped = true; ctx.sel(theirs, { color: "#ff1fb4", ink: "#fff" }, { badge: false, extra: dots }); }
+      if (!await c.move(...park(i), 750)) return;
+      while (ctx.live()) {
+        await wait(rand(1100, 2600));
+        if (!ctx.live()) return;
+        const [x, y] = park(i);
+        await c.move(x + rand(-10, 10), y + rand(-5, 5), 520);
+      }
+    }));
+  },
+  // Work: everyone goes to look after their own case study.
+  3: async (ctx) => {
+    await Promise.all(crew.map(async (c, i) => {
+      await wait(i * 130);
+      if (!ctx.live()) return;
+      const card = c.cards[0], r = R(card.querySelector(".img"));
+      if (!await c.move(r.x + r.w * 0.62, r.y + r.h * 0.55)) return;
+      await c.click();
+      const un = ctx.sel(card, c);
+      await wait(1200);
+      un();
+    }));
+  }
+};
+
+let current = null, highest = 0;
+function runScene(n) {
+  if (n <= highest) return;
+  if (current) current.stop();
+  for (let k = highest + 1; k < n; k++) FINAL[k]();
+  highest = n;
+  const ctx = {
+    undo: new Set(),
+    live: () => current === ctx,
+    sel(el, who, opts) {
+      const un = select(el, who, opts);
+      const f = () => { un(); ctx.undo.delete(f); };
+      ctx.undo.add(f);
+      return f;
+    },
+    stop() { [...ctx.undo].forEach((f) => f()); FINAL[n](); }
+  };
+  current = ctx;
+  crew.forEach((c) => { if (c.mode !== "hover") c.mode = "script"; });
+  SCENES[n](ctx).then(() => { if (ctx.live()) FINAL[n](); });
+}
+
+// After the tour, each person hangs around their own case study, fiddling with it now and then.
+let idling = false;
+function startIdle() {
+  crew.forEach((c) => { if (c.mode !== "hover") c.mode = "idle"; });
+  if (idling || REDUCE) return;
+  idling = true;
+  crew.forEach(async (c) => {
+    for (;;) {
+      await wait(rand(1800, 4600));
+      if (c.mode !== "idle" || document.hidden || state) continue;
+      const card = c.cards[Math.floor(Math.random() * c.cards.length)];
+      const r = R(card.querySelector(".img"));
+      if (!await c.move(r.x + r.w * rand(0.4, 0.88), r.y + r.h * rand(0.3, 0.85))) continue;
+      if (c.mode === "idle" && Math.random() < 0.3) {
+        await c.click();
+        const un = select(card, c);
+        await wait(1000);
+        un();
+      }
+    }
+  });
+}
+
+// Hovering a case study calls its author over.
+function summon(c, card) {
+  c.mode = "hover";
+  c.hovering = card;
+  const r = R(card.querySelector(".img"));
+  c.move(r.x + r.w - 58, r.y + 26, null, { force: true });
+  if (c.unsel) c.unsel();
+  c.unsel = select(card, c);
+}
+function dismiss(c, card) {
+  if (c.hovering !== card) return;
+  if (c.unsel) { c.unsel(); c.unsel = null; }
+  c.hovering = null;
+  c.mode = highest >= 3 ? "idle" : "script";
+}
+document.querySelectorAll(".card").forEach((card) => {
+  const c = byName[WORKS.find((w) => w.id === card.dataset.id).author];
+  card.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") summon(c, card); });
+  card.addEventListener("pointerleave", () => dismiss(c, card));
+  card.addEventListener("focus", () => summon(c, card));
+  card.addEventListener("blur", () => dismiss(c, card));
+});
+
+/* ---------- jo's cursor: follows you around ---------- */
+let pcx = innerWidth * 0.7, pcy = innerHeight * 0.78;
+addEventListener("pointermove", (e) => { if (e.pointerType === "mouse") { pcx = e.clientX; pcy = e.clientY; } }, { passive: true });
+addEventListener("pointerdown", (e) => { if (e.pointerType !== "mouse") { pcx = e.clientX; pcy = e.clientY; } }, { passive: true });
+setTimeout(() => { if (joe.mode === "wait") joe.mode = "follow"; }, REDUCE ? 0 : 1600);
+
+/* ---------- LinkedIn: 21K followers, in the file ---------- */
+// They pile into the LinkedIn frame as a crowd of tiny cursors. They follow jo's cursor (which follows you),
+// wear their LinkedIn headlines as name tags, leave the usual comments, and like everything.
+const HEADLINES = ["Thought Leader", "Open to Work", "Ex-Google", "Founder (Stealth)", "Top Voice", "Recruiter", "Growth Hacker",
+  "Proud Dad | CMO", "Chief Vibes Officer", "Your Mom", "Keynote Speaker", "Ghostwriter"];
+const COMMENTS = ["This. 👏", "Congrats Joe!!", "Agreed.", "So true", "Great insight", "Thoughts?", "Love this!", "Following for more",
+  "Commenting for reach", "Interested", "Couldn't agree more", "Saving this", "Big if true", "Repost?", "Needed this today",
+  "Let's connect!", "Inspiring 🙌", "Who's here on a Monday?"];
+const CLICK_COMMENTS = ["Love this!", "Agreed.", "This. 👏", "So true", "Inspiring 🙌"];
+const CROWD_COLORS = [["#3d6bff", "#fff"], ["#ff4433", "#fff"], ["#10b26a", "#fff"], ["#a35cff", "#fff"], ["#ff8fc8", "#0d0d0d"],
+  ["#00a3c4", "#fff"], ["#ff7a00", "#fff"], ["#0a66c2", "#fff"], ["#0d0d0d", "#fff"], ["#e0245e", "#fff"]];
+const UI_FONT = getComputedStyle(document.documentElement).getPropertyValue("--ui").trim() || "sans-serif";
+const EMOJI_FONT = "'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif";
+
+const crowdFrame = $("#crowd-f"), crowdCv = $("#crowd"), cg = crowdCv.getContext("2d"), more = $("#more");
+const crowd = { list: [], bubbles: [], likes: [], W: 0, H: 0, dpr: 1, last: 0, nextLike: 0, nextChat: 0, arrived: false, counting: false, said: [] };
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const pick = (a) => a[Math.floor(Math.random() * a.length)];
+const fmtK = (n) => (n < 1000 ? String(n) : (n / 1000).toFixed(n < 10000 ? 1 : 0).replace(/\.0$/, "") + "K");
+let crowdVisible = false;
+
+// Everything is drawn from little pre-rendered images, so a few hundred cursors stay cheap.
+function makeSprite(w, h, draw) {
+  const c = document.createElement("canvas");
+  c.width = Math.ceil(w * crowd.dpr); c.height = Math.ceil(h * crowd.dpr);
+  const x = c.getContext("2d");
+  x.scale(crowd.dpr, crowd.dpr);
+  draw(x);
+  c.w = w; c.h = h;
+  return c;
+}
+function pillSprite(text, bg, ink, size, padX, h, radius) {
+  const font = `600 ${size}px ${UI_FONT}`;
+  cg.font = font;
+  const tw = Math.ceil(cg.measureText(text).width);
+  return makeSprite(tw + padX * 2 + 6, h + 6, (x) => {
+    x.translate(2, 1);
+    x.shadowColor = "rgba(0, 0, 0, .22)"; x.shadowBlur = 4; x.shadowOffsetY = 1;
+    x.fillStyle = bg;
+    x.beginPath(); x.roundRect(0, 0, tw + padX * 2, h, radius); x.fill();
+    x.shadowColor = "transparent";
+    x.fillStyle = ink; x.font = font; x.textBaseline = "middle";
+    x.fillText(text, padX, h / 2 + 0.5);
+  });
+}
+const AS = 0.64, APAD = 5, ARROW_PATH = new Path2D(ARROW);
+
+function sizeCrowd() {
+  const r = crowdFrame.getBoundingClientRect();
+  crowd.W = r.width; crowd.H = r.height;
+  crowdCv.width = Math.round(r.width * crowd.dpr);
+  crowdCv.height = Math.round(r.height * crowd.dpr);
+}
+
+function crowdSetup() {
+  crowd.dpr = Math.min(2, devicePixelRatio || 1);
+  sizeCrowd();
+  crowd.arrows = CROWD_COLORS.map(([c]) => makeSprite(24 * AS + APAD * 2, 24 * AS + APAD * 2, (x) => {
+    x.translate(APAD - 3 * AS, APAD - 2 * AS); x.scale(AS, AS);
+    x.shadowColor = "rgba(0, 0, 0, .35)"; x.shadowBlur = 4; x.shadowOffsetY = 1.5;
+    x.fillStyle = c; x.fill(ARROW_PATH);
+    x.shadowColor = "transparent";
+    x.lineJoin = "round"; x.lineWidth = 2; x.strokeStyle = "#fff"; x.stroke(ARROW_PATH);
+  }));
+  crowd.likeS = makeSprite(28, 28, (x) => {
+    x.font = `20px ${EMOJI_FONT}`; x.textAlign = "center"; x.textBaseline = "middle";
+    x.fillText("👍", 14, 15);
+  });
+  const n = Math.round(clamp((crowd.W * crowd.H) / 3300, 70, 300));
+  crowd.list = Array.from({ length: n }, () => ({
+    x: -50, y: -50, a: rand(0, Math.PI * 2), u: Math.sqrt(rand(0.07, 1)),
+    k: rand(0.016, 0.07), ph: rand(0, 6.3), fr: rand(0.35, 1), amp: rand(3, 11),
+    ci: Math.floor(Math.random() * CROWD_COLORS.length), tag: null, say: null, live: false, at: 0, down: 0
+  }));
+  const tags = Math.min(HEADLINES.length, Math.round(n / 16));
+  for (let j = 0; j < tags; j++) {
+    const p = crowd.list[Math.floor((j + 0.5) * n / tags)], [bg, ink] = CROWD_COLORS[p.ci];
+    p.tag = pillSprite(HEADLINES[j], bg, ink, 11, 7, 19, 9.5);
+  }
+  $("#crowd-n").textContent = n;
+}
+
+// Where the crowd gathers: around and just below jo's cursor, kept inside the frame.
+function crowdShape(jx, jy) {
+  const n = crowd.list.length, r0 = clamp(Math.sqrt(n) * 15, 100, 270);
+  const rx = Math.min(r0 * 1.3, crowd.W * 0.44), ry = Math.min(r0 * 0.85, crowd.H * 0.34);
+  return { rx, ry, cx: clamp(jx + 6, rx * 0.6, crowd.W - rx * 0.6), cy: clamp(jy + 46, ry * 0.6, crowd.H - ry * 0.6) };
+}
+function home(p, c, t) {
+  return [
+    clamp(c.cx + Math.cos(p.a) * p.u * c.rx + Math.sin(t * p.fr + p.ph) * p.amp, 6, crowd.W - 14),
+    clamp(c.cy + Math.sin(p.a) * p.u * c.ry + Math.cos(t * p.fr * 1.3 + p.ph) * p.amp * 0.7, 6, crowd.H - 18)
+  ];
+}
+
+// They pour in from the edges of the frame while the overflow count in the bar runs up to +21K.
+function crowdArrive() {
+  if (crowd.arrived || REDUCE) return;
+  crowd.arrived = crowd.counting = true;
+  const now = performance.now(), n = crowd.list.length;
+  crowd.list.forEach((p, i) => {
+    const side = Math.floor(Math.random() * 4);
+    p.x = side === 0 ? -20 : side === 1 ? crowd.W + 20 : rand(0, crowd.W);
+    p.y = side === 2 ? -20 : side === 3 ? crowd.H + 20 : rand(0, crowd.H);
+    p.at = now + 2600 * Math.pow(i / n, 0.75) + rand(0, 200);
+  });
+  crowd.nextLike = now + 900;
+  crowd.nextChat = now + 1500;
+  more.textContent = "+0";
+  more.hidden = false;
+}
+
+function randomLive() {
+  for (let k = 0; k < 8; k++) { const p = pick(crowd.list); if (p.live) return p; }
+  return null;
+}
+function like(p, now) {
+  if (!p || !p.live) return;
+  p.down = now + 150;
+  if (crowd.likes.length < 70) crowd.likes.push({ x: p.x + 4, y: p.y - 4, t: now, dx: rand(-14, 14) });
+}
+function say(p, text, now) {
+  if (!p || p.say) return;
+  const [bg, ink] = CROWD_COLORS[p.ci];
+  p.say = { s: pillSprite(text, bg, ink, 13, 10, 28, [3, 14, 14, 14]), t: now };
+  crowd.bubbles.push(p);
+}
+function nextComment() {
+  let c;
+  do c = pick(COMMENTS); while (crowd.said.includes(c));
+  crowd.said = [...crowd.said.slice(-5), c];
+  return c;
+}
+
+function crowdStep(now) {
+  const dt = Math.min(48, crowd.last ? now - crowd.last : 16.7);
+  crowd.last = now;
+  const r = crowdFrame.getBoundingClientRect();
+  if (Math.abs(r.width - crowd.W) > 1 || Math.abs(r.height - crowd.H) > 1) sizeCrowd();
+  if (!crowd.arrived) return;
+  const c = crowdShape(joe.x - r.left - scrollX, joe.y - r.top - scrollY), t = now / 1000;
+  let live = 0;
+  for (const p of crowd.list) {
+    if (!p.live) { if (now < p.at) continue; p.live = true; }
+    live++;
+    const [tx, ty] = home(p, c, t), k = 1 - Math.pow(1 - p.k, dt / 16.7);
+    p.x += (tx - p.x) * k;
+    p.y += (ty - p.y) * k;
+  }
+  if (crowd.counting) {
+    more.textContent = "+" + fmtK(Math.round(21000 * live / crowd.list.length));
+    if (live === crowd.list.length) crowd.counting = false;
+  }
+  if (live > 10 && now > crowd.nextLike) { crowd.nextLike = now + rand(80, 280); like(randomLive(), now); }
+  if (live > 24 && now > crowd.nextChat && crowd.bubbles.length < 3) { crowd.nextChat = now + rand(900, 1900); say(randomLive(), nextComment(), now); }
+  crowdDraw(now);
+}
+
+// Name tags and comments sit below-right of the cursor, flipping left or up near the frame's edges.
+function labelAt(p, sp, sc) {
+  const w = sp.w * sc, h = sp.h * sc;
+  let x = p.x + 7, y = p.y + 11;
+  if (x + w > crowd.W - 2) x = Math.max(2, p.x - w + 4);
+  if (y + h > crowd.H - 2) y = p.y - h - 2;
+  return [x, y, w, h];
+}
+function crowdDraw(now) {
+  const g = cg;
+  g.setTransform(crowd.dpr, 0, 0, crowd.dpr, 0, 0);
+  g.clearRect(0, 0, crowd.W, crowd.H);
+  for (const p of crowd.list) {
+    if (!p.live) continue;
+    const sp = crowd.arrows[p.ci], s = now < p.down ? 0.8 : 1;
+    g.drawImage(sp, p.x - APAD * s, p.y - APAD * s, sp.w * s, sp.h * s);
+  }
+  for (const p of crowd.list) if (p.live && p.tag && !p.say) g.drawImage(p.tag, ...labelAt(p, p.tag, 1));
+  crowd.bubbles = crowd.bubbles.filter((p) => {
+    const age = now - p.say.t;
+    if (age > 2600) { p.say = null; return false; }
+    const a = Math.min(1, age / 160, (2600 - age) / 320), sc = 0.85 + 0.15 * Math.min(1, age / 160);
+    g.globalAlpha = a;
+    g.drawImage(p.say.s, ...labelAt(p, p.say.s, sc));
+    return true;
+  });
+  crowd.likes = crowd.likes.filter((l) => {
+    const a = (now - l.t) / 1100;
+    if (a >= 1) return false;
+    const e = 1 - (1 - a) * (1 - a), sz = 28 * Math.min(1, 0.45 + a * 4);
+    g.globalAlpha = a < 0.6 ? 1 : 1 - (a - 0.6) / 0.4;
+    g.drawImage(crowd.likeS, l.x + l.dx * e - sz / 2, l.y - 48 * e - sz / 2, sz, sz);
+    return true;
+  });
+  g.globalAlpha = 1;
+}
+
+// With reduced motion: the crowd is already there, standing still, with a couple of comments up.
+function crowdStatic() {
+  const t = 0, c = crowdShape(crowd.W * 0.68, crowd.H * 0.52);
+  crowd.list.forEach((p) => { p.live = true; [p.x, p.y] = home(p, c, t); p.say = null; });
+  crowd.bubbles = [];
+  const now = performance.now();
+  [["Congrats Joe!!", 0.3], ["Great insight", 0.7]].forEach(([text, f]) => {
+    const p = crowd.list[Math.floor(f * crowd.list.length)];
+    say(p, text, now - 1000);
+  });
+  crowdDraw(now);
+}
+
+crowdSetup();
+if (REDUCE) crowdStatic();
+if (REDUCE) {
+  $("#crowd-hint").textContent = "Those are my followers. Usually they're a lot more lively.";
+} else if (!matchMedia("(hover: hover) and (pointer: fine)").matches) {
+  $("#crowd-hint").textContent = "Those are my followers. Tap anywhere and they'll follow. Tap again and they'll like it.";
+}
+new IntersectionObserver((es) => es.forEach((e) => {
+  crowdVisible = e.isIntersecting;
+  if (!crowdVisible) crowd.last = 0;
+  if (e.intersectionRatio >= 0.3) crowdArrive();
+}), { threshold: [0, 0.3] }).observe(crowdFrame);
+new ResizeObserver(() => { sizeCrowd(); if (REDUCE) crowdStatic(); }).observe(crowdFrame);
+
+// Click anywhere in the frame: everyone likes it.
+crowdFrame.addEventListener("pointerdown", (e) => {
+  if (!crowd.arrived || e.target.closest("a, button")) return;
+  const live = crowd.list.filter((p) => p.live);
+  for (let j = 0; j < Math.min(40, live.length); j++) setTimeout(() => like(pick(live), performance.now()), j * 16 + rand(0, 140));
+  say(pick(live), pick(CLICK_COMMENTS), performance.now());
+});
+
+/* ---------- LinkedIn numbers: jo draws the impressions chart himself, live, with the pen tool ---------- */
+const fmtBig = (v) => (v >= 1e6 ? +(v / 1e6).toFixed(1) + "M" : v >= 1e3 ? +(v / 1e3).toFixed(v < 1e4 ? 1 : 0) + "K" : String(Math.round(v)));
+const fmtFull = (v) => Math.round(v).toLocaleString("en-US");
+function niceStep(max, count) {
+  const raw = max / count, p = Math.pow(10, Math.floor(Math.log10(raw))), m = raw / p;
+  return (m <= 1 ? 1 : m <= 2 ? 2 : m <= 2.5 ? 2.5 : m <= 5 ? 5 : 10) * p;
+}
+const IMP = IMPRESSIONS.months;
+const imp = { el: $("#imp-chart"), svg: $("#imp-svg"), tip: $("#imp-tip"), drawn: 0, band: null, bandVal: 0, done: false, hot: -1, drawing: false, started: false, joe: false };
+const SVGNS = "http://www.w3.org/2000/svg";
+
+if (IMPRESSIONS.sample) $("#imp-k").insertAdjacentHTML("beforeend", ` ${ph("Sample numbers until you send me yours")}`);
+$("#imp-asof").textContent = `As of ${IMP[IMP.length - 1][0]}`;
+imp.svg.setAttribute("aria-label", `LinkedIn impressions, all time: ${fmtBig(IMP[0][1])} in ${IMP[0][0]}, up to ${fmtBig(IMP[IMP.length - 1][1])} in ${IMP[IMP.length - 1][0]}.`);
+$("#imp-table").innerHTML = `<thead><tr><th>Month</th><th>Impressions, all time</th></tr></thead><tbody>` +
+  IMP.map(([m, v]) => `<tr><td>${esc(m)}</td><td>${fmtFull(v)}</td></tr>`).join("") + "</tbody>";
+
+function impGeom() {
+  const W = imp.el.clientWidth, H = Math.round(clamp(W * 0.42, 220, 380));
+  const m = { t: 34, r: 10, b: 30, l: 44 };
+  const max = Math.max(...IMP.map((d) => d[1])), step = niceStep(max, 3), top = Math.ceil(max / step) * step;
+  const x = (i) => m.l + (W - m.l - m.r) * (IMP.length === 1 ? 1 : i / (IMP.length - 1));
+  const y = (v) => m.t + (H - m.t - m.b) * (1 - v / top);
+  return { W, H, m, step, top, x, y };
+}
+
+function impRender() {
+  const g = imp.g = impGeom(), { W, H, m, step, top, x, y } = g, n = IMP.length;
+  imp.svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  imp.svg.setAttribute("height", H);
+  let h = `<g class="imp-axis">`;
+  for (let k = 0; k * step <= top + 1e-6; k++) {
+    const yy = y(k * step).toFixed(1);
+    h += `<line class="imp-grid" x1="${m.l}" x2="${W - m.r}" y1="${yy}" y2="${yy}"/><text x="${m.l - 10}" y="${+yy + 4}" text-anchor="end">${fmtBig(k * step)}</text>`;
+  }
+  // Month labels: full at both ends, short in between where they fit.
+  const gap = n > 1 ? x(1) - x(0) : W, every = Math.ceil(44 / gap);
+  IMP.forEach(([label], i) => {
+    const end = i === 0 || i === n - 1;
+    if (!end && (i % every || x(i) - x(0) < 74 || x(n - 1) - x(i) < 74)) return;
+    const text = end ? label : label.split(" ")[0].slice(0, 3);
+    h += `<text x="${x(i).toFixed(1)}" y="${H - 8}" text-anchor="${i === 0 ? "start" : i === n - 1 ? "end" : "middle"}">${esc(text)}</text>`;
+  });
+  h += `</g><path class="imp-area"/><path class="imp-line"/><line class="imp-x" y1="${m.t - 6}" y2="${H - m.b}" visibility="hidden"/><g class="imp-pts">` +
+    IMP.map(([, v], i) => `<circle class="imp-pt" r="4.5" cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" visibility="hidden"/>`).join("") +
+    `</g><text class="imp-end" text-anchor="end"></text>`;
+  imp.svg.innerHTML = h;
+  imp.area = imp.svg.querySelector(".imp-area");
+  imp.line = imp.svg.querySelector(".imp-line");
+  imp.xl = imp.svg.querySelector(".imp-x");
+  imp.pts = [...imp.svg.querySelectorAll(".imp-pt")];
+  imp.end = imp.svg.querySelector(".imp-end");
+  impUpdate();
+  if (imp.hot >= 0) impHot(imp.hot);
+  sizeLabels();
+}
+
+function impUpdate() {
+  const { x, y, m, H } = imp.g, n = imp.drawn;
+  const line = IMP.slice(0, n).map(([, v], i) => [x(i), y(v)]);
+  if (imp.band && n) line.push(imp.band);
+  const d = line.map((p) => p[0].toFixed(1) + " " + p[1].toFixed(1));
+  imp.line.setAttribute("d", d.length ? "M" + d.join("L") : "");
+  const base = (H - m.b).toFixed(1);
+  imp.area.setAttribute("d", line.length > 1 ? `M${line[0][0].toFixed(1)} ${base}L${d.join("L")}L${line[line.length - 1][0].toFixed(1)} ${base}Z` : "");
+  imp.pts.forEach((c, i) => {
+    c.setAttribute("visibility", i < n ? "visible" : "hidden");
+    c.classList.toggle("cur", !imp.done && i === n - 1);
+    c.setAttribute("r", i === imp.hot ? 6 : 4.5);
+  });
+  const last = IMP.length - 1;
+  if (imp.done) {
+    imp.end.setAttribute("x", (x(last) - 4).toFixed(1));
+    imp.end.setAttribute("y", (y(IMP[last][1]) - 14).toFixed(1));
+    imp.end.textContent = fmtBig(IMP[last][1]);
+  }
+  imp.end.classList.toggle("on", imp.done);
+  $("#imp-total").textContent = fmtBig(imp.band ? imp.bandVal : n ? IMP[n - 1][1] : 0);
+}
+
+// While jo's pen is out, the next segment stretches from the last point to his cursor, and the big number keeps up.
+const penJoe = () => imp.joe && joe.mode === "script";
+function impBandFromJoe() {
+  if (!imp.drawn) return;
+  const r = R(imp.svg), bx = joe.x - r.x, by = joe.y - r.y, i = imp.drawn;
+  imp.band = [bx, by];
+  if (i < IMP.length) {
+    const x0 = imp.g.x(i - 1), x1 = imp.g.x(i), p = clamp((bx - x0) / (x1 - x0 || 1), 0, 1);
+    imp.bandVal = IMP[i - 1][1] + (IMP[i][1] - IMP[i - 1][1]) * p;
+  }
+  impUpdate();
+}
+
+async function penDraw() {
+  if (imp.started) return;
+  imp.started = true;
+  if (REDUCE) { imp.drawn = IMP.length; imp.done = true; impUpdate(); return; }
+  imp.drawing = true;
+  imp.joe = joe.mode === "follow" && !state;
+  if (imp.joe) { joe.mode = "script"; joe.el.classList.add("pen"); }
+  for (let i = 0; i < IMP.length; i++) {
+    const g = imp.g, tx = g.x(i), ty = g.y(IMP[i][1]);
+    if (penJoe()) {
+      const r = R(imp.svg);
+      await joe.move(r.x + tx, r.y + ty, i ? 220 : 700, { straight: i > 0 });
+      if (penJoe()) { joe.press(); await wait(90); joe.release(); }
+    } else if (i) {
+      // Someone took jo's cursor away (a case study, say), so the line finishes drawing itself.
+      const [x0, y0] = [g.x(i - 1), g.y(IMP[i - 1][1])], v0 = IMP[i - 1][1];
+      await tween(150, (p) => { imp.band = [x0 + (imp.g.x(i) - x0) * p, y0 + (imp.g.y(IMP[i][1]) - y0) * p]; imp.bandVal = v0 + (IMP[i][1] - v0) * p; impUpdate(); }, (p) => p);
+    }
+    imp.band = null;
+    imp.drawn = i + 1;
+    impUpdate();
+  }
+  imp.drawing = false;
+  imp.done = true;
+  impUpdate();
+  joe.el.classList.remove("pen");
+  if (penJoe()) { await wait(500); if (joe.mode === "script") { joe.token++; joe.mode = "follow"; } }
+  imp.joe = false;
+}
+
+// Hover, or focus and arrow keys: a crosshair snaps to the nearest month.
+function impHot(i) {
+  imp.hot = i;
+  impUpdate();
+  if (i < 0) { imp.tip.hidden = true; imp.xl.setAttribute("visibility", "hidden"); return; }
+  const { x, y, W } = imp.g, px = x(i), py = y(IMP[i][1]);
+  imp.xl.setAttribute("x1", px); imp.xl.setAttribute("x2", px);
+  imp.xl.setAttribute("visibility", "visible");
+  const b = document.createElement("b");
+  b.textContent = fmtFull(IMP[i][1]);
+  imp.tip.replaceChildren(b, document.createTextNode(IMP[i][0]));
+  imp.tip.hidden = false;
+  const half = imp.tip.offsetWidth / 2;
+  imp.tip.style.left = clamp(px, half, W - half) + "px";
+  imp.tip.style.top = py + "px";
+}
+imp.svg.addEventListener("pointermove", (e) => {
+  if (!imp.done) return;
+  const r = imp.svg.getBoundingClientRect(), { m, W } = imp.g, n = IMP.length;
+  impHot(clamp(Math.round(((e.clientX - r.left - m.l) / (W - m.l - m.r)) * (n - 1)), 0, n - 1));
+});
+imp.svg.addEventListener("pointerleave", () => impHot(-1));
+imp.svg.addEventListener("focus", () => { if (imp.done) impHot(IMP.length - 1); });
+imp.svg.addEventListener("blur", () => impHot(-1));
+imp.svg.addEventListener("keydown", (e) => {
+  if (!imp.done) return;
+  const n = IMP.length, k = { ArrowLeft: -1, ArrowRight: 1 }[e.key];
+  if (k) { e.preventDefault(); impHot(clamp((imp.hot < 0 ? n - 1 : imp.hot) + k, 0, n - 1)); }
+  else if (e.key === "Home" || e.key === "End") { e.preventDefault(); impHot(e.key === "Home" ? 0 : n - 1); }
+});
+
+impRender();
+new ResizeObserver(() => { if (imp.el.clientWidth !== imp.g.W) impRender(); }).observe(imp.el);
+const penIO = new IntersectionObserver((es) => es.forEach((e) => {
+  if (e.isIntersecting) { penIO.disconnect(); setTimeout(penDraw, 250); }
+}), { threshold: 0.7 });
+penIO.observe(imp.svg);
+
+/* ---------- Notable posts ---------- */
+const npMax = Math.max(0, ...NOTABLE.map((p) => p.impressions || 0));
+$("#np").innerHTML = NOTABLE.map((p, i) => {
+  const meta = [
+    p.impressions != null ? `<b>${fmtBig(p.impressions)}</b> impressions` : null,
+    p.reactions != null ? `<b>${fmtFull(p.reactions)}</b> reactions` : null,
+    p.date ? esc(p.date) : null
+  ].filter(Boolean);
+  return `<li>
+    <span class="np-c">◇ Notable post / ${String(i + 1).padStart(2, "0")}</span>
+    <p class="np-hook">${p.hook ? esc(p.hook) : ph("Opening line of a post you send me")}</p>
+    <span class="np-meta">${meta.length ? meta.join(" · ") : ph("Impressions · reactions · date")}</span>
+    ${p.impressions && npMax ? `<span class="np-bar" style="--share:${((100 * p.impressions) / npMax).toFixed(1)}%" aria-hidden="true"></span>` : ""}
+    <a class="np-go" href="${p.url ? esc(p.url) : "#"}" target="_blank" rel="noopener" data-np="${i}">Read it, then come back ↗</a>
+  </li>`;
+}).join("");
+sizeLabels();
+
+/* ---------- Frame loop ---------- */
+function frame(now) {
+  for (const t of tweens) {
+    const p = Math.min(1, (now - t.t0) / t.dur);
+    t.update(t.ease(p));
+    if (p >= 1) { tweens.delete(t); t.res(); }
+  }
+  if (joe.mode === "follow") {
+    const tx = pcx + 22 + scrollX, ty = pcy + 26 + scrollY, k = REDUCE ? 1 : 0.085;
+    joe.set(joe.x + (tx - joe.x) * k, joe.y + (ty - joe.y) * k);
+  }
+  selections.forEach(placeSel);
+  if (crowdVisible && !REDUCE && !document.hidden) crowdStep(now);
+  if (imp.drawing && penJoe()) impBandFromJoe();
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+/* ---------- Scene triggers ---------- */
+if (REDUCE) {
+  FINAL[1](); FINAL[2](); highest = 3; startIdle();
+  const park = () => crew.forEach((c) => { const r = R(c.cards[0].querySelector(".img")); c.set(r.x + r.w * 0.62, r.y + r.h * 0.55); });
+  park();
+  addEventListener("resize", park);
+} else {
+  const watch = (el, n, opts) => {
+    const io = new IntersectionObserver((es) => es.forEach((e) => {
+      if (e.isIntersecting) { io.disconnect(); runScene(n); }
+    }), opts);
+    io.observe(el);
+  };
+  watch(aboutFrame, 1, { threshold: 0.3 });
+  watch(theirs, 2, { threshold: 0.9, rootMargin: "0px 0px -12% 0px" });
+  watch($("#cards"), 3, { threshold: 0, rootMargin: "0px 0px -30% 0px" });
+}
+
+// Avatars in the bar: click someone to jump to their case study (jo's, and the +21K, go to his followers).
+async function spotlight(c, card) {
+  await wait(REDUCE ? 0 : 650);
+  summon(c, card);
+  await wait(1700);
+  if (!card.matches(":hover")) dismiss(c, card);
+}
+$("#people").addEventListener("click", (e) => {
+  const b = e.target.closest(".av");
+  if (!b) return;
+  const behavior = REDUCE ? "auto" : "smooth";
+  if (b.dataset.who === JOE.name || b.dataset.who === "followers") {
+    $("#writing").scrollIntoView({ behavior, block: "center" });
+    return;
+  }
+  const c = byName[b.dataset.who], card = c.cards[0];
+  card.scrollIntoView({ behavior, block: "center" });
+  spotlight(c, card);
+});
+
+/* ---------- Please come back ---------- */
+const leave = $("#leave");
+const leaveH = $("#leave-h");
+const leaveP = $("#leave-p");
+const leaveWhere = $("#leave-where");
+const leaveActions = $("#leave-actions");
+const baseTitle = document.title;
+let state = null; // { w, i, leftAt, phase: "ask" | "away" | "back", wentAway, sent }
+let lastFocus = null;
+
+// While the come-back screen is up, jo's cursor hovers anxiously over the button he'd like you to press.
+let pleadToken = 0;
+async function plead(id) {
+  const token = ++pleadToken;
+  joe.mode = "plead";
+  await wait(REDUCE ? 0 : 300);
+  while (token === pleadToken && !leave.hidden) {
+    const el = document.getElementById(id);
+    if (!el) break;
+    const r = R(el);
+    await joe.move(r.x + r.w * 0.8 + rand(-6, 6), r.y + r.h * 0.62 + rand(-4, 4), 420);
+    if (REDUCE) break;
+    await wait(rand(450, 1200));
+  }
+}
+function unplead() { pleadToken++; joe.token++; joe.mode = "follow"; }
+
+/* ---------- Tab show: the title and icon keep talking while they're on the other site ---------- */
+// at = seconds after leaving. Each beat counts as one "message" in the welcome-back line.
+const BEATS = [
+  { at: 0,   title: "Come back pls",                       face: "happy" },
+  { at: 15,  title: "I'll wait.",                          face: "look" },
+  { at: 40,  title: "Still reading? Good sign.",           face: "look" },
+  { at: 75,  title: "Joe misses you",                      face: "sad" },
+  { at: 120, title: "It's been 2 minutes. Not counting.",  face: "look" },
+  { at: 180, title: "I reorganized my work. Twice.",       face: "shock" },
+  { at: 300, title: "I'm not crying, you're crying",       face: "tear" },
+  { at: 480, title: "zzz",                                 face: "sleep" },
+  { at: 720, title: "Hello?? Is this thing on",            face: "shock" }
+];
+const fav = $("#fav");
+const favCanvas = document.createElement("canvas");
+favCanvas.width = favCanvas.height = 64;
+const cssColor = (v) => {
+  const m = /var\((--[\w-]+)\)/.exec(v);
+  return m ? getComputedStyle(document.documentElement).getPropertyValue(m[1]).trim() : v;
+};
+
+// Draws a blocky little face for the tab icon, or jo's yellow cursor as the resting mark.
+function drawFav(face, bg, fg, blink = false) {
+  const g = favCanvas.getContext("2d");
+  g.clearRect(0, 0, 64, 64);
+  g.fillStyle = bg; g.fillRect(0, 0, 64, 64);
+  g.fillStyle = fg; g.strokeStyle = fg; g.lineWidth = 6; g.lineCap = "square";
+  if (face === "mark") {
+    const pts = [[3, 2], [3, 19], [7.6, 14.8], [10.9, 22], [14, 20.6], [10.8, 13.6], [17.2, 13.6]];
+    g.beginPath();
+    pts.forEach(([x, y], i) => { const X = 10 + (x - 3) * 2.7, Y = 4 + (y - 2) * 2.7; i ? g.lineTo(X, Y) : g.moveTo(X, Y); });
+    g.closePath();
+    g.lineJoin = "round"; g.lineWidth = 4; g.strokeStyle = "#ffffff";
+    g.fill(); g.stroke();
+  } else {
+    const dx = face === "look" ? 7 : 0;
+    if (blink || face === "sleep") {
+      g.fillRect(13 + dx, 25, 12, 4); g.fillRect(39 + dx, 25, 12, 4);
+    } else {
+      g.fillRect(14 + dx, 16, 9, 14); g.fillRect(40 + dx, 16, 9, 14);
+    }
+    g.beginPath();
+    if (face === "happy" || face === "look") g.arc(32, 36, 13, 0.15 * Math.PI, 0.85 * Math.PI);
+    else if (face === "shock") { g.arc(32, 46, 7, 0, 2 * Math.PI); g.fill(); }
+    else if (face === "sleep") { g.moveTo(24, 46); g.lineTo(40, 46); }
+    else g.arc(32, 56, 12, 1.2 * Math.PI, 1.8 * Math.PI); // sad, tear
+    g.stroke();
+    if (face === "tear") { g.fillStyle = "#2f45ff"; g.fillRect(16, 32, 6, 10); }
+    if (face === "sleep") { g.font = "bold 18px Arial, sans-serif"; g.fillText("z", 50, 14); }
+  }
+  fav.href = favCanvas.toDataURL("image/png");
+}
+const drawMark = () => drawFav("mark", "#1d1d1d", JOE.color);
+
+let showTimer = null;
+function tabShow() {
+  if (!state || state.phase !== "away") return;
+  const secs = (Date.now() - state.leftAt) / 1000;
+  let n = 0;
+  while (n < BEATS.length && BEATS[n].at <= secs) n++;
+  state.sent = n;
+  const beat = BEATS[Math.max(0, n - 1)];
+  document.title = n > 1 ? `(${n}) ${beat.title}` : beat.title;
+  // Blink about every third tick. Browsers slow timers in background tabs, so this is a rough rhythm.
+  const blink = Math.floor(secs) % 3 === 0;
+  drawFav(beat.face, cssColor(state.w.c), cssColor(state.w.t), blink);
+}
+function startShow() { stopShow(); tabShow(); showTimer = setInterval(tabShow, 1000); }
+function stopShow() {
+  clearInterval(showTimer); showTimer = null;
+  document.title = baseTitle;
+  drawMark();
+}
+drawMark();
+
+function paint(w) {
+  leave.style.setProperty("--c", w.c);
+  leave.style.setProperty("--t", w.t);
+}
+
+function ask(w, i) {
+  lastFocus = document.activeElement;
+  state = { w, i, leftAt: 0, phase: "ask" };
+  paint(w);
+  leaveWhere.textContent = `Heading to ${host(w.url)}`;
+  leaveH.textContent = "Please come back.";
+  leaveP.textContent = w.leaveLine || `You're off to read ${first(w.author)}'s case study for ${w.title}. ${PLEAS[i % PLEAS.length]}`;
+  leaveActions.innerHTML = `
+    <a class="btn" id="promise" href="${esc(w.url)}" target="_blank" rel="noopener">I promise ↗</a>
+    <button class="btn ghost" type="button" id="stay">Never mind, I'll stay</button>`;
+  $("#promise").addEventListener("click", away);
+  $("#stay").addEventListener("click", closeLeave);
+  leave.hidden = false;
+  document.body.classList.add("locked");
+  $("#promise").focus();
+  plead("stay");
+}
+
+function away() {
+  state.phase = "away";
+  state.leftAt = Date.now();
+  state.wentAway = false;
+  state.sent = 0;
+  startShow();
+  // Shown only if their browser opened the case study in a background tab.
+  leaveH.textContent = "Go on, I'll wait.";
+  leaveP.textContent = `${first(state.w.author)}'s case study opened in a new tab. I'll be right here, not refreshing anything.`;
+  leaveActions.innerHTML = `<button class="btn" type="button" id="back">Okay, I'm back</button>`;
+  $("#back").addEventListener("click", closeLeave);
+  plead("back");
+}
+
+function fmt(ms) {
+  const s = Math.round(ms / 1000);
+  return s < 60 ? `${s} second${s === 1 ? "" : "s"}` : `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+}
+
+function welcomeBack() {
+  const sent = state.sent;
+  stopShow();
+  const gone = Date.now() - state.leftAt;
+  const s = gone / 1000;
+  leaveWhere.textContent = `Back from ${host(state.w.url)}`;
+  leaveH.textContent = "You came back!";
+  leaveP.textContent =
+    s < 8 ? `That was ${fmt(gone)}. Did you even read it? I'm not mad. Pick another one.` :
+    sent <= 1 ? `You were gone ${fmt(gone)}. I didn't move. Pick another one?` :
+    sent <= 4 ? `You were gone ${fmt(gone)}. I sent you ${sent} messages in the tab. You saw them, right? Pick another one.` :
+    `You were gone ${fmt(gone)} and left me on read ${sent} times. It's fine. I'm fine. Pick another one?`;
+  leaveActions.innerHTML = `<button class="btn" type="button" id="back">Back to the work</button>`;
+  $("#back").addEventListener("click", closeLeave);
+  $("#back").focus();
+  state.phase = "back";
+  plead("back");
+}
+
+function closeLeave() {
+  leave.hidden = true;
+  document.body.classList.remove("locked");
+  state = null;
+  stopShow();
+  unplead();
+  if (lastFocus) lastFocus.focus({ preventScroll: true });
+}
+
+// They count as gone once this tab is hidden or the window loses focus; the first look back ends the show.
+function wentAway() { if (state && state.phase === "away") state.wentAway = true; }
+function cameBack() {
+  if (state && state.phase === "away" && state.wentAway && !document.hidden) welcomeBack();
+}
+document.addEventListener("visibilitychange", () => (document.hidden ? wentAway() : cameBack()));
+addEventListener("blur", wentAway);
+addEventListener("focus", cameBack);
+
+$("#stack").addEventListener("click", (e) => {
+  const a = e.target.closest("a.work, #follow, a.np-go");
+  if (!a) return;
+  const isPost = a.matches("#follow, a.np-go");
+  const url = a.id === "follow" ? LINKEDIN_PROFILE : a.matches(".np-go") ? NOTABLE[+a.dataset.np].url : a.href;
+  // Placeholder LinkedIn links go nowhere until a real link is filled in.
+  if (!url) { e.preventDefault(); return; }
+  // Let cmd/ctrl/shift/middle clicks open the link straight away.
+  if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+  e.preventDefault();
+  if (!isPost) {
+    const i = WORKS.findIndex((w) => w.id === a.dataset.id);
+    ask(WORKS[i], i);
+  } else {
+    ask({
+      title: "LinkedIn", author: "Joe Meier", url, c: "var(--paper)", t: "var(--ink)",
+      leaveLine: a.id === "follow"
+        ? "You're off to my LinkedIn. Become follower 21,001, maybe endorse me for Microsoft Excel, then come straight back."
+        : "You're off to LinkedIn to read one of my better posts. Don't get sucked into the feed. Come straight back."
+    }, 0);
+  }
+});
+$("#leave-x").addEventListener("click", closeLeave);
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape") return;
+  if (!leave.hidden) closeLeave();
+});
+</script>
+</body>
+</html>
