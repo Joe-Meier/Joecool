@@ -57,9 +57,12 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--guide); outline
 }
 .bar a { text-decoration: none; }
 .bar .right { display: flex; align-items: center; gap: clamp(12px, 2vw, 24px); }
-.bar nav { display: flex; gap: 18px; }
-.bar nav a { color: #d6d6d6; }
-.bar nav a:hover { color: #fff; }
+/* Two sections, two tabs: the portfolio and the LinkedIn stuff. */
+.tabs { display: flex; gap: 2px; padding: 3px; border-radius: 9px; background: #2b2b2b; }
+.tabs a { padding: 7px 12px; border-radius: 7px; color: #bdbdbd; }
+.tabs a:hover { color: #fff; }
+.tabs a.on { background: #454545; color: #fff; }
+.tabs a.on[data-sect="linkedin"] { background: var(--blue); }
 .people { display: flex; }
 .av {
   all: unset; cursor: pointer; box-sizing: border-box;
@@ -77,7 +80,21 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--guide); outline
 .av.more { width: auto; min-width: 28px; padding: 0 8px; border-radius: 14px; background: #3d3d3d; color: #fff; font-variant-numeric: tabular-nums; animation: pop .35s cubic-bezier(.2, 1.2, .4, 1); }
 
 /* Frames on the canvas */
-main { padding: calc(var(--bar) + clamp(36px, 7vh, 88px)) 0 clamp(80px, 12vh, 160px); }
+main { padding: calc(var(--bar) + 14px) 0 clamp(56px, 9vh, 120px); }
+/* Sections, like in a design file: one for the portfolio, one for LinkedIn. */
+.sect {
+  position: relative; margin: 0 clamp(6px, 1.2vw, 16px);
+  padding: clamp(68px, 10vh, 104px) 0 clamp(72px, 11vh, 132px);
+  border-radius: 14px; background: rgba(255, 255, 255, .022); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08);
+}
+.sect + .sect { margin-top: clamp(40px, 7vh, 88px); }
+.sect-name {
+  position: absolute; left: clamp(12px, 1.6vw, 20px); top: clamp(12px, 1.6vw, 20px);
+  padding: 7px 11px; border-radius: 7px; background: #2e2e2e; color: #ededed;
+  font: 600 13px/1 var(--ui); letter-spacing: 0;
+}
+.li-sect { background: rgba(47, 69, 255, .1); box-shadow: inset 0 0 0 1px rgba(90, 110, 255, .4); }
+.li-sect .sect-name { background: var(--blue); color: #fff; }
 .fw { --w: 1400px; position: relative; width: min(var(--w), calc(100% - 2 * var(--gutter))); margin: 0 auto; }
 .fw + .fw { margin-top: clamp(110px, 18vh, 220px); }
 .flabel {
@@ -95,8 +112,8 @@ main { padding: calc(var(--bar) + clamp(36px, 7vh, 88px)) 0 clamp(80px, 12vh, 16
 }
 
 /* About */
-.about { min-height: min(76vh, 740px); display: flex; flex-direction: column; justify-content: center; gap: clamp(28px, 4vw, 56px); }
-.about .intro { margin: 0; font-size: clamp(30px, 4.7vw, 78px); font-weight: 700; line-height: 1; letter-spacing: -0.05em; }
+.about { min-height: min(60vh, 580px); display: flex; flex-direction: column; justify-content: center; gap: clamp(28px, 4vw, 56px); }
+.about .intro { margin: 0; font-size: clamp(25px, 3.5vw, 58px); font-weight: 700; line-height: 1; letter-spacing: -0.05em; }
 .about .fine { font-size: max(11px, .19em); font-weight: 400; letter-spacing: 0; }
 .about s { text-decoration: line-through; text-decoration-thickness: .08em; }
 .about .notes { display: grid; gap: 14px; margin-left: 14%; font-size: clamp(15px, 1.3vw, 19px); line-height: 1.3; letter-spacing: -0.01em; }
@@ -112,14 +129,50 @@ main { padding: calc(var(--bar) + clamp(36px, 7vh, 88px)) 0 clamp(80px, 12vh, 16
 }
 .js:not(.reduce) .about s.hl { background-size: 100% 100%; }
 
+/* Banner: ad space for sale, sold in blocks, right under jo's name. */
+.banner-w { --w: 1180px; }
+.banner-f { padding: 0; }
+.bn {
+  position: relative; aspect-ratio: 4 / 1; cursor: crosshair; touch-action: none; user-select: none; -webkit-user-select: none;
+  background: var(--yellow); color: var(--ink);
+}
+.bn::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background-image: linear-gradient(to right, rgba(13, 13, 13, .09) 1px, transparent 1px), linear-gradient(to bottom, rgba(13, 13, 13, .09) 1px, transparent 1px);
+  background-size: calc(100% / var(--cols, 32)) calc(100% / var(--rows, 8));
+}
+.bn:focus { outline: none; }
+.bn:focus-visible { outline: 2px solid var(--guide); outline-offset: 4px; }
+.bn-ad { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 0 clamp(16px, 4vw, 56px); pointer-events: none; }
+.bn-ad b { font-size: clamp(28px, 6vw, 92px); font-weight: 700; line-height: .85; letter-spacing: -0.06em; }
+.bn-ad span { margin-top: clamp(6px, 1vw, 14px); font-size: clamp(12px, 1.3vw, 18px); letter-spacing: -0.01em; }
+.bn-spot { position: absolute; z-index: 1; display: grid; place-items: center; overflow: hidden; background: var(--ink); color: #fff; font: 600 11px/1 var(--ui); letter-spacing: 0; text-decoration: none; }
+.bn-spot img { width: 100%; height: 100%; object-fit: cover; }
+.bn-sel { --sc: #0d99ff; position: absolute; z-index: 2; border: 1.5px solid var(--sc); background: color-mix(in srgb, var(--sc) 14%, transparent); pointer-events: none; }
+.bn-sel.taken { --sc: var(--red); }
+.bn-sel i { position: absolute; width: 8px; height: 8px; background: #fff; border: 1.5px solid var(--sc); }
+.bn-sel i:nth-child(1) { left: -5px; top: -5px; }
+.bn-sel i:nth-child(2) { right: -5px; top: -5px; }
+.bn-sel i:nth-child(3) { left: -5px; bottom: -5px; }
+.bn-sel i:nth-child(4) { right: -5px; bottom: -5px; }
+.bn-sel b {
+  position: absolute; left: 50%; top: calc(100% + 7px); transform: translateX(-50%);
+  padding: 3px 6px; border-radius: 4px; white-space: nowrap;
+  background: var(--sc); color: #fff; font: 600 11px/1 var(--ui); letter-spacing: 0; font-variant-numeric: tabular-nums;
+}
+.bn-sel.up b { top: auto; bottom: calc(100% + 7px); }
+.bn-foot { display: flex; justify-content: space-between; align-items: center; gap: 14px 24px; flex-wrap: wrap; margin-top: 30px; min-height: 52px; }
+.bn-foot p { margin: 0; max-width: 52ch; font: 500 14px/1.4 var(--ui); letter-spacing: 0; color: #c9c9c9; }
+#bn-buy { --t: var(--paper); --c: var(--ink); padding: 14px 20px; }
+
 /* Hero */
-.hero { min-height: min(80vh, 800px); display: flex; flex-direction: column; justify-content: center; padding-bottom: calc(var(--pad) + 56px); }
-.hero h1 { margin: 0; font-size: clamp(30px, 4.9vw, 84px); font-weight: 700; line-height: 1; letter-spacing: -0.05em; }
+.hero { min-height: min(62vh, 620px); display: flex; flex-direction: column; justify-content: center; padding-bottom: calc(var(--pad) + 56px); }
+.hero h1 { margin: 0; font-size: clamp(25px, 3.6vw, 62px); font-weight: 700; line-height: 1; letter-spacing: -0.05em; }
 .hero .punch { color: var(--blue); }
 #theirs { display: inline-block; }
 
 /* Work */
-.work-f h2 { margin: 0 0 clamp(28px, 4vw, 56px); font-size: clamp(72px, 12vw, 220px); font-weight: 700; line-height: .8; letter-spacing: -0.075em; }
+.work-f h2 { margin: 0 0 clamp(28px, 4vw, 56px); font-size: clamp(56px, 8.5vw, 150px); font-weight: 700; line-height: .8; letter-spacing: -0.075em; }
 .cards { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(28px, 3vw, 40px) clamp(16px, 2vw, 28px); }
 .card { grid-column: span var(--span); display: flex; flex-direction: column; gap: 14px; color: var(--ink); text-decoration: none; cursor: pointer; }
 .card .img { position: relative; display: block; height: var(--h); overflow: hidden; background: var(--c) center / cover no-repeat; }
@@ -138,21 +191,21 @@ main { padding: calc(var(--bar) + clamp(36px, 7vh, 88px)) 0 clamp(80px, 12vh, 16
 .card:focus-visible { outline: 2px solid var(--guide); outline-offset: 6px; }
 .card .cap { display: grid; gap: 5px; }
 .card .client { font-size: 13px; color: var(--grey); letter-spacing: 0; }
-.card .title { font-size: clamp(26px, 2.6vw, 44px); font-weight: 700; line-height: .95; letter-spacing: -0.05em; }
+.card .title { font-size: clamp(22px, 2vw, 34px); font-weight: 700; line-height: .95; letter-spacing: -0.05em; }
 .card .by { font-size: 15px; letter-spacing: -0.01em; }
 @media (hover: none) { .card .go { opacity: 1; transform: none; } }
 
 /* LinkedIn: jo's followers show up in the file as a crowd of tiny cursors that follow his. */
 .crowd-f {
   --c: var(--paper); --t: var(--ink);
-  min-height: min(94vh, 920px); overflow: hidden;
+  min-height: min(84vh, 820px); overflow: hidden;
   display: flex; flex-direction: column; justify-content: space-between; gap: clamp(48px, 7vw, 96px);
 }
-.crowd-f h2 { margin: 0; font-size: clamp(44px, 9.4vw, 164px); font-weight: 700; line-height: .86; letter-spacing: -0.07em; }
+.crowd-f h2 { margin: 0; font-size: clamp(36px, 6.6vw, 114px); font-weight: 700; line-height: .86; letter-spacing: -0.07em; }
 .crowd-f h2 .punch { color: var(--blue); }
 .crowd-foot { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px 32px; flex-wrap: wrap; }
 .crowd-foot p { margin: 0; }
-.crowd-hint { max-width: 25ch; font-size: clamp(18px, 1.7vw, 24px); line-height: 1.15; letter-spacing: -0.02em; }
+.crowd-hint { max-width: 25ch; font-size: clamp(16px, 1.4vw, 20px); line-height: 1.15; letter-spacing: -0.02em; }
 .lurk { margin-top: 10px !important; font: 500 12px/1.3 var(--ui); letter-spacing: 0; color: var(--grey); }
 #crowd { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; pointer-events: none; }
 
@@ -165,7 +218,7 @@ main { padding: calc(var(--bar) + clamp(36px, 7vh, 88px)) 0 clamp(80px, 12vh, 16
 .imp-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px 32px; flex-wrap: wrap; }
 .imp-head p { margin: 0; }
 .imp-k { font: 500 13px/1.4 var(--ui); letter-spacing: 0; color: var(--grey); }
-.imp-total { margin-top: 8px !important; font-size: clamp(72px, 10vw, 164px); font-weight: 700; line-height: .8; letter-spacing: -0.07em; }
+.imp-total { margin-top: 8px !important; font-size: clamp(54px, 7vw, 114px); font-weight: 700; line-height: .8; letter-spacing: -0.07em; }
 .imp-note { max-width: 22ch; font-size: clamp(16px, 1.4vw, 20px); line-height: 1.15; letter-spacing: -0.02em; }
 .imp-chart { position: relative; }
 #imp-svg { display: block; width: 100%; overflow: visible; touch-action: pan-y; }
@@ -202,7 +255,7 @@ main { padding: calc(var(--bar) + clamp(36px, 7vh, 88px)) 0 clamp(80px, 12vh, 16
 .np li:first-child { padding-top: 0; border-top: 0; }
 .np li:last-child { padding-bottom: 0; }
 .np-c { font: 500 11px/1 var(--ui); letter-spacing: 0; color: #9747ff; }
-.np-hook { margin: 0; font-size: clamp(22px, 2vw, 30px); font-weight: 700; line-height: 1; letter-spacing: -0.04em; }
+.np-hook { margin: 0; font-size: clamp(19px, 1.6vw, 24px); font-weight: 700; line-height: 1; letter-spacing: -0.04em; }
 .np-meta { font: 500 13px/1.3 var(--ui); letter-spacing: 0; color: var(--grey); }
 .np-meta b { color: var(--ink); font-weight: 600; }
 .np-bar { justify-self: stretch; height: 6px; }
@@ -285,8 +338,8 @@ footer {
 .lwrap .flabel { color: #c4c4c4; }
 .lwrap .flabel button { all: unset; cursor: pointer; }
 .lframe { display: grid; gap: clamp(18px, 3vw, 32px); padding: var(--pad); background: var(--c); color: var(--t); }
-.lframe h2 { margin: 0; font-size: clamp(56px, 10vw, 168px); font-weight: 700; line-height: .86; letter-spacing: -0.07em; }
-.lframe p { margin: 0; max-width: 32ch; font-size: clamp(19px, 2vw, 30px); line-height: 1.12; letter-spacing: -0.025em; }
+.lframe h2 { margin: 0; font-size: clamp(46px, 7.4vw, 124px); font-weight: 700; line-height: .86; letter-spacing: -0.07em; }
+.lframe p { margin: 0; max-width: 32ch; font-size: clamp(17px, 1.6vw, 24px); line-height: 1.12; letter-spacing: -0.025em; }
 .lframe .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
 @keyframes pop { from { opacity: 0; transform: translateY(12px) scale(.97); } }
 body.locked { overflow: hidden; }
@@ -296,15 +349,15 @@ body.locked { overflow: hidden; }
   .card.big, .card.small { --h: auto; }
   .card .img { aspect-ratio: 4 / 3; }
   .about .notes { margin-left: 0; }
-  .crowd-f { min-height: 84vh; }
+  .crowd-f { min-height: 76vh; }
   .nums-w { flex-direction: column; align-items: stretch; }
   .np-s { margin-top: 0; }
   .cur .in { transform: scale(.88); }
 }
 @media (max-width: 520px) {
-  .bar nav { display: none; }
-  .about { min-height: 64vh; }
-  .hero { min-height: 56vh; }
+  .people { display: none; }
+  .about { min-height: 50vh; }
+  .hero { min-height: 44vh; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }
@@ -321,11 +374,13 @@ body.locked { overflow: hidden; }
   <a class="name" href="#top" id="top">Joe Meier</a>
   <div class="right">
     <div class="people" id="people"></div>
-    <nav><a href="#about">About</a><a href="#work">Work</a></nav>
+    <nav class="tabs" aria-label="Sections"><a href="#portfolio" data-sect="portfolio">Portfolio</a><a href="#linkedin" data-sect="linkedin">LinkedIn</a></nav>
   </div>
 </header>
 
 <main id="stack">
+ <div class="sect" id="portfolio">
+  <span class="sect-name">Portfolio</span>
   <section class="fw about-w" id="about">
     <div class="flabel"><span>About</span><span class="dim"></span></div>
     <div class="frame about">
@@ -334,6 +389,21 @@ body.locked { overflow: hidden; }
         <p class="footnote">*Too dumb for NYC, Too ugly for LA. (in nyc though)</p>
         <p class="contact"><span class="placeholder">Placeholder: how to reach you (email, LinkedIn, Instagram).</span></p>
       </div>
+    </div>
+  </section>
+
+  <section class="fw banner-w" id="banner">
+    <div class="flabel"><span>Banner (for sale)</span><span class="dim"></span></div>
+    <div class="frame banner-f">
+      <div class="bn" id="bn" tabindex="0" aria-label="Ad space for sale. Drag, or use the arrow keys, to pick a spot.">
+        <div class="bn-ad" aria-hidden="true"><b>Your ad here.</b><span>Right under my name, right above my best work.</span></div>
+        <div class="bn-sold" id="bn-sold"></div>
+        <div class="bn-sel" id="bn-sel" hidden><i></i><i></i><i></i><i></i><b id="bn-badge"></b></div>
+      </div>
+    </div>
+    <div class="bn-foot">
+      <p id="bn-hint"></p>
+      <a class="btn" id="bn-buy" href="#" target="_blank" rel="noopener" hidden>Buy this spot ↗</a>
     </div>
   </section>
 
@@ -352,6 +422,10 @@ body.locked { overflow: hidden; }
     </div>
   </section>
 
+ </div>
+
+ <div class="sect li-sect" id="linkedin">
+  <span class="sect-name">LinkedIn</span>
   <section class="fw li-w" id="writing">
     <div class="flabel"><span>On LinkedIn</span><span class="dim"></span></div>
     <div class="frame crowd-f" id="crowd-f">
@@ -395,6 +469,7 @@ body.locked { overflow: hidden; }
       </div>
     </div>
   </section>
+ </div>
 </main>
 
 <footer>
@@ -517,6 +592,11 @@ $("#cards").innerHTML = WORKS.map((w) => `
   </a>`).join("");
 
 const LINKEDIN_PROFILE = "https://www.linkedin.com/in/josephlmeier/";
+
+// The banner under About: ad space for sale, in blocks on a cols × rows grid (a 1584 × 396 LinkedIn-banner shape).
+// pricePerBlock: dollars per block, or null to keep it "DM me". buyUrl: where "Buy" goes (null = your LinkedIn, for a DM).
+// sold: spots already bought, in blocks from the top left: { x: 0, y: 0, w: 4, h: 2, image: "banner/acme.png", url: "https://...", name: "Acme" }
+const BANNER = { cols: 32, rows: 8, pricePerBlock: null, buyUrl: null, sold: [] };
 
 // LinkedIn impressions: your all-time running total at the end of each month. Add a row each month; the last row is "now".
 // Set sample to false once these are your real numbers.
@@ -1266,6 +1346,132 @@ $("#np").innerHTML = NOTABLE.map((p, i) => {
 }).join("");
 sizeLabels();
 
+/* ---------- Banner: ad space for sale, right under jo's name ---------- */
+// Visitors drag across it to pick a spot (snapped to blocks, with a size and price badge, like selecting in a design file),
+// then "Buy" sends them to jo through the come-back screen.
+const bn = $("#bn"), bnSel = $("#bn-sel"), bnBadge = $("#bn-badge"), bnBuy = $("#bn-buy");
+bn.style.setProperty("--cols", BANNER.cols);
+bn.style.setProperty("--rows", BANNER.rows);
+$("#bn-hint").textContent = "Drag across the banner to pick your spot. It's sold in blocks. " +
+  (BANNER.pricePerBlock ? `$${fmtFull(BANNER.pricePerBlock)} a block.` : "Price on request, which means DM me.");
+$("#bn-sold").innerHTML = BANNER.sold.map((s) => `<a class="bn-spot" href="${s.url ? esc(s.url) : "#"}" target="_blank" rel="noopener sponsored" title="${esc(s.name || "")}"
+  style="left:${(100 * s.x) / BANNER.cols}%;top:${(100 * s.y) / BANNER.rows}%;width:${(100 * s.w) / BANNER.cols}%;height:${(100 * s.h) / BANNER.rows}%">${
+  s.image ? `<img src="${esc(s.image)}" alt="${esc(s.name || "")}">` : esc(s.name || "")}</a>`).join("");
+
+let spot = null, bnDrag = null;
+const pct = (v, n) => (100 * v) / n + "%";
+const takenSpot = (p) => BANNER.sold.some((s) => p.x < s.x + s.w && s.x < p.x + p.w && p.y < s.y + s.h && s.y < p.y + p.h);
+function showPick(p, demo = null) {
+  spot = demo ? null : p;
+  if (!p) { bnSel.hidden = true; bnBuy.hidden = true; return; }
+  bnSel.hidden = false;
+  Object.assign(bnSel.style, { left: pct(p.x, BANNER.cols), top: pct(p.y, BANNER.rows), width: pct(p.w, BANNER.cols), height: pct(p.h, BANNER.rows) });
+  const n = p.w * p.h, taken = takenSpot(p);
+  bnBadge.textContent = demo || (taken ? "Already taken" :
+    `${p.w} × ${p.h} block${n === 1 ? "" : "s"}${BANNER.pricePerBlock ? ` · $${fmtFull(n * BANNER.pricePerBlock)}` : ""}`);
+  bnSel.classList.toggle("taken", taken && !demo);
+  bnSel.classList.toggle("up", p.y + p.h === BANNER.rows && p.y > 0);
+  bnBuy.hidden = !!demo || taken;
+  bnBuy.textContent = n === 1 ? "Buy this block ↗" : `Buy these ${n} blocks ↗`;
+}
+function cellAt(e) {
+  const r = bn.getBoundingClientRect();
+  return [
+    clamp(Math.floor(((e.clientX - r.left) / r.width) * BANNER.cols), 0, BANNER.cols - 1),
+    clamp(Math.floor(((e.clientY - r.top) / r.height) * BANNER.rows), 0, BANNER.rows - 1)
+  ];
+}
+bn.addEventListener("pointerdown", (e) => {
+  if (e.button !== 0 || e.target.closest(".bn-spot")) return;
+  stopDemo();
+  e.preventDefault();
+  bn.setPointerCapture(e.pointerId);
+  const [x, y] = cellAt(e);
+  bnDrag = { x, y };
+  showPick({ x, y, w: 1, h: 1 });
+});
+bn.addEventListener("pointermove", (e) => {
+  if (!bnDrag) return;
+  const [x, y] = cellAt(e);
+  showPick({ x: Math.min(x, bnDrag.x), y: Math.min(y, bnDrag.y), w: Math.abs(x - bnDrag.x) + 1, h: Math.abs(y - bnDrag.y) + 1 });
+});
+bn.addEventListener("pointerup", () => { bnDrag = null; });
+bn.addEventListener("pointercancel", () => { bnDrag = null; });
+// Keyboard: arrows move the spot, shift + arrows resize it.
+bn.addEventListener("keydown", (e) => {
+  const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
+  if (!d) return;
+  e.preventDefault();
+  stopDemo();
+  const p = spot ? { ...spot } : { x: 0, y: 0, w: 1, h: 1 };
+  if (e.shiftKey) {
+    p.w = clamp(p.w + d[0], 1, BANNER.cols - p.x);
+    p.h = clamp(p.h + d[1], 1, BANNER.rows - p.y);
+  } else if (spot) {
+    p.x = clamp(p.x + d[0], 0, BANNER.cols - p.w);
+    p.y = clamp(p.y + d[1], 0, BANNER.rows - p.h);
+  }
+  showPick(p);
+});
+
+// A potential advertiser drops by, eyes up a spot, and changes their mind. Nobody's bought one yet.
+const ADVERTISER = { name: "Potential advertiser", color: "#ff7a00", ink: "#fff" };
+let adv = null, demoToken = 0, demoOn = false;
+function stopDemo() {
+  if (!demoOn) return;
+  demoToken++;
+  demoOn = false;
+  showPick(null);
+  if (adv) { adv.release(); adv.move(adv.x + 260, adv.y - 120, 600); }
+}
+async function bannerDemo() {
+  if (REDUCE || spot || bnDrag || state) return;
+  const token = ++demoToken, live = () => token === demoToken;
+  demoOn = true;
+  adv = adv || new Cursor(ADVERTISER);
+  const at = (cx, cy) => { const r = R(bn); return [r.x + ((cx + 0.5) / BANNER.cols) * r.w, r.y + ((cy + 0.5) / BANNER.rows) * r.h]; };
+  const sx = Math.round(BANNER.cols * 0.56), sy = 1, ex = Math.round(BANNER.cols * 0.8), ey = BANNER.rows - 3;
+  const r0 = R(bn);
+  adv.set(r0.x + r0.w + 40, r0.y - 30);
+  if (!await adv.move(...at(sx, sy), 900) || !live()) return;
+  adv.press();
+  await tween(1000, (p) => {
+    if (!live()) return;
+    const cx = sx + (ex - sx) * p, cy = sy + (ey - sy) * p;
+    adv.set(...at(cx, cy));
+    const x = Math.round(cx), y = Math.round(cy);
+    showPick({ x: sx, y: sy, w: x - sx + 1, h: y - sy + 1 }, true);
+    const n = (x - sx + 1) * (y - sy + 1);
+    bnBadge.textContent = `${x - sx + 1} × ${y - sy + 1} block${n === 1 ? "" : "s"}${BANNER.pricePerBlock ? ` · $${fmtFull(n * BANNER.pricePerBlock)}` : ""}`;
+  });
+  if (!live()) return;
+  adv.release();
+  await wait(1500);
+  if (!live()) return;
+  bnBadge.textContent = "Hmm. Maybe later.";
+  await wait(1600);
+  if (!live()) return;
+  showPick(null);
+  demoOn = false;
+  const r = R(bn);
+  adv.move(r.x + r.w + 60, r.y - 60, 900);
+}
+const bnIO = new IntersectionObserver((es) => es.forEach((e) => {
+  if (!e.isIntersecting) return;
+  bnIO.disconnect();
+  // Wait for the crew to finish setting up the About frame first.
+  setTimeout(bannerDemo, Math.max(900, 6200 - performance.now()));
+}), { threshold: 0.9 });
+bnIO.observe(bn);
+
+/* ---------- Section tabs in the bar ---------- */
+const tabs = [...document.querySelectorAll(".tabs a")];
+const sectIO = new IntersectionObserver((es) => es.forEach((e) => {
+  if (e.isIntersecting) tabs.forEach((t) => t.classList.toggle("on", t.dataset.sect === e.target.id));
+}), { rootMargin: "-45% 0px -55% 0px" });
+document.querySelectorAll(".sect").forEach((el) => sectIO.observe(el));
+tabs[0].classList.add("on");
+
 /* ---------- Frame loop ---------- */
 function frame(now) {
   for (const t of tweens) {
@@ -1504,10 +1710,10 @@ addEventListener("blur", wentAway);
 addEventListener("focus", cameBack);
 
 $("#stack").addEventListener("click", (e) => {
-  const a = e.target.closest("a.work, #follow, a.np-go");
+  const a = e.target.closest("a.work, #follow, a.np-go, #bn-buy");
   if (!a) return;
-  const isPost = a.matches("#follow, a.np-go");
-  const url = a.id === "follow" ? LINKEDIN_PROFILE : a.matches(".np-go") ? NOTABLE[+a.dataset.np].url : a.href;
+  const isPost = a.matches("#follow, a.np-go, #bn-buy");
+  const url = a.id === "follow" ? LINKEDIN_PROFILE : a.id === "bn-buy" ? BANNER.buyUrl || LINKEDIN_PROFILE : a.matches(".np-go") ? NOTABLE[+a.dataset.np].url : a.href;
   // Placeholder LinkedIn links go nowhere until a real link is filled in.
   if (!url) { e.preventDefault(); return; }
   // Let cmd/ctrl/shift/middle clicks open the link straight away.
@@ -1521,6 +1727,8 @@ $("#stack").addEventListener("click", (e) => {
       title: "LinkedIn", author: "Joe Meier", url, c: "var(--paper)", t: "var(--ink)",
       leaveLine: a.id === "follow"
         ? "You're off to my LinkedIn. Become follower 21,001, maybe endorse me for Microsoft Excel, then come straight back."
+        : a.id === "bn-buy"
+        ? `You're buying ${spot.w * spot.h === 1 ? "a block" : `${spot.w * spot.h} blocks`} of my banner (${spot.w} × ${spot.h}, starting ${spot.x + 1} across, ${spot.y + 1} down). ${BANNER.buyUrl ? "Finish up there, then come straight back." : "DM me that spot on LinkedIn, then come straight back."}`
         : "You're off to LinkedIn to read one of my better posts. Don't get sucked into the feed. Come straight back."
     }, 0);
   }
