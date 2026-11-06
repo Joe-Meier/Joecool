@@ -164,6 +164,36 @@ main { padding: calc(var(--bar) + 14px) 0 clamp(56px, 9vh, 120px); }
 .bn-foot { display: flex; justify-content: space-between; align-items: center; gap: 14px 24px; flex-wrap: wrap; margin-top: 30px; min-height: 52px; }
 .bn-foot p { margin: 0; max-width: 52ch; font: 500 14px/1.4 var(--ui); letter-spacing: 0; color: #c9c9c9; }
 #bn-buy { --t: var(--paper); --c: var(--ink); padding: 14px 20px; }
+.bn-preview { position: absolute; z-index: 1; object-fit: cover; pointer-events: none; }
+/* Checkout: a frame that appears under the banner once they've picked a spot. */
+.bn-co { max-width: 780px; margin-top: 28px; }
+.co-f { display: grid; gap: 22px; }
+.co-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px 24px; flex-wrap: wrap; }
+.co-head p { margin: 0; }
+.co-spot { max-width: 36ch; font: 500 14px/1.4 var(--ui); letter-spacing: 0; color: var(--grey); }
+.co-total { font-size: clamp(40px, 5vw, 72px); font-weight: 700; line-height: .85; letter-spacing: -0.06em; }
+.co-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 14px 18px; }
+.co-f label { display: grid; gap: 6px; font: 600 12px/1.2 var(--ui); letter-spacing: 0; color: var(--ink); }
+.co-f label b { font-weight: 600; }
+.co-f label b span { font-weight: 400; color: var(--grey); }
+.co-f input:not([type="file"]) {
+  min-width: 0; padding: 12px; border: 1px solid #d4d4cf; border-radius: 8px;
+  background: #fff; color: var(--ink); font: 400 16px/1.2 var(--ui); letter-spacing: 0;
+}
+.co-f input:not([type="file"]):focus { outline: 2px solid #0d99ff; outline-offset: -1px; border-color: transparent; }
+.co-f .co-file { position: relative; display: block; padding: 18px; border: 1.5px dashed #c4c4bf; border-radius: 10px; cursor: pointer; font: 500 14px/1.4 var(--ui); }
+.co-file input { position: absolute; inset: 0; width: 100%; opacity: 0; cursor: pointer; }
+.co-file:hover, .co-file.has { border-color: var(--ink); }
+.co-file.has { border-style: solid; }
+.co-file:focus-within { outline: 2px solid #0d99ff; outline-offset: 2px; }
+.co-err { margin: 0; color: var(--red); font: 600 14px/1.4 var(--ui); letter-spacing: 0; }
+.co-actions { display: flex; align-items: center; gap: 14px 20px; flex-wrap: wrap; }
+.co-f .btn { --c: var(--paper); --t: var(--ink); }
+.co-f .btn[disabled] { opacity: .45; cursor: not-allowed; }
+.co-cancel { all: unset; cursor: pointer; font: 500 14px/1 var(--ui); letter-spacing: 0; color: var(--grey); text-decoration: underline; text-underline-offset: 3px; }
+.co-cancel:hover { color: var(--ink); }
+.co-cancel:focus-visible { outline: 2px solid var(--guide); outline-offset: 3px; }
+.co-fine { margin: 0; max-width: 62ch; font: 400 12px/1.45 var(--ui); letter-spacing: 0; color: var(--grey); }
 
 /* Hero */
 .hero { min-height: min(62vh, 620px); display: flex; flex-direction: column; justify-content: center; padding-bottom: calc(var(--pad) + 56px); }
@@ -398,13 +428,36 @@ body.locked { overflow: hidden; }
       <div class="bn" id="bn" tabindex="0" aria-label="Ad space for sale. Drag, or use the arrow keys, to pick a spot.">
         <div class="bn-ad" aria-hidden="true"><b>Your ad here.</b><span>Right under my name, right above my best work.</span></div>
         <div class="bn-sold" id="bn-sold"></div>
+        <img class="bn-preview" id="bn-preview" alt="" hidden>
         <div class="bn-sel" id="bn-sel" hidden><i></i><i></i><i></i><i></i><b id="bn-badge"></b></div>
       </div>
     </div>
     <div class="bn-foot">
       <p id="bn-hint"></p>
-      <a class="btn" id="bn-buy" href="#" target="_blank" rel="noopener" hidden>Buy this spot ↗</a>
+      <button class="btn" type="button" id="bn-buy" hidden>Buy this spot ↗</button>
     </div>
+    <form class="bn-co" id="bn-co" hidden novalidate>
+      <div class="flabel"><span>Checkout</span><span class="dim"></span></div>
+      <div class="frame co-f">
+        <div class="co-head">
+          <p class="co-spot" id="co-spot"></p>
+          <p class="co-total" id="co-total"></p>
+        </div>
+        <div class="co-grid">
+          <label><b>Your name</b><input name="name" autocomplete="name" required></label>
+          <label><b>Email</b><input name="email" type="email" autocomplete="email" required></label>
+          <label><b>Company <span>(optional)</span></b><input name="company" autocomplete="organization"></label>
+          <label><b>Where your ad links to <span>(optional)</span></b><input name="url" type="url" inputmode="url" placeholder="https://"></label>
+        </div>
+        <label class="co-file"><input type="file" id="co-img" accept="image/png,image/jpeg,image/webp,image/gif"><span id="co-file-label">Upload your ad (PNG or JPG). It's cropped to fill your spot, and you'll see it on the banner.</span></label>
+        <p class="co-err" id="co-err" role="alert" hidden></p>
+        <div class="co-actions">
+          <button class="btn" type="submit" id="co-pay">Pay on Stripe ↗</button>
+          <button class="co-cancel" type="button" id="co-cancel">Cancel</button>
+        </div>
+        <p class="co-fine">Card details go straight to Stripe, never to this site. Your ad goes up once I've had a look at it, usually within a day.</p>
+      </div>
+    </form>
   </section>
 
   <section class="fw hero-w">
@@ -596,7 +649,9 @@ const LINKEDIN_PROFILE = "https://www.linkedin.com/in/josephlmeier/";
 // The banner under About: ad space for sale, in blocks on a cols × rows grid (a 1584 × 396 LinkedIn-banner shape).
 // pricePerBlock: dollars per block, or null to keep it "DM me". buyUrl: where "Buy" goes (null = your LinkedIn, for a DM).
 // sold: spots already bought, in blocks from the top left: { x: 0, y: 0, w: 4, h: 2, image: "banner/acme.png", url: "https://...", name: "Acme" }
-const BANNER = { cols: 32, rows: 8, pricePerBlock: null, buyUrl: null, sold: [] };
+// checkoutApi: the address of your banner-backend server (e.g. "https://banner-backend.onrender.com"). Once it's set, buyers
+// upload their ad and pay on Stripe, and the server's PRICE_PER_BLOCK sets the price. Until then, "Pay" falls back to a LinkedIn DM.
+const BANNER = { cols: 32, rows: 8, pricePerBlock: null, termMonths: 6, checkoutApi: null, buyUrl: null, sold: [] };
 
 // LinkedIn impressions: your all-time running total at the end of each month. Add a row each month; the last row is "now".
 // Set sample to false once these are your real numbers.
@@ -1348,12 +1403,10 @@ sizeLabels();
 
 /* ---------- Banner: ad space for sale, right under jo's name ---------- */
 // Visitors drag across it to pick a spot (snapped to blocks, with a size and price badge, like selecting in a design file),
-// then "Buy" sends them to jo through the come-back screen.
+// then "Buy" opens a checkout under the banner (see Banner checkout below).
 const bn = $("#bn"), bnSel = $("#bn-sel"), bnBadge = $("#bn-badge"), bnBuy = $("#bn-buy");
 bn.style.setProperty("--cols", BANNER.cols);
 bn.style.setProperty("--rows", BANNER.rows);
-$("#bn-hint").textContent = "Drag across the banner to pick your spot. It's sold in blocks. " +
-  (BANNER.pricePerBlock ? `$${fmtFull(BANNER.pricePerBlock)} a block.` : "Price on request, which means DM me.");
 $("#bn-sold").innerHTML = BANNER.sold.map((s) => `<a class="bn-spot" href="${s.url ? esc(s.url) : "#"}" target="_blank" rel="noopener sponsored" title="${esc(s.name || "")}"
   style="left:${(100 * s.x) / BANNER.cols}%;top:${(100 * s.y) / BANNER.rows}%;width:${(100 * s.w) / BANNER.cols}%;height:${(100 * s.h) / BANNER.rows}%">${
   s.image ? `<img src="${esc(s.image)}" alt="${esc(s.name || "")}">` : esc(s.name || "")}</a>`).join("");
@@ -1373,6 +1426,7 @@ function showPick(p, demo = null) {
   bnSel.classList.toggle("up", p.y + p.h === BANNER.rows && p.y > 0);
   bnBuy.hidden = !!demo || taken;
   bnBuy.textContent = n === 1 ? "Buy this block ↗" : `Buy these ${n} blocks ↗`;
+  if (!demo && !co.hidden && !bnDrag) coSummary();
 }
 function cellAt(e) {
   const r = bn.getBoundingClientRect();
@@ -1395,7 +1449,7 @@ bn.addEventListener("pointermove", (e) => {
   const [x, y] = cellAt(e);
   showPick({ x: Math.min(x, bnDrag.x), y: Math.min(y, bnDrag.y), w: Math.abs(x - bnDrag.x) + 1, h: Math.abs(y - bnDrag.y) + 1 });
 });
-bn.addEventListener("pointerup", () => { bnDrag = null; });
+bn.addEventListener("pointerup", () => { bnDrag = null; if (spot && !co.hidden) coSummary(); });
 bn.addEventListener("pointercancel", () => { bnDrag = null; });
 // Keyboard: arrows move the spot, shift + arrows resize it.
 bn.addEventListener("keydown", (e) => {
@@ -1463,6 +1517,135 @@ const bnIO = new IntersectionObserver((es) => es.forEach((e) => {
   setTimeout(bannerDemo, Math.max(900, 6200 - performance.now()));
 }), { threshold: 0.9 });
 bnIO.observe(bn);
+
+/* ---------- Banner checkout: pick a spot, upload the ad, pay on Stripe ---------- */
+// With BANNER.checkoutApi set, the form sends the spot and the ad to banner-backend, which sets the price and
+// hands back a Stripe Checkout page. Without it, "Pay" falls back to a LinkedIn DM.
+const co = $("#bn-co"), coPay = $("#co-pay"), coErr = $("#co-err"), coImg = $("#co-img"), bnPreview = $("#bn-preview");
+const api = (path) => BANNER.checkoutApi.replace(/\/+$/, "") + path;
+const money = (n) => n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: n % 1 ? 2 : 0 });
+let adImg = null, adType = "image/jpeg", adData = null;
+
+function bnHintText() {
+  $("#bn-hint").textContent = "Drag across the banner to pick your spot. It's sold in blocks" + (
+    BANNER.pricePerBlock ? `, ${money(BANNER.pricePerBlock)} each for ${BANNER.termMonths} months.` :
+    BANNER.checkoutApi ? `, for ${BANNER.termMonths} months.` : ". Price on request, which means DM me.");
+}
+bnHintText();
+// Until the server is set up, skip the form: "Pay" just opens a LinkedIn DM.
+for (const el of co.querySelectorAll(".co-grid, .co-file, .co-fine")) el.hidden = !BANNER.checkoutApi;
+
+function coError(msg) { coErr.textContent = msg || ""; coErr.hidden = !msg; return false; }
+
+// The ad, cropped to fill the spot, shown right on the banner so they see what they're buying.
+function renderAd() {
+  if (!adImg || !spot || co.hidden) { bnPreview.hidden = true; adData = null; return; }
+  const W = spot.w * 100, H = spot.h * 100, c = document.createElement("canvas");
+  c.width = W; c.height = H;
+  const g = c.getContext("2d"), s = Math.max(W / adImg.naturalWidth, H / adImg.naturalHeight);
+  const dw = adImg.naturalWidth * s, dh = adImg.naturalHeight * s;
+  const png = adType === "image/png";
+  if (!png) { g.fillStyle = "#fff"; g.fillRect(0, 0, W, H); }
+  g.drawImage(adImg, (W - dw) / 2, (H - dh) / 2, dw, dh);
+  adData = c.toDataURL(png ? "image/png" : "image/jpeg", 0.9);
+  if (png && adData.length * 0.75 > 3.5e6) adData = c.toDataURL("image/jpeg", 0.9);
+  bnPreview.src = adData;
+  Object.assign(bnPreview.style, { left: pct(spot.x, BANNER.cols), top: pct(spot.y, BANNER.rows), width: pct(spot.w, BANNER.cols), height: pct(spot.h, BANNER.rows) });
+  bnPreview.hidden = false;
+}
+
+function coSummary() {
+  if (!spot) return;
+  const n = spot.w * spot.h, total = BANNER.pricePerBlock ? n * BANNER.pricePerBlock : null;
+  $("#co-spot").textContent = `${spot.w} × ${spot.h} block${n === 1 ? "" : "s"}, starting ${spot.x + 1} across and ${spot.y + 1} down, for ${BANNER.termMonths} months.`;
+  $("#co-total").textContent = total ? money(total) : BANNER.checkoutApi ? "…" : "Price on request";
+  coPay.textContent = !BANNER.checkoutApi ? "Payments open soon. DM me instead ↗" : total ? `Pay ${money(total)} on Stripe ↗` : "Continue to Stripe ↗";
+  const taken = takenSpot(spot);
+  coPay.disabled = taken;
+  coError(taken ? "Someone already bought part of that spot. Pick another one up top." : "");
+  renderAd();
+}
+
+bnBuy.addEventListener("click", (e) => {
+  e.preventDefault();
+  if (!spot) return;
+  co.hidden = false;
+  coSummary();
+  sizeLabels();
+  co.scrollIntoView({ behavior: REDUCE ? "auto" : "smooth", block: "nearest" });
+  setTimeout(() => co.querySelector("input[name=name]").focus({ preventScroll: true }), REDUCE ? 0 : 450);
+});
+$("#co-cancel").addEventListener("click", () => { co.hidden = true; renderAd(); bn.focus({ preventScroll: true }); });
+
+coImg.addEventListener("change", () => {
+  const f = coImg.files[0];
+  if (!f) return;
+  if (!/^image\/(png|jpeg|webp|gif)$/.test(f.type)) { coError("Please pick a PNG, JPG, WebP or GIF."); return; }
+  const img = new Image();
+  img.onload = () => {
+    adImg = img;
+    adType = f.type;
+    $("#co-file-label").textContent = `${f.name}. It's cropped to fill your spot, so check the preview on the banner.`;
+    coImg.closest(".co-file").classList.add("has");
+    coError("");
+    renderAd();
+  };
+  img.onerror = () => coError("That image didn't load. Try another one?");
+  img.src = URL.createObjectURL(f);
+});
+
+function bnDM() {
+  const n = spot.w * spot.h;
+  ask({
+    title: "LinkedIn", author: "Joe Meier", url: BANNER.buyUrl || LINKEDIN_PROFILE, c: "var(--paper)", t: "var(--ink)",
+    leaveLine: `You're buying ${n === 1 ? "a block" : `${n} blocks`} of my banner (${spot.w} × ${spot.h}, starting ${spot.x + 1} across, ${spot.y + 1} down). ` +
+      (BANNER.buyUrl ? "Finish up there, then come straight back." : "DM me that spot on LinkedIn, then come straight back.")
+  }, 0);
+}
+
+co.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (!spot || takenSpot(spot)) return coError("Pick a free spot on the banner first.");
+  if (!BANNER.checkoutApi) return bnDM();
+  const f = new FormData(co);
+  const customer = { name: String(f.get("name")).trim(), email: String(f.get("email")).trim(), company: String(f.get("company")).trim(), url: String(f.get("url")).trim() };
+  if (!customer.name) return coError("Please add your name.");
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customer.email)) return coError("Please add a valid email.");
+  if (customer.url && !/^https?:\/\//i.test(customer.url)) customer.url = "https://" + customer.url;
+  if (!adData) return coError("Please upload your ad.");
+  coError("");
+  const label = coPay.textContent;
+  coPay.disabled = true;
+  coPay.textContent = "Opening checkout…";
+  try {
+    const res = await fetch(api("/create-checkout-session"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ customer, selection: { x: spot.x, y: spot.y, width: spot.w, height: spot.h }, image: adData })
+    });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok || !json.url) throw new Error(json.error || "Checkout is having a moment. Please try again.");
+    ask({
+      title: "Stripe", author: "Joe Meier", url: json.url, c: "var(--yellow)", t: "var(--ink)", sameTab: true,
+      leaveLine: `You're off to Stripe to pay ${json.total ? money(json.total) : "for your spot"}. Come straight back after. I'll be right here, guarding your spot.`
+    }, 0);
+  } catch (err) {
+    coError(err instanceof TypeError ? "Couldn't reach checkout. Give it a minute and try again." : err.message);
+  } finally {
+    coPay.disabled = false;
+    coPay.textContent = label;
+  }
+});
+
+// The live price comes from the server, so the page always shows what Stripe will charge.
+if (BANNER.checkoutApi) {
+  fetch(api("/config")).then((r) => r.json()).then((c) => {
+    if (c.pricePerBlock) BANNER.pricePerBlock = c.pricePerBlock;
+    if (c.termMonths) BANNER.termMonths = c.termMonths;
+    bnHintText();
+    if (spot) showPick(spot);
+  }).catch(() => {});
+}
 
 /* ---------- Section tabs in the bar ---------- */
 const tabs = [...document.querySelectorAll(".tabs a")];
@@ -1643,9 +1826,9 @@ function ask(w, i) {
   leaveH.textContent = "Please come back.";
   leaveP.textContent = w.leaveLine || `You're off to read ${first(w.author)}'s case study for ${w.title}. ${PLEAS[i % PLEAS.length]}`;
   leaveActions.innerHTML = `
-    <a class="btn" id="promise" href="${esc(w.url)}" target="_blank" rel="noopener">I promise ↗</a>
+    <a class="btn" id="promise" href="${esc(w.url)}"${w.sameTab ? "" : ' target="_blank" rel="noopener"'}>I promise ↗</a>
     <button class="btn ghost" type="button" id="stay">Never mind, I'll stay</button>`;
-  $("#promise").addEventListener("click", away);
+  if (!w.sameTab) $("#promise").addEventListener("click", away);
   $("#stay").addEventListener("click", closeLeave);
   leave.hidden = false;
   document.body.classList.add("locked");
@@ -1710,10 +1893,10 @@ addEventListener("blur", wentAway);
 addEventListener("focus", cameBack);
 
 $("#stack").addEventListener("click", (e) => {
-  const a = e.target.closest("a.work, #follow, a.np-go, #bn-buy");
+  const a = e.target.closest("a.work, #follow, a.np-go");
   if (!a) return;
-  const isPost = a.matches("#follow, a.np-go, #bn-buy");
-  const url = a.id === "follow" ? LINKEDIN_PROFILE : a.id === "bn-buy" ? BANNER.buyUrl || LINKEDIN_PROFILE : a.matches(".np-go") ? NOTABLE[+a.dataset.np].url : a.href;
+  const isPost = a.matches("#follow, a.np-go");
+  const url = a.id === "follow" ? LINKEDIN_PROFILE : a.matches(".np-go") ? NOTABLE[+a.dataset.np].url : a.href;
   // Placeholder LinkedIn links go nowhere until a real link is filled in.
   if (!url) { e.preventDefault(); return; }
   // Let cmd/ctrl/shift/middle clicks open the link straight away.
@@ -1727,13 +1910,33 @@ $("#stack").addEventListener("click", (e) => {
       title: "LinkedIn", author: "Joe Meier", url, c: "var(--paper)", t: "var(--ink)",
       leaveLine: a.id === "follow"
         ? "You're off to my LinkedIn. Become follower 21,001, maybe endorse me for Microsoft Excel, then come straight back."
-        : a.id === "bn-buy"
-        ? `You're buying ${spot.w * spot.h === 1 ? "a block" : `${spot.w * spot.h} blocks`} of my banner (${spot.w} × ${spot.h}, starting ${spot.x + 1} across, ${spot.y + 1} down). ${BANNER.buyUrl ? "Finish up there, then come straight back." : "DM me that spot on LinkedIn, then come straight back."}`
         : "You're off to LinkedIn to read one of my better posts. Don't get sucked into the feed. Come straight back."
     }, 0);
   }
 });
 $("#leave-x").addEventListener("click", closeLeave);
+
+// Back from Stripe: say thanks (or no hard feelings), then tidy the address bar.
+function notice(where, h, p, btn) {
+  lastFocus = document.activeElement;
+  paint({ c: "var(--yellow)", t: "var(--ink)" });
+  leaveWhere.textContent = where;
+  leaveH.textContent = h;
+  leaveP.textContent = p;
+  leaveActions.innerHTML = `<button class="btn" type="button" id="back">${esc(btn)}</button>`;
+  $("#back").addEventListener("click", closeLeave);
+  leave.hidden = false;
+  document.body.classList.add("locked");
+  $("#back").focus();
+  plead("back");
+}
+const fromStripe = new URLSearchParams(location.search).get("banner");
+if (fromStripe === "paid" || fromStripe === "cancelled") {
+  history.replaceState(null, "", location.pathname + location.hash);
+  setTimeout(() => fromStripe === "paid"
+    ? notice("Back from Stripe", "You bought a spot!", "Thank you for funding my portfolio. Your ad goes up as soon as I've had a look at it, usually within a day.", "Back to the site")
+    : notice("Back from Stripe", "Changed your mind?", "No charge, no hard feelings. The banner will be right here when you're ready.", "Back to the site"), 500);
+}
 document.addEventListener("keydown", (e) => {
   if (e.key !== "Escape") return;
   if (!leave.hidden) closeLeave();
