@@ -77,7 +77,6 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--guide); outline
 .av:hover, .av:focus-visible { transform: translateY(-2px); z-index: 1; }
 .av:focus-visible { outline: 2px solid var(--guide); outline-offset: 2px; }
 /* The overflow count, like a file with too many people in it. */
-.av.more { width: auto; min-width: 28px; padding: 0 8px; border-radius: 14px; background: #3d3d3d; color: #fff; font-variant-numeric: tabular-nums; animation: pop .35s cubic-bezier(.2, 1.2, .4, 1); }
 
 /* Frames on the canvas */
 main { padding: calc(var(--bar) + 14px) 0 clamp(56px, 9vh, 120px); }
@@ -225,19 +224,33 @@ main { padding: calc(var(--bar) + 14px) 0 clamp(56px, 9vh, 120px); }
 .card .by { font-size: 15px; letter-spacing: -0.01em; }
 @media (hover: none) { .card .go { opacity: 1; transform: none; } }
 
-/* LinkedIn: jo's followers show up in the file as a crowd of tiny cursors that follow his. */
-.crowd-f {
+/* LinkedIn: jo drafts a post, live, in a text box. The crew shoots down the first few drafts. */
+.comp-f {
   --c: var(--paper); --t: var(--ink);
-  min-height: min(84vh, 820px); overflow: hidden;
-  display: flex; flex-direction: column; justify-content: space-between; gap: clamp(48px, 7vw, 96px);
+  min-height: min(78vh, 760px);
+  display: grid; align-content: space-between; gap: clamp(40px, 6vw, 88px);
 }
-.crowd-f h2 { margin: 0; font-size: clamp(36px, 6.6vw, 114px); font-weight: 700; line-height: .86; letter-spacing: -0.07em; }
-.crowd-f h2 .punch { color: var(--blue); }
-.crowd-foot { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px 32px; flex-wrap: wrap; }
-.crowd-foot p { margin: 0; }
-.crowd-hint { max-width: 25ch; font-size: clamp(16px, 1.4vw, 20px); line-height: 1.15; letter-spacing: -0.02em; }
-.lurk { margin-top: 10px !important; font: 500 12px/1.3 var(--ui); letter-spacing: 0; color: var(--grey); }
-#crowd { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; pointer-events: none; }
+.comp-who { display: flex; align-items: center; gap: 10px; margin: 0; font: 500 13px/1.2 var(--ui); letter-spacing: 0; color: var(--grey); }
+.comp-who b { color: var(--ink); font-weight: 600; }
+.comp-av { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--yellow); color: var(--ink); font: 700 12px/1 var(--ui); }
+.comp-box {
+  margin: 0; min-height: 2.7em; outline: 1px solid transparent; outline-offset: 10px;
+  font-size: clamp(34px, 5.6vw, 96px); font-weight: 700; line-height: .9; letter-spacing: -0.06em;
+  overflow-wrap: anywhere;
+}
+.comp-f:not(.done) .comp-box { outline-color: #0d99ff; }
+.comp-text { box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.comp-text.hl { background: rgba(13, 153, 255, .28); }
+.comp-caret { display: inline-block; width: max(2px, .035em); height: .8em; margin-left: .03em; vertical-align: -0.07em; background: var(--ink); }
+.comp-box:not(.typing) .comp-caret { animation: blink 1.05s steps(1) infinite; }
+.comp-f.done .comp-caret { display: none; }
+@keyframes blink { 50% { opacity: 0; } }
+.comp-foot { display: flex; justify-content: space-between; align-items: center; gap: 20px 32px; flex-wrap: wrap; }
+.comp-after { margin: 0; font-size: clamp(16px, 1.4vw, 20px); line-height: 1.15; letter-spacing: -0.02em; opacity: 0; transition: opacity .4s; }
+.comp-btns { display: flex; flex-wrap: wrap; gap: 10px; }
+.comp-f:not(.done) #comp-again { visibility: hidden; }
+.comp-f.done .comp-after { opacity: 1; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 /* LinkedIn numbers: an impressions chart jo draws live with the pen tool, and his notable posts. */
 .nums-w { --w: 1360px; display: flex; align-items: flex-start; gap: clamp(28px, 4vw, 64px); }
@@ -245,11 +258,18 @@ main { padding: calc(var(--bar) + 14px) 0 clamp(56px, 9vh, 120px); }
 .imp-s { flex: 1.7 1 0; }
 .np-s { flex: 1 1 0; margin-top: clamp(64px, 10vw, 160px); }
 .imp-f { display: grid; gap: clamp(24px, 3vw, 40px); }
-.imp-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px 32px; flex-wrap: wrap; }
+.imp-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px 32px; flex-wrap: wrap; }
+/* The numbers, kept small: a row of stats with a deadpan note under each. */
+.stats {
+  list-style: none; margin: 0; padding: 0 0 clamp(22px, 2.6vw, 36px); border-bottom: 1px solid #e7e7e4;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 22px clamp(20px, 3vw, 40px);
+}
+.stats li { display: grid; align-content: start; gap: 8px; }
+.stats b { font-size: clamp(32px, 3.4vw, 52px); font-weight: 700; line-height: .85; letter-spacing: -0.06em; font-variant-numeric: tabular-nums; }
+.stats span { max-width: 24ch; font: 500 13px/1.35 var(--ui); letter-spacing: 0; color: var(--grey); }
 .imp-head p { margin: 0; }
 .imp-k { font: 500 13px/1.4 var(--ui); letter-spacing: 0; color: var(--grey); }
-.imp-total { margin-top: 8px !important; font-size: clamp(54px, 7vw, 114px); font-weight: 700; line-height: .8; letter-spacing: -0.07em; }
-.imp-note { max-width: 22ch; font-size: clamp(16px, 1.4vw, 20px); line-height: 1.15; letter-spacing: -0.02em; }
+.imp-note { max-width: 30ch; font-size: clamp(15px, 1.2vw, 18px); line-height: 1.15; letter-spacing: -0.02em; }
 .imp-chart { position: relative; }
 #imp-svg { display: block; width: 100%; overflow: visible; touch-action: pan-y; }
 #imp-svg:focus { outline: none; }
@@ -332,6 +352,17 @@ footer {
   font: 600 12px/1 var(--ui); letter-spacing: 0;
   box-shadow: 0 1px 3px rgba(0, 0, 0, .25);
 }
+.cur .bub {
+  position: absolute; left: 14px; top: 19px; display: none; gap: 3px; white-space: nowrap;
+  padding: 7px 13px 9px; border-radius: 4px 16px 16px 16px;
+  background: var(--cc); color: var(--ct);
+  font: 600 16px/1.1 var(--ui); letter-spacing: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .25);
+  animation: pop .25s cubic-bezier(.2, 1.2, .4, 1);
+}
+.cur .bub small { font: 600 10px/1 var(--ui); opacity: .8; }
+.cur.talking .bub { display: grid; }
+.cur.talking .pill { display: none; }
 .sel { position: absolute; left: 0; top: 0; z-index: 35; border: 1.5px solid var(--cc); }
 .sel i { position: absolute; width: 8px; height: 8px; background: #fff; border: 1.5px solid var(--cc); }
 .sel i:nth-child(1) { left: -5px; top: -5px; }
@@ -379,7 +410,7 @@ body.locked { overflow: hidden; }
   .card.big, .card.small { --h: auto; }
   .card .img { aspect-ratio: 4 / 3; }
   .about .notes { margin-left: 0; }
-  .crowd-f { min-height: 76vh; }
+  .comp-f { min-height: 70vh; }
   .nums-w { flex-direction: column; align-items: stretch; }
   .np-s { margin-top: 0; }
   .cur .in { transform: scale(.88); }
@@ -480,29 +511,28 @@ body.locked { overflow: hidden; }
  <div class="sect li-sect" id="linkedin">
   <span class="sect-name">LinkedIn</span>
   <section class="fw li-w" id="writing">
-    <div class="flabel"><span>On LinkedIn</span><span class="dim"></span></div>
-    <div class="frame crowd-f" id="crowd-f">
-      <h2 id="li-h">21K followers.<br>Millions of likes.<br><span class="punch">Zero case studies.</span></h2>
-      <div class="crowd-foot">
-        <div>
-          <p class="crowd-hint" id="crowd-hint">Those are my followers. Move around and they'll follow. Click and they'll like it.</p>
-          <p class="lurk">Showing <span id="crowd-n">300</span> of 21K. The rest are lurking.</p>
+    <div class="flabel"><span id="comp-name">Draft 45</span><span class="dim"></span></div>
+    <div class="frame comp-f" id="comp-f">
+      <h2 class="sr" id="comp-h"></h2>
+      <p class="comp-who"><span class="comp-av" aria-hidden="true">JM</span><span><b>Joe Meier</b> · Post to Anyone</span></p>
+      <p class="comp-box" id="comp-box" aria-hidden="true"><span class="comp-text" id="comp-text"></span><span class="comp-caret" id="comp-caret"></span></p>
+      <div class="comp-foot">
+        <p class="comp-after" id="comp-after"></p>
+        <div class="comp-btns">
+          <button class="btn ghost" type="button" id="comp-again">Let me try again</button>
+          <a class="btn" id="follow" href="#" target="_blank" rel="noopener">Follow me, I guess ↗</a>
         </div>
-        <a class="btn" id="follow" href="#" target="_blank" rel="noopener">Become follower 21,001 ↗</a>
       </div>
-      <canvas id="crowd" aria-hidden="true"></canvas>
     </div>
   </section>
 
   <section class="fw nums-w" id="numbers">
     <div class="sub imp-s">
-      <div class="flabel"><span>Impressions</span><span class="dim"></span></div>
+      <div class="flabel"><span>Numbers</span><span class="dim"></span></div>
       <div class="frame imp-f">
+        <ul class="stats" id="stats"></ul>
         <div class="imp-head">
-          <div>
-            <p class="imp-k" id="imp-k">LinkedIn impressions, all time</p>
-            <p class="imp-total" id="imp-total">0</p>
-          </div>
+          <p class="imp-k" id="imp-k">Impressions, all time</p>
           <p class="imp-note">Drawn live by me, with the pen tool. The one thing on this site I made myself.</p>
         </div>
         <div class="imp-chart" id="imp-chart">
@@ -516,7 +546,7 @@ body.locked { overflow: hidden; }
       </div>
     </div>
     <div class="sub np-s">
-      <div class="flabel"><span>Notable posts</span><span class="dim"></span></div>
+      <div class="flabel"><span>Posts that did okay</span><span class="dim"></span></div>
       <div class="frame np-f">
         <ol class="np" id="np"></ol>
       </div>
@@ -673,7 +703,15 @@ const IMPRESSIONS = {
   ]
 };
 
-// Posts worth bragging about. url: the post's link ("..." menu > Copy link to post). hook: its opening line.
+// The numbers in the LinkedIn section, kept small on purpose. value "impressions" uses the last row above
+// (and counts up while jo's pen draws the chart). says: the line under it.
+const LI_NUMBERS = [
+  { value: "impressions", says: "Impressions. That's when someone scrolls past a post." },
+  { value: "Millions", says: "Likes. Nobody knows what they're for." },
+  { value: "21K", says: "Followers. I've met a few of them." }
+];
+
+// Posts that did okay. url: the post's link ("..." menu > Copy link to post). hook: its opening line.
 // impressions and reactions are plain numbers. Leave anything null and it shows as a placeholder.
 const NOTABLE = [
   { url: null, hook: null, date: null, impressions: null, reactions: null },
@@ -684,8 +722,7 @@ if (LINKEDIN_PROFILE) $("#follow").href = LINKEDIN_PROFILE;
 
 $("#people").innerHTML = [...PEOPLE, JOE].map((p) =>
   `<button type="button" class="av" data-who="${esc(p.name)}" title="${esc(p.name)}" aria-label="${esc(p.name)}" style="--cc:${p.color};--ct:${p.ink}">${p.initials}</button>`
-).join("") +
-  `<button type="button" class="av more" id="more" data-who="followers" title="21K followers on LinkedIn" aria-label="21K followers on LinkedIn"${REDUCE ? "" : " hidden"}>+21K</button>`;
+).join("");
 
 // Frame sizes next to each frame name, like a design file.
 function sizeLabels() {
@@ -718,7 +755,7 @@ class Cursor {
     this.el.className = "cur" + (isJoe ? " joe" : "");
     this.el.style.setProperty("--cc", p.color);
     this.el.style.setProperty("--ct", p.ink);
-    this.el.innerHTML = `<div class="in"><svg class="arrow-i" viewBox="0 0 24 24"><path d="${ARROW}"/></svg><svg class="pen-i" viewBox="0 0 24 24"><path d="${PEN}"/><circle cx="10.6" cy="10.6" r="1.7"/></svg><span class="pill">${esc(p.name)}</span></div>`;
+    this.el.innerHTML = `<div class="in"><svg class="arrow-i" viewBox="0 0 24 24"><path d="${ARROW}"/></svg><svg class="pen-i" viewBox="0 0 24 24"><path d="${PEN}"/><circle cx="10.6" cy="10.6" r="1.7"/></svg><span class="pill">${esc(p.name)}</span><span class="bub"></span></div>`;
     layer.appendChild(this.el);
     this.set(-200, -200);
   }
@@ -740,6 +777,14 @@ class Cursor {
       this.set(q * q * x0 + 2 * q * p * cx + p * p * x, q * q * y0 + 2 * q * p * cy + p * p * y);
     }).then(() => token === this.token);
   }
+  // Cursor chat: a bubble with a line in it, for a while.
+  say(text, ms) {
+    this.el.querySelector(".bub").innerHTML = `<small>${esc(this.name)}</small>${esc(text)}`;
+    this.el.classList.add("talking");
+    clearTimeout(this.sayT);
+    this.sayT = setTimeout(() => this.hush(), ms);
+  }
+  hush() { clearTimeout(this.sayT); this.el.classList.remove("talking"); }
   press() { this.el.classList.add("down"); }
   release() { this.el.classList.remove("down"); }
   async click() { this.press(); await wait(130); this.release(); }
@@ -992,235 +1037,171 @@ addEventListener("pointermove", (e) => { if (e.pointerType === "mouse") { pcx = 
 addEventListener("pointerdown", (e) => { if (e.pointerType !== "mouse") { pcx = e.clientX; pcy = e.clientY; } }, { passive: true });
 setTimeout(() => { if (joe.mode === "wait") joe.mode = "follow"; }, REDUCE ? 0 : 1600);
 
-/* ---------- LinkedIn: 21K followers, in the file ---------- */
-// They pile into the LinkedIn frame as a crowd of tiny cursors. They follow jo's cursor (which follows you),
-// wear their LinkedIn headlines as name tags, leave the usual comments, and like everything.
-const HEADLINES = ["Thought Leader", "Open to Work", "Ex-Google", "Founder (Stealth)", "Top Voice", "Recruiter", "Growth Hacker",
-  "Proud Dad | CMO", "Chief Vibes Officer", "Your Mom", "Keynote Speaker", "Ghostwriter"];
-const COMMENTS = ["This. 👏", "Congrats Joe!!", "Agreed.", "So true", "Great insight", "Thoughts?", "Love this!", "Following for more",
-  "Commenting for reach", "Interested", "Couldn't agree more", "Saving this", "Big if true", "Repost?", "Needed this today",
-  "Let's connect!", "Inspiring 🙌", "Who's here on a Monday?"];
-const CLICK_COMMENTS = ["Love this!", "Agreed.", "This. 👏", "So true", "Inspiring 🙌"];
-const CROWD_COLORS = [["#3d6bff", "#fff"], ["#ff4433", "#fff"], ["#10b26a", "#fff"], ["#a35cff", "#fff"], ["#ff8fc8", "#0d0d0d"],
-  ["#00a3c4", "#fff"], ["#ff7a00", "#fff"], ["#0a66c2", "#fff"], ["#0d0d0d", "#fff"], ["#e0245e", "#fff"]];
-const UI_FONT = getComputedStyle(document.documentElement).getPropertyValue("--ui").trim() || "sans-serif";
-const EMOJI_FONT = "'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif";
-
-const crowdFrame = $("#crowd-f"), crowdCv = $("#crowd"), cg = crowdCv.getContext("2d"), more = $("#more");
-const crowd = { list: [], bubbles: [], likes: [], W: 0, H: 0, dpr: 1, last: 0, nextLike: 0, nextChat: 0, arrived: false, counting: false, said: [] };
+/* ---------- LinkedIn: jo drafts a post, live, and the crew shoots down the first few ---------- */
+// POST is what he always ends up with (it's also the section's headline). DRAFTS are what he tries first,
+// VETOES are what the crew says about them, and AFTER is the line under the post after each go.
+const POST = "I post on LinkedIn. People read it for some reason.";
+const DRAFTS = [
+  "I'm humbled to announce that I'm humbled.",
+  "Agree?",
+  "Here's what my dog taught me about B2B sales 🧵",
+  "Stop scrolling.",
+  "Let that sink in.",
+  "This is the post I was scared to write.",
+  "Unpopular opinion:",
+  "Normally I don't post personal stuff, but",
+  "My barber taught me more about branding than any course.",
+  "Excited to share some exciting news!",
+  "What would you do? 🤔",
+  "I got rejected 200 times. Here's what I learned 👇"
+];
+const VETOES = ["no", "absolutely not", "joe.", "delete that", "please don't", "are you ok", "who is this for", "my eyes", "no ❤️"];
+const AFTER = ["Took me a few drafts.", "Took a few more.", "Same post again.", "It's always this one."];
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const pick = (a) => a[Math.floor(Math.random() * a.length)];
-const fmtK = (n) => (n < 1000 ? String(n) : (n / 1000).toFixed(n < 10000 ? 1 : 0).replace(/\.0$/, "") + "K");
-let crowdVisible = false;
 
-// Everything is drawn from little pre-rendered images, so a few hundred cursors stay cheap.
-function makeSprite(w, h, draw) {
-  const c = document.createElement("canvas");
-  c.width = Math.ceil(w * crowd.dpr); c.height = Math.ceil(h * crowd.dpr);
-  const x = c.getContext("2d");
-  x.scale(crowd.dpr, crowd.dpr);
-  draw(x);
-  c.w = w; c.h = h;
+const comp = {
+  frame: $("#comp-f"), box: $("#comp-box"), text: $("#comp-text"), caret: $("#comp-caret"), name: $("#comp-name"),
+  after: $("#comp-after"), again: $("#comp-again"),
+  token: 0, runs: 0, n: 44, running: false, joe: false, crew: new Set(), deck: []
+};
+$("#comp-h").textContent = POST;
+
+const compJoe = () => comp.joe && joe.mode === "script";
+const compLabel = (s) => { comp.name.textContent = s; };
+function compShow(s, hl = false) { comp.text.textContent = s; comp.text.classList.toggle("hl", hl); }
+function nextDraft() {
+  if (!comp.deck.length) comp.deck = DRAFTS.slice().sort(() => Math.random() - 0.5);
+  return comp.deck.pop();
+}
+
+// jo's cursor sits just past the caret while he types.
+function joeAtCaret(dur) {
+  if (!compJoe()) return Promise.resolve(false);
+  const r = R(comp.caret);
+  return joe.move(r.x + 8, r.y + r.h * 0.8, dur, { straight: true });
+}
+
+async function compType(s, live) {
+  comp.box.classList.add("typing");
+  const chars = Array.from(s);
+  for (let i = 1; i <= chars.length; i++) {
+    if (!live()) return false;
+    compShow(chars.slice(0, i).join(""));
+    if (i % 4 === 1 || i === chars.length) joeAtCaret(170);
+    await wait(chars[i - 1] === " " ? rand(70, 140) : rand(30, 80));
+  }
+  comp.box.classList.remove("typing");
+  return live();
+}
+
+// Either drags back across the draft to select it all and deletes it, or just holds backspace.
+async function compErase(live, drag) {
+  if (drag && compJoe()) {
+    const r = R(comp.text);
+    joe.press();
+    await joe.move(r.x + 2, r.y + 12, 420, { straight: true });
+    joe.release();
+    if (!live()) return false;
+    compShow(comp.text.textContent, true);
+    await wait(420);
+    if (!live()) return false;
+    compShow("");
+    joeAtCaret(260);
+    return live();
+  }
+  comp.box.classList.add("typing");
+  const chars = Array.from(comp.text.textContent);
+  while (chars.length) {
+    if (!live()) return false;
+    chars.pop();
+    compShow(chars.join(""));
+    if (chars.length % 6 === 0) joeAtCaret(120);
+    await wait(17);
+  }
+  comp.box.classList.remove("typing");
+  return live();
+}
+
+// Someone from the crew drops in under the draft and says what they think of it.
+async function crewSay(c, line, live, ms) {
+  if (!c || c.mode === "hover" || REDUCE) return null;
+  c.mode = "script";
+  comp.crew.add(c);
+  const r = R(comp.caret), f = R(comp.frame);
+  const x = clamp(r.x - 10, f.x + 24, f.x + f.w - 230), y = Math.min(r.y + r.h + 44, f.y + f.h - 70);
+  if (await c.move(x, y, 750) && live()) c.say(line, ms);
   return c;
 }
-function pillSprite(text, bg, ink, size, padX, h, radius) {
-  const font = `600 ${size}px ${UI_FONT}`;
-  cg.font = font;
-  const tw = Math.ceil(cg.measureText(text).width);
-  return makeSprite(tw + padX * 2 + 6, h + 6, (x) => {
-    x.translate(2, 1);
-    x.shadowColor = "rgba(0, 0, 0, .22)"; x.shadowBlur = 4; x.shadowOffsetY = 1;
-    x.fillStyle = bg;
-    x.beginPath(); x.roundRect(0, 0, tw + padX * 2, h, radius); x.fill();
-    x.shadowColor = "transparent";
-    x.fillStyle = ink; x.font = font; x.textBaseline = "middle";
-    x.fillText(text, padX, h / 2 + 0.5);
-  });
-}
-const AS = 0.64, APAD = 5, ARROW_PATH = new Path2D(ARROW);
-
-function sizeCrowd() {
-  const r = crowdFrame.getBoundingClientRect();
-  crowd.W = r.width; crowd.H = r.height;
-  crowdCv.width = Math.round(r.width * crowd.dpr);
-  crowdCv.height = Math.round(r.height * crowd.dpr);
+function crewGo(c) {
+  if (!c) return;
+  c.hush();
+  comp.crew.delete(c);
+  if (c.mode !== "script") return;
+  c.mode = highest >= 3 ? "idle" : "script";
+  // Back up the page, out of the way (in idle, they wander back to their case studies from there).
+  c.move(c.x + rand(-80, 80), Math.min(c.y, scrollY) - rand(160, 320), 1000);
 }
 
-function crowdSetup() {
-  crowd.dpr = Math.min(2, devicePixelRatio || 1);
-  sizeCrowd();
-  crowd.arrows = CROWD_COLORS.map(([c]) => makeSprite(24 * AS + APAD * 2, 24 * AS + APAD * 2, (x) => {
-    x.translate(APAD - 3 * AS, APAD - 2 * AS); x.scale(AS, AS);
-    x.shadowColor = "rgba(0, 0, 0, .35)"; x.shadowBlur = 4; x.shadowOffsetY = 1.5;
-    x.fillStyle = c; x.fill(ARROW_PATH);
-    x.shadowColor = "transparent";
-    x.lineJoin = "round"; x.lineWidth = 2; x.strokeStyle = "#fff"; x.stroke(ARROW_PATH);
-  }));
-  crowd.likeS = makeSprite(28, 28, (x) => {
-    x.font = `20px ${EMOJI_FONT}`; x.textAlign = "center"; x.textBaseline = "middle";
-    x.fillText("👍", 14, 15);
-  });
-  const n = Math.round(clamp((crowd.W * crowd.H) / 3300, 70, 300));
-  crowd.list = Array.from({ length: n }, () => ({
-    x: -50, y: -50, a: rand(0, Math.PI * 2), u: Math.sqrt(rand(0.07, 1)),
-    k: rand(0.016, 0.07), ph: rand(0, 6.3), fr: rand(0.35, 1), amp: rand(3, 11),
-    ci: Math.floor(Math.random() * CROWD_COLORS.length), tag: null, say: null, live: false, at: 0, down: 0
-  }));
-  const tags = Math.min(HEADLINES.length, Math.round(n / 16));
-  for (let j = 0; j < tags; j++) {
-    const p = crowd.list[Math.floor((j + 0.5) * n / tags)], [bg, ink] = CROWD_COLORS[p.ci];
-    p.tag = pillSprite(HEADLINES[j], bg, ink, 11, 7, 19, 9.5);
+async function compRun(rounds) {
+  if (comp.running || state) return;
+  const token = ++comp.token, live = () => token === comp.token;
+  comp.running = true;
+  comp.frame.classList.remove("done");
+  comp.joe = joe.mode === "follow" || joe.mode === "wait";
+  if (comp.joe) joe.mode = "script";
+  compShow("");
+  compLabel(`Draft ${comp.n + 1}`);
+  await joeAtCaret(700);
+  await wait(250);
+  for (let k = 0; k < rounds; k++) {
+    if (!live()) return;
+    compLabel(`Draft ${++comp.n}`);
+    if (!await compType(nextDraft(), live)) return;
+    await wait(300);
+    const c = await crewSay(crew[(comp.runs + k) % crew.length], pick(VETOES), live, 1800);
+    if (!live()) return;
+    await wait(700);
+    if (!await compErase(live, k % 2 === 1)) return;
+    crewGo(c);
+    await wait(450);
   }
-  $("#crowd-n").textContent = n;
+  if (!live()) return;
+  compLabel(`Draft ${++comp.n} (final)${comp.runs ? ` (${comp.runs + 1})` : ""}`);
+  if (!await compType(POST, live)) return;
+  const c = await crewSay(crew[(comp.runs + rounds) % crew.length], comp.runs ? pick(["again?", "this one again", "ok"]) : "fine.", live, 1500);
+  if (!live()) return;
+  await wait(1500);
+  crewGo(c);
+  compDone();
 }
 
-// Where the crowd gathers: around and just below jo's cursor, kept inside the frame.
-function crowdShape(jx, jy) {
-  const n = crowd.list.length, r0 = clamp(Math.sqrt(n) * 15, 100, 270);
-  const rx = Math.min(r0 * 1.3, crowd.W * 0.44), ry = Math.min(r0 * 0.85, crowd.H * 0.34);
-  return { rx, ry, cx: clamp(jx + 6, rx * 0.6, crowd.W - rx * 0.6), cy: clamp(jy + 46, ry * 0.6, crowd.H - ry * 0.6) };
-}
-function home(p, c, t) {
-  return [
-    clamp(c.cx + Math.cos(p.a) * p.u * c.rx + Math.sin(t * p.fr + p.ph) * p.amp, 6, crowd.W - 14),
-    clamp(c.cy + Math.sin(p.a) * p.u * c.ry + Math.cos(t * p.fr * 1.3 + p.ph) * p.amp * 0.7, 6, crowd.H - 18)
-  ];
-}
-
-// They pour in from the edges of the frame while the overflow count in the bar runs up to +21K.
-function crowdArrive() {
-  if (crowd.arrived || REDUCE) return;
-  crowd.arrived = crowd.counting = true;
-  const now = performance.now(), n = crowd.list.length;
-  crowd.list.forEach((p, i) => {
-    const side = Math.floor(Math.random() * 4);
-    p.x = side === 0 ? -20 : side === 1 ? crowd.W + 20 : rand(0, crowd.W);
-    p.y = side === 2 ? -20 : side === 3 ? crowd.H + 20 : rand(0, crowd.H);
-    p.at = now + 2600 * Math.pow(i / n, 0.75) + rand(0, 200);
-  });
-  crowd.nextLike = now + 900;
-  crowd.nextChat = now + 1500;
-  more.textContent = "+0";
-  more.hidden = false;
+// Wraps up: the real post stays, everyone goes back to what they were doing. Also used when they scroll away mid-draft.
+function compDone() {
+  comp.token++;
+  comp.running = false;
+  [...comp.crew].forEach(crewGo);
+  comp.box.classList.remove("typing");
+  compShow(POST);
+  if (!comp.name.textContent.includes("(final)")) compLabel(`Draft ${++comp.n} (final)${comp.runs ? ` (${comp.runs + 1})` : ""}`);
+  comp.after.textContent = AFTER[Math.min(comp.runs, AFTER.length - 1)];
+  comp.runs++;
+  comp.frame.classList.add("done");
+  if (compJoe()) { joe.token++; joe.release(); joe.mode = "follow"; }
+  comp.joe = false;
+  sizeLabels();
 }
 
-function randomLive() {
-  for (let k = 0; k < 8; k++) { const p = pick(crowd.list); if (p.live) return p; }
-  return null;
-}
-function like(p, now) {
-  if (!p || !p.live) return;
-  p.down = now + 150;
-  if (crowd.likes.length < 70) crowd.likes.push({ x: p.x + 4, y: p.y - 4, t: now, dx: rand(-14, 14) });
-}
-function say(p, text, now) {
-  if (!p || p.say) return;
-  const [bg, ink] = CROWD_COLORS[p.ci];
-  p.say = { s: pillSprite(text, bg, ink, 13, 10, 28, [3, 14, 14, 14]), t: now };
-  crowd.bubbles.push(p);
-}
-function nextComment() {
-  let c;
-  do c = pick(COMMENTS); while (crowd.said.includes(c));
-  crowd.said = [...crowd.said.slice(-5), c];
-  return c;
-}
-
-function crowdStep(now) {
-  const dt = Math.min(48, crowd.last ? now - crowd.last : 16.7);
-  crowd.last = now;
-  const r = crowdFrame.getBoundingClientRect();
-  if (Math.abs(r.width - crowd.W) > 1 || Math.abs(r.height - crowd.H) > 1) sizeCrowd();
-  if (!crowd.arrived) return;
-  const c = crowdShape(joe.x - r.left - scrollX, joe.y - r.top - scrollY), t = now / 1000;
-  let live = 0;
-  for (const p of crowd.list) {
-    if (!p.live) { if (now < p.at) continue; p.live = true; }
-    live++;
-    const [tx, ty] = home(p, c, t), k = 1 - Math.pow(1 - p.k, dt / 16.7);
-    p.x += (tx - p.x) * k;
-    p.y += (ty - p.y) * k;
-  }
-  if (crowd.counting) {
-    more.textContent = "+" + fmtK(Math.round(21000 * live / crowd.list.length));
-    if (live === crowd.list.length) crowd.counting = false;
-  }
-  if (live > 10 && now > crowd.nextLike) { crowd.nextLike = now + rand(80, 280); like(randomLive(), now); }
-  if (live > 24 && now > crowd.nextChat && crowd.bubbles.length < 3) { crowd.nextChat = now + rand(900, 1900); say(randomLive(), nextComment(), now); }
-  crowdDraw(now);
-}
-
-// Name tags and comments sit below-right of the cursor, flipping left or up near the frame's edges.
-function labelAt(p, sp, sc) {
-  const w = sp.w * sc, h = sp.h * sc;
-  let x = p.x + 7, y = p.y + 11;
-  if (x + w > crowd.W - 2) x = Math.max(2, p.x - w + 4);
-  if (y + h > crowd.H - 2) y = p.y - h - 2;
-  return [x, y, w, h];
-}
-function crowdDraw(now) {
-  const g = cg;
-  g.setTransform(crowd.dpr, 0, 0, crowd.dpr, 0, 0);
-  g.clearRect(0, 0, crowd.W, crowd.H);
-  for (const p of crowd.list) {
-    if (!p.live) continue;
-    const sp = crowd.arrows[p.ci], s = now < p.down ? 0.8 : 1;
-    g.drawImage(sp, p.x - APAD * s, p.y - APAD * s, sp.w * s, sp.h * s);
-  }
-  for (const p of crowd.list) if (p.live && p.tag && !p.say) g.drawImage(p.tag, ...labelAt(p, p.tag, 1));
-  crowd.bubbles = crowd.bubbles.filter((p) => {
-    const age = now - p.say.t;
-    if (age > 2600) { p.say = null; return false; }
-    const a = Math.min(1, age / 160, (2600 - age) / 320), sc = 0.85 + 0.15 * Math.min(1, age / 160);
-    g.globalAlpha = a;
-    g.drawImage(p.say.s, ...labelAt(p, p.say.s, sc));
-    return true;
-  });
-  crowd.likes = crowd.likes.filter((l) => {
-    const a = (now - l.t) / 1100;
-    if (a >= 1) return false;
-    const e = 1 - (1 - a) * (1 - a), sz = 28 * Math.min(1, 0.45 + a * 4);
-    g.globalAlpha = a < 0.6 ? 1 : 1 - (a - 0.6) / 0.4;
-    g.drawImage(crowd.likeS, l.x + l.dx * e - sz / 2, l.y - 48 * e - sz / 2, sz, sz);
-    return true;
-  });
-  g.globalAlpha = 1;
-}
-
-// With reduced motion: the crowd is already there, standing still, with a couple of comments up.
-function crowdStatic() {
-  const t = 0, c = crowdShape(crowd.W * 0.68, crowd.H * 0.52);
-  crowd.list.forEach((p) => { p.live = true; [p.x, p.y] = home(p, c, t); p.say = null; });
-  crowd.bubbles = [];
-  const now = performance.now();
-  [["Congrats Joe!!", 0.3], ["Great insight", 0.7]].forEach(([text, f]) => {
-    const p = crowd.list[Math.floor(f * crowd.list.length)];
-    say(p, text, now - 1000);
-  });
-  crowdDraw(now);
-}
-
-crowdSetup();
-if (REDUCE) crowdStatic();
 if (REDUCE) {
-  $("#crowd-hint").textContent = "Those are my followers. Usually they're a lot more lively.";
-} else if (!matchMedia("(hover: hover) and (pointer: fine)").matches) {
-  $("#crowd-hint").textContent = "Those are my followers. Tap anywhere and they'll follow. Tap again and they'll like it.";
+  compDone();
+  comp.again.hidden = true;
+} else {
+  new IntersectionObserver((es) => es.forEach((e) => {
+    if (e.intersectionRatio >= 0.45 && !comp.runs && !comp.running) compRun(3);
+    else if (e.intersectionRatio < 0.1 && comp.running) compDone();
+  }), { threshold: [0, 0.1, 0.45] }).observe(comp.frame);
+  comp.again.addEventListener("click", () => compRun(2));
 }
-new IntersectionObserver((es) => es.forEach((e) => {
-  crowdVisible = e.isIntersecting;
-  if (!crowdVisible) crowd.last = 0;
-  if (e.intersectionRatio >= 0.3) crowdArrive();
-}), { threshold: [0, 0.3] }).observe(crowdFrame);
-new ResizeObserver(() => { sizeCrowd(); if (REDUCE) crowdStatic(); }).observe(crowdFrame);
-
-// Click anywhere in the frame: everyone likes it.
-crowdFrame.addEventListener("pointerdown", (e) => {
-  if (!crowd.arrived || e.target.closest("a, button")) return;
-  const live = crowd.list.filter((p) => p.live);
-  for (let j = 0; j < Math.min(40, live.length); j++) setTimeout(() => like(pick(live), performance.now()), j * 16 + rand(0, 140));
-  say(pick(live), pick(CLICK_COMMENTS), performance.now());
-});
 
 /* ---------- LinkedIn numbers: jo draws the impressions chart himself, live, with the pen tool ---------- */
 const fmtBig = (v) => (v >= 1e6 ? +(v / 1e6).toFixed(1) + "M" : v >= 1e3 ? +(v / 1e3).toFixed(v < 1e4 ? 1 : 0) + "K" : String(Math.round(v)));
@@ -1233,6 +1214,9 @@ const IMP = IMPRESSIONS.months;
 const imp = { el: $("#imp-chart"), svg: $("#imp-svg"), tip: $("#imp-tip"), drawn: 0, band: null, bandVal: 0, done: false, hot: -1, drawing: false, started: false, joe: false };
 const SVGNS = "http://www.w3.org/2000/svg";
 
+$("#stats").innerHTML = LI_NUMBERS.map((n) => n.value === "impressions"
+  ? `<li><b id="imp-total">0</b><span>${esc(n.says)}</span></li>`
+  : `<li><b>${esc(n.value)}</b><span>${esc(n.says)}</span></li>`).join("");
 if (IMPRESSIONS.sample) $("#imp-k").insertAdjacentHTML("beforeend", ` ${ph("Sample numbers until you send me yours")}`);
 $("#imp-asof").textContent = `As of ${IMP[IMP.length - 1][0]}`;
 imp.svg.setAttribute("aria-label", `LinkedIn impressions, all time: ${fmtBig(IMP[0][1])} in ${IMP[0][0]}, up to ${fmtBig(IMP[IMP.length - 1][1])} in ${IMP[IMP.length - 1][0]}.`);
@@ -1299,7 +1283,8 @@ function impUpdate() {
     imp.end.textContent = fmtBig(IMP[last][1]);
   }
   imp.end.classList.toggle("on", imp.done);
-  $("#imp-total").textContent = fmtBig(imp.band ? imp.bandVal : n ? IMP[n - 1][1] : 0);
+  const tot = $("#imp-total");
+  if (tot) tot.textContent = fmtBig(imp.band ? imp.bandVal : n ? IMP[n - 1][1] : 0);
 }
 
 // While jo's pen is out, the next segment stretches from the last point to his cursor, and the big number keeps up.
@@ -1392,7 +1377,7 @@ $("#np").innerHTML = NOTABLE.map((p, i) => {
     p.date ? esc(p.date) : null
   ].filter(Boolean);
   return `<li>
-    <span class="np-c">◇ Notable post / ${String(i + 1).padStart(2, "0")}</span>
+    <span class="np-c">◇ Post that did okay / ${String(i + 1).padStart(2, "0")}</span>
     <p class="np-hook">${p.hook ? esc(p.hook) : ph("Opening line of a post you send me")}</p>
     <span class="np-meta">${meta.length ? meta.join(" · ") : ph("Impressions · reactions · date")}</span>
     ${p.impressions && npMax ? `<span class="np-bar" style="--share:${((100 * p.impressions) / npMax).toFixed(1)}%" aria-hidden="true"></span>` : ""}
@@ -1667,7 +1652,6 @@ function frame(now) {
     joe.set(joe.x + (tx - joe.x) * k, joe.y + (ty - joe.y) * k);
   }
   selections.forEach(placeSel);
-  if (crowdVisible && !REDUCE && !document.hidden) crowdStep(now);
   if (imp.drawing && penJoe()) impBandFromJoe();
   requestAnimationFrame(frame);
 }
@@ -1691,7 +1675,7 @@ if (REDUCE) {
   watch($("#cards"), 3, { threshold: 0, rootMargin: "0px 0px -30% 0px" });
 }
 
-// Avatars in the bar: click someone to jump to their case study (jo's, and the +21K, go to his followers).
+// Avatars in the bar: click someone to jump to their case study (jo's goes to his LinkedIn section).
 async function spotlight(c, card) {
   await wait(REDUCE ? 0 : 650);
   summon(c, card);
@@ -1702,7 +1686,7 @@ $("#people").addEventListener("click", (e) => {
   const b = e.target.closest(".av");
   if (!b) return;
   const behavior = REDUCE ? "auto" : "smooth";
-  if (b.dataset.who === JOE.name || b.dataset.who === "followers") {
+  if (b.dataset.who === JOE.name) {
     $("#writing").scrollIntoView({ behavior, block: "center" });
     return;
   }
@@ -1909,8 +1893,8 @@ $("#stack").addEventListener("click", (e) => {
     ask({
       title: "LinkedIn", author: "Joe Meier", url, c: "var(--paper)", t: "var(--ink)",
       leaveLine: a.id === "follow"
-        ? "You're off to my LinkedIn. Become follower 21,001, maybe endorse me for Microsoft Excel, then come straight back."
-        : "You're off to LinkedIn to read one of my better posts. Don't get sucked into the feed. Come straight back."
+        ? "You're off to my LinkedIn. Follow me if you want. Endorse me for Microsoft Excel if you really want. Then come straight back."
+        : "You're off to LinkedIn to read one of my posts. Try not to scroll the feed. It never ends. Come straight back."
     }, 0);
   }
 });
