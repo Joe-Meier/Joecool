@@ -699,7 +699,7 @@ const LINKEDIN_PROFILE = "https://www.linkedin.com/in/josephlmeier/";
 // Ads you approve on the server's /admin page don't go here: they land in banner/ads.json and show up on their own.
 // checkoutApi: the address of your banner-backend server (e.g. "https://banner-backend.onrender.com"). Once it's set, buyers
 // upload their ad and pay on Stripe, and the server's PRICE_PER_BLOCK sets the price. Until then, "Pay" falls back to a LinkedIn DM.
-const BANNER = { cols: 64, rows: 20, pricePerBlock: 3, termMonths: 6, checkoutApi: null, buyUrl: null, sold: [] };
+const BANNER = { cols: 64, rows: 20, pricePerBlock: 1.5, termMonths: 6, checkoutApi: null, buyUrl: null, sold: [] };
 
 // LinkedIn impressions: your all-time running total at the end of each month. Add a row each month; the last row is "now".
 // Set sample to false once these are your real numbers.
