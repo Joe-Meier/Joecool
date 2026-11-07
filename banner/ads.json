@@ -1,1 +1,13 @@
-[]
+[
+  {
+    "id": "bd8e3e096d",
+    "x": 48,
+    "y": 2,
+    "w": 8,
+    "h": 10,
+    "image": "banner/bd8e3e096d.png",
+    "url": "https://craigslist.com",
+    "name": "CommonTab",
+    "until": "2027-05-07"
+  }
+]
