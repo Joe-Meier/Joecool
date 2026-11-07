@@ -1873,9 +1873,13 @@ function notice(where, h, p, btn) {
   $("#back").focus();
   plead("back");
 }
-const fromStripe = new URLSearchParams(location.search).get("banner");
+const backParams = new URLSearchParams(location.search), fromStripe = backParams.get("banner"), paidSession = backParams.get("session_id");
 if (fromStripe === "paid" || fromStripe === "cancelled") {
   history.replaceState(null, "", location.pathname + location.hash);
+  // Tells the server they've paid, so jo hears about it right away (it checks Stripe every few minutes anyway).
+  if (fromStripe === "paid" && paidSession && BANNER.checkoutApi) {
+    fetch(`${BANNER.checkoutApi.replace(/\/+$/, "")}/confirm`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ sessionId: paidSession }) }).catch(() => {});
+  }
   setTimeout(() => fromStripe === "paid"
     ? notice("Back from Stripe", "You bought a spot!", "Thank you for funding my portfolio. Your ad goes up as soon as I've had a look at it, usually within a day.", "Back to the site")
     : notice("Back from Stripe", "Changed your mind?", "No charge, no hard feelings. The banner will be right here when you're ready.", "Back to the site"), 500);
