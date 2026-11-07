@@ -130,7 +130,7 @@ main { padding: calc(var(--bar) + 14px) 0 clamp(56px, 9vh, 120px); }
 .js:not(.reduce) .about s.hl { background-size: 100% 100%; }
 
 /* Banner: ad space for sale, sold in squares, on a strip that runs down the right side of the whole site. */
-:root { --rail: clamp(180px, 15vw, 290px); }
+:root { --rail: clamp(220px, 19vw, 360px); }
 body { padding-right: var(--rail); }
 .rail {
   position: fixed; z-index: 20; right: 0; bottom: 0; top: calc(var(--bar) + env(safe-area-inset-top, 0px));
@@ -439,13 +439,13 @@ body.locked { overflow: hidden; }
 
 @media (max-width: 899px) {
   /* The banner strip: a thin tab down the side until it's opened, then wide, with the panel next to it. */
-  :root { --rail: 26px; --rail-open: max(176px, 50vw); }
+  :root { --rail: 32px; --rail-open: max(190px, 54vw); }
   .rail { padding: 0; }
   .rail-head, .rail-view { display: none; }
   .rail-tab {
     all: unset; box-sizing: border-box; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
     cursor: pointer; background: var(--yellow); color: var(--ink); writing-mode: vertical-rl;
-    font: 700 12px/1 var(--ui); letter-spacing: .01em; white-space: nowrap;
+    font: 700 13px/1 var(--ui); letter-spacing: .01em; white-space: nowrap;
   }
   .rail-tab:focus-visible { outline: 2px solid var(--guide); outline-offset: -3px; }
   html:has(.bn-open), body.bn-open { overflow: hidden; }
