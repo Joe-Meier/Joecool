@@ -141,7 +141,10 @@ body { padding-right: var(--rail); }
   display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px 10px;
   margin-bottom: 8px; font: 500 12px/1.2 var(--ui); letter-spacing: 0; color: var(--label);
 }
-.rail-buy { all: unset; cursor: pointer; padding: 5px 10px; border-radius: 999px; background: var(--yellow); color: var(--ink); font: 600 12px/1 var(--ui); letter-spacing: 0; }
+.rail-buy {
+  all: unset; box-sizing: border-box; cursor: pointer; flex: 1 1 100%; padding: 14px 18px; border-radius: 999px; text-align: center;
+  background: var(--yellow); color: var(--ink); font: 700 clamp(16px, 1.3vw, 20px)/1 var(--font); letter-spacing: -0.02em;
+}
 .rail-buy:hover { background: #fff; }
 .rail-buy:focus-visible { outline: 2px solid var(--guide); outline-offset: 2px; }
 .bn-open .rail-buy { visibility: hidden; }
@@ -564,7 +567,7 @@ body.locked { overflow: hidden; }
 
 <aside class="rail" id="banner" aria-label="Banner ad space for sale">
   <button class="rail-tab" type="button" id="rail-tab">Your ad here</button>
-  <div class="rail-head"><span>Banner (for sale)</span><button class="rail-buy" type="button" id="rail-buy">Buy a spot</button></div>
+  <div class="rail-head"><span>Banner (for sale)</span><button class="rail-buy" type="button" id="rail-buy">Buy a spot ↗</button></div>
   <div class="rail-view" id="rail-view">
     <div class="bn" id="bn" tabindex="0" aria-label="Ad space for sale. Drag, or use the arrow keys, to pick a spot. Shift and the arrow keys change its size.">
       <div class="bn-ad" id="bn-ad" aria-hidden="true"></div>
