@@ -132,13 +132,13 @@ main { padding: calc(var(--bar) + 14px) 0 clamp(56px, 9vh, 120px); }
 .banner-w { --w: 1180px; }
 .banner-f { padding: 0; }
 .bn {
-  position: relative; aspect-ratio: 4 / 1; cursor: crosshair; touch-action: none; user-select: none; -webkit-user-select: none;
+  position: relative; aspect-ratio: 32 / 10; cursor: crosshair; touch-action: none; user-select: none; -webkit-user-select: none;
   background: var(--yellow); color: var(--ink);
 }
 .bn::after {
   content: ""; position: absolute; inset: 0; pointer-events: none;
   background-image: linear-gradient(to right, rgba(13, 13, 13, .09) 1px, transparent 1px), linear-gradient(to bottom, rgba(13, 13, 13, .09) 1px, transparent 1px);
-  background-size: calc(100% / var(--cols, 32)) calc(100% / var(--rows, 8));
+  background-size: calc(100% / var(--cols, 32)) calc(100% / var(--rows, 10));
 }
 .bn:focus { outline: none; }
 .bn:focus-visible { outline: 2px solid var(--guide); outline-offset: 4px; }
@@ -160,6 +160,20 @@ main { padding: calc(var(--bar) + 14px) 0 clamp(56px, 9vh, 120px); }
   background: var(--sc); color: #fff; font: 600 11px/1 var(--ui); letter-spacing: 0; font-variant-numeric: tabular-nums;
 }
 .bn-sel.up b { top: auto; bottom: calc(100% + 7px); }
+/* Once it's theirs, the selection can be grabbed: drag inside to move it, drag a corner to scale it. */
+.bn-sel.live { pointer-events: auto; cursor: move; }
+.bn-sel.live i { pointer-events: auto; }
+.bn-sel.live i::before { content: ""; position: absolute; inset: -9px; }
+.bn-sel.live i[data-h="nw"], .bn-sel.live i[data-h="se"] { cursor: nwse-resize; }
+.bn-sel.live i[data-h="ne"], .bn-sel.live i[data-h="sw"] { cursor: nesw-resize; }
+.bn-sel.has-ad { background: transparent; }
+.bn.dragging, .bn.dragging * { cursor: grabbing !important; }
+.bn-act { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+.btn.bn-up { --t: var(--paper); position: relative; padding: 14px 20px; overflow: hidden; }
+.bn-up input { position: absolute; inset: 0; width: 100%; opacity: 0; cursor: pointer; }
+.bn-up:focus-within { outline: 2px solid var(--guide); outline-offset: 3px; }
+.bn-size { display: flex; align-items: center; gap: 10px; font: 500 13px/1 var(--ui); letter-spacing: 0; color: #c9c9c9; }
+.bn-size input { width: 130px; accent-color: var(--yellow); }
 .bn-foot { display: flex; justify-content: space-between; align-items: center; gap: 14px 24px; flex-wrap: wrap; margin-top: 30px; min-height: 52px; }
 .bn-foot p { margin: 0; max-width: 52ch; font: 500 14px/1.4 var(--ui); letter-spacing: 0; color: #c9c9c9; }
 #bn-buy { --t: var(--paper); --c: var(--ink); padding: 14px 20px; }
@@ -456,16 +470,20 @@ body.locked { overflow: hidden; }
   <section class="fw banner-w" id="banner">
     <div class="flabel"><span>Banner (for sale)</span><span class="dim"></span></div>
     <div class="frame banner-f">
-      <div class="bn" id="bn" tabindex="0" aria-label="Ad space for sale. Drag, or use the arrow keys, to pick a spot.">
+      <div class="bn" id="bn" tabindex="0" aria-label="Ad space for sale. Drag, or use the arrow keys, to pick a spot. Shift and the arrow keys change its size.">
         <div class="bn-ad" aria-hidden="true"><b>Your ad here.</b><span>LinkedIn won't let me sell my banner, so I'm selling this one.</span></div>
         <div class="bn-sold" id="bn-sold"></div>
         <img class="bn-preview" id="bn-preview" alt="" hidden>
-        <div class="bn-sel" id="bn-sel" hidden><i></i><i></i><i></i><i></i><b id="bn-badge"></b></div>
+        <div class="bn-sel" id="bn-sel" hidden><i data-h="nw"></i><i data-h="ne"></i><i data-h="sw"></i><i data-h="se"></i><b id="bn-badge"></b></div>
       </div>
     </div>
     <div class="bn-foot">
       <p id="bn-hint"></p>
-      <button class="btn" type="button" id="bn-buy" hidden>Buy this spot ↗</button>
+      <div class="bn-act">
+        <label class="btn ghost bn-up"><span id="bn-up-label">Upload your ad</span><input type="file" id="bn-img" accept="image/png,image/jpeg,image/webp,image/gif"></label>
+        <label class="bn-size" id="bn-size" hidden>Size <input type="range" id="bn-scale" min="1" max="32" step="1" value="8"></label>
+        <button class="btn" type="button" id="bn-buy" hidden>Buy this spot ↗</button>
+      </div>
     </div>
     <form class="bn-co" id="bn-co" hidden novalidate>
       <div class="flabel"><span>Checkout</span><span class="dim"></span></div>
@@ -480,13 +498,12 @@ body.locked { overflow: hidden; }
           <label><b>Company <span>(optional)</span></b><input name="company" autocomplete="organization"></label>
           <label><b>Where your ad links to <span>(optional)</span></b><input name="url" type="url" inputmode="url" placeholder="https://"></label>
         </div>
-        <label class="co-file"><input type="file" id="co-img" accept="image/png,image/jpeg,image/webp,image/gif"><span id="co-file-label">Upload your ad (PNG or JPG). It's cropped to fill your spot, and you'll see it on the banner.</span></label>
         <p class="co-err" id="co-err" role="alert" hidden></p>
         <div class="co-actions">
           <button class="btn" type="submit" id="co-pay">Pay on Stripe ↗</button>
           <button class="co-cancel" type="button" id="co-cancel">Cancel</button>
         </div>
-        <p class="co-fine">Card details go straight to Stripe, never to this site. Your ad goes up once I've had a look at it, usually within a day.</p>
+        <p class="co-fine">Card details go straight to Stripe, never to this site. Your ad goes up once I've had a look at it, usually within a day. If I don't put it up, you get your money back.</p>
       </div>
     </form>
   </section>
@@ -676,12 +693,13 @@ $("#cards").innerHTML = WORKS.map((w) => `
 
 const LINKEDIN_PROFILE = "https://www.linkedin.com/in/josephlmeier/";
 
-// The banner under About: ad space for sale, in blocks on a cols × rows grid (a 1584 × 396 LinkedIn-banner shape).
-// pricePerBlock: dollars per block, or null to keep it "DM me". buyUrl: where "Buy" goes (null = your LinkedIn, for a DM).
-// sold: spots already bought, in blocks from the top left: { x: 0, y: 0, w: 4, h: 2, image: "banner/acme.png", url: "https://...", name: "Acme" }
+// The banner under About: ad space for sale, in squares on a cols × rows grid.
+// pricePerBlock: dollars per square, or null to keep it "DM me". buyUrl: where "Buy" goes (null = your LinkedIn, for a DM).
+// sold: spots you add by hand, in squares from the top left: { x: 0, y: 0, w: 4, h: 2, image: "banner/acme.png", url: "https://...", name: "Acme" }.
+// Ads you approve on the server's /admin page don't go here: they land in banner/ads.json and show up on their own.
 // checkoutApi: the address of your banner-backend server (e.g. "https://banner-backend.onrender.com"). Once it's set, buyers
 // upload their ad and pay on Stripe, and the server's PRICE_PER_BLOCK sets the price. Until then, "Pay" falls back to a LinkedIn DM.
-const BANNER = { cols: 32, rows: 8, pricePerBlock: null, termMonths: 6, checkoutApi: null, buyUrl: null, sold: [] };
+const BANNER = { cols: 32, rows: 10, pricePerBlock: 3, termMonths: 6, checkoutApi: null, buyUrl: null, sold: [] };
 
 // LinkedIn impressions: your all-time running total at the end of each month. Add a row each month; the last row is "now".
 // Set sample to false once these are your real numbers.
@@ -1034,7 +1052,7 @@ document.querySelectorAll(".card").forEach((card) => {
 /* ---------- jo's cursor: follows you around ---------- */
 let pcx = innerWidth * 0.7, pcy = innerHeight * 0.78;
 addEventListener("pointermove", (e) => { if (e.pointerType === "mouse") { pcx = e.clientX; pcy = e.clientY; } }, { passive: true });
-addEventListener("pointerdown", (e) => { if (e.pointerType !== "mouse") { pcx = e.clientX; pcy = e.clientY; } }, { passive: true });
+addEventListener("pointerdown", (e) => { if (e.pointerType !== "mouse" && !e.target.closest?.("#bn")) { pcx = e.clientX; pcy = e.clientY; } }, { passive: true });
 setTimeout(() => { if (joe.mode === "wait") joe.mode = "follow"; }, REDUCE ? 0 : 1600);
 
 /* ---------- LinkedIn: jo drafts a post, live, and the crew shoots down the first few ---------- */
@@ -1387,71 +1405,215 @@ $("#np").innerHTML = NOTABLE.map((p, i) => {
 sizeLabels();
 
 /* ---------- Banner: ad space for sale, right under jo's name ---------- */
-// Visitors drag across it to pick a spot (snapped to blocks, with a size and price badge, like selecting in a design file),
-// then "Buy" opens a checkout under the banner (see Banner checkout below).
-const bn = $("#bn"), bnSel = $("#bn-sel"), bnBadge = $("#bn-badge"), bnBuy = $("#bn-buy");
+// Visitors drag across it to pick a spot, or upload their ad first. Either way they get a selection snapped to squares,
+// like in a design file: drag it to move it, drag a corner (or the Size slider) to scale it, and the price keeps up.
+// "Buy" opens a checkout under the banner (see Banner checkout below).
+const bn = $("#bn"), bnSel = $("#bn-sel"), bnBadge = $("#bn-badge"), bnBuy = $("#bn-buy"), bnPreview = $("#bn-preview");
+const bnFile = $("#bn-img"), bnUpLabel = $("#bn-up-label"), bnSize = $("#bn-size"), bnScale = $("#bn-scale");
+const money = (n) => n.toLocaleString("en-US", { style: "currency", currency: "USD" });
+const pct = (v, n) => (100 * v) / n + "%";
 bn.style.setProperty("--cols", BANNER.cols);
 bn.style.setProperty("--rows", BANNER.rows);
-$("#bn-sold").innerHTML = BANNER.sold.map((s) => `<a class="bn-spot" href="${s.url ? esc(s.url) : "#"}" target="_blank" rel="noopener sponsored" title="${esc(s.name || "")}"
-  style="left:${(100 * s.x) / BANNER.cols}%;top:${(100 * s.y) / BANNER.rows}%;width:${(100 * s.w) / BANNER.cols}%;height:${(100 * s.h) / BANNER.rows}%">${
-  s.image ? `<img src="${esc(s.image)}" alt="${esc(s.name || "")}">` : esc(s.name || "")}</a>`).join("");
+bn.style.aspectRatio = `${BANNER.cols} / ${BANNER.rows}`;
+
+function renderSold() {
+  $("#bn-sold").innerHTML = BANNER.sold.map((s) => `<a class="bn-spot" href="${s.url ? esc(s.url) : "#"}" target="_blank" rel="noopener sponsored" title="${esc(s.name || "")}"
+    style="left:${pct(s.x, BANNER.cols)};top:${pct(s.y, BANNER.rows)};width:${pct(s.w, BANNER.cols)};height:${pct(s.h, BANNER.rows)}">${
+    s.image ? `<img src="${esc(s.image)}" alt="${esc(s.name || "")}">` : esc(s.name || "")}</a>`).join("");
+}
+renderSold();
+// Ads jo has approved get committed next to this page as banner/ads.json, so they show up here on their own.
+if (location.protocol !== "file:") fetch("banner/ads.json", { cache: "no-cache" }).then((r) => (r.ok ? r.json() : [])).then((ads) => {
+  if (!Array.isArray(ads) || !ads.length) return;
+  BANNER.sold = [...BANNER.sold, ...ads.filter((a) => [a.x, a.y, a.w, a.h].every(Number.isInteger))];
+  renderSold();
+  if (spot) showPick(spot);
+}).catch(() => {});
 
 let spot = null, bnDrag = null;
-const pct = (v, n) => (100 * v) / n + "%";
+let adImg = null, adUrl = null, adType = "image/jpeg", adName = "";
+const adAspect = () => (adImg ? adImg.naturalWidth / adImg.naturalHeight : 1);
 const takenSpot = (p) => BANNER.sold.some((s) => p.x < s.x + s.w && s.x < p.x + p.w && p.y < s.y + s.h && s.y < p.y + p.h);
+const squares = (n) => (n === 1 ? "1 square" : `${n} squares`);
+
+function bnHintText() {
+  const price = BANNER.pricePerBlock ? `Every square is ${money(BANNER.pricePerBlock)}, for ${BANNER.termMonths} months.` : "Price on request, which means DM me.";
+  const touch = !matchMedia("(hover: hover) and (pointer: fine)").matches;
+  $("#bn-hint").textContent = adImg
+    ? `Drag your ad to move it. ${touch ? "Use Size" : "Drag a corner, or use Size,"} to scale it. ${price}`
+    : `Drag across the banner to pick a spot, or upload your ad and scale it to fit. ${price}`;
+}
+
 function showPick(p, demo = null) {
   spot = demo ? null : p;
-  if (!p) { bnSel.hidden = true; bnBuy.hidden = true; return; }
+  bnSel.classList.toggle("live", !!spot);
+  bnSel.classList.toggle("has-ad", !!(spot && adImg));
+  if (!p) { bnSel.hidden = true; bnBuy.hidden = true; placeAd(); return; }
   bnSel.hidden = false;
   Object.assign(bnSel.style, { left: pct(p.x, BANNER.cols), top: pct(p.y, BANNER.rows), width: pct(p.w, BANNER.cols), height: pct(p.h, BANNER.rows) });
-  const n = p.w * p.h, taken = takenSpot(p);
-  bnBadge.textContent = demo || (taken ? "Already taken" :
-    `${p.w} × ${p.h} block${n === 1 ? "" : "s"}${BANNER.pricePerBlock ? ` · $${fmtFull(n * BANNER.pricePerBlock)}` : ""}`);
+  const n = p.w * p.h, taken = takenSpot(p), total = BANNER.pricePerBlock ? n * BANNER.pricePerBlock : null;
+  bnBadge.textContent = demo || (taken ? "Already taken" : `${p.w} × ${p.h} · ${squares(n)}${total ? ` · ${money(total)}` : ""}`);
   bnSel.classList.toggle("taken", taken && !demo);
   bnSel.classList.toggle("up", p.y + p.h === BANNER.rows && p.y > 0);
   bnBuy.hidden = !!demo || taken;
-  bnBuy.textContent = n === 1 ? "Buy this block ↗" : `Buy these ${n} blocks ↗`;
-  if (!demo && !co.hidden && !bnDrag) coSummary();
+  bnBuy.textContent = total ? `Buy for ${money(total)} ↗` : `Buy ${n === 1 ? "this square" : `these ${n} squares`} ↗`;
+  if (spot && adImg) bnScale.value = spot.w;
+  placeAd();
+  if (!demo && !co.hidden) coSummary();
 }
-function cellAt(e) {
+
+// The ad sits right in the spot, cropped to fill it, so they see what they're paying for.
+function placeAd() {
+  if (!adImg || !spot) { bnPreview.hidden = true; return; }
+  if (bnPreview.src !== adUrl) bnPreview.src = adUrl;
+  Object.assign(bnPreview.style, { left: pct(spot.x, BANNER.cols), top: pct(spot.y, BANNER.rows), width: pct(spot.w, BANNER.cols), height: pct(spot.h, BANNER.rows) });
+  bnPreview.hidden = false;
+}
+
+// Scales the spot to w squares wide, keeping the ad's shape and staying on the banner.
+function sized(p, w) {
+  const a = adAspect();
+  w = clamp(Math.round(w), 1, BANNER.cols);
+  let h = clamp(Math.round(w / a), 1, BANNER.rows);
+  if (Math.round(w / a) > BANNER.rows) w = clamp(Math.round(h * a), 1, BANNER.cols);
+  return { x: clamp(p.x, 0, BANNER.cols - w), y: clamp(p.y, 0, BANNER.rows - h), w, h };
+}
+const maxW = () => sized({ x: 0, y: 0 }, BANNER.cols).w;
+
+// Somewhere free for a freshly uploaded ad, near the middle-right.
+function freeSpot(w) {
+  for (let size = w; size >= 1; size--) {
+    const s = sized({ x: 0, y: 0 }, size), want = [BANNER.cols * 0.62 - s.w / 2, (BANNER.rows - s.h) / 2];
+    let best = null, bestD = Infinity;
+    for (let y = 0; y + s.h <= BANNER.rows; y++) for (let x = 0; x + s.w <= BANNER.cols; x++) {
+      const p = { x, y, w: s.w, h: s.h }, d = Math.hypot(x - want[0], y - want[1]);
+      if (d < bestD && !takenSpot(p)) { best = p; bestD = d; }
+    }
+    if (best) return best;
+  }
+  return sized({ x: 0, y: 0 }, 1);
+}
+
+function cellF(e) {
   const r = bn.getBoundingClientRect();
-  return [
-    clamp(Math.floor(((e.clientX - r.left) / r.width) * BANNER.cols), 0, BANNER.cols - 1),
-    clamp(Math.floor(((e.clientY - r.top) / r.height) * BANNER.rows), 0, BANNER.rows - 1)
-  ];
+  return [((e.clientX - r.left) / r.width) * BANNER.cols, ((e.clientY - r.top) / r.height) * BANNER.rows];
 }
+const cellAt = (e) => { const [fx, fy] = cellF(e); return [clamp(Math.floor(fx), 0, BANNER.cols - 1), clamp(Math.floor(fy), 0, BANNER.rows - 1)]; };
+
 bn.addEventListener("pointerdown", (e) => {
   if (e.button !== 0 || e.target.closest(".bn-spot")) return;
   stopDemo();
   e.preventDefault();
   bn.setPointerCapture(e.pointerId);
-  const [x, y] = cellAt(e);
-  bnDrag = { x, y };
-  showPick({ x, y, w: 1, h: 1 });
+  const [fx, fy] = cellF(e), corner = e.target.closest("[data-h]");
+  if (spot && corner) {
+    bnDrag = { mode: "scale", corner: corner.dataset.h, start: { ...spot } };
+  } else if (spot && fx >= spot.x && fx <= spot.x + spot.w && fy >= spot.y && fy <= spot.y + spot.h) {
+    bnDrag = { mode: "move", start: { ...spot }, from: [fx, fy] };
+  } else {
+    const [x, y] = cellAt(e);
+    bnDrag = { mode: "draw", x, y };
+    showPick(adImg ? sized({ x, y }, 1) : { x, y, w: 1, h: 1 });
+  }
+  bn.classList.add("dragging");
 });
 bn.addEventListener("pointermove", (e) => {
   if (!bnDrag) return;
-  const [x, y] = cellAt(e);
-  showPick({ x: Math.min(x, bnDrag.x), y: Math.min(y, bnDrag.y), w: Math.abs(x - bnDrag.x) + 1, h: Math.abs(y - bnDrag.y) + 1 });
+  const [fx, fy] = cellF(e), s = bnDrag.start;
+  if (bnDrag.mode === "move") {
+    showPick({ ...s, x: clamp(s.x + Math.round(fx - bnDrag.from[0]), 0, BANNER.cols - s.w), y: clamp(s.y + Math.round(fy - bnDrag.from[1]), 0, BANNER.rows - s.h) });
+  } else if (bnDrag.mode === "scale") {
+    // The opposite corner stays put. With an ad, it keeps the ad's shape; without one, it's a free resize.
+    const right = bnDrag.corner.includes("e"), down = bnDrag.corner.includes("s");
+    const ax = right ? s.x : s.x + s.w, ay = down ? s.y : s.y + s.h;
+    const gx = right ? fx - ax : ax - fx, gy = down ? fy - ay : ay - fy;
+    const roomX = right ? BANNER.cols - ax : ax, roomY = down ? BANNER.rows - ay : ay;
+    let w, h;
+    if (adImg) {
+      const a = adAspect();
+      w = clamp(Math.round(Math.max(gx, gy * a)), 1, roomX);
+      h = Math.max(1, Math.round(w / a));
+      if (h > roomY) { h = Math.max(1, roomY); w = clamp(Math.round(h * a), 1, roomX); }
+    } else {
+      w = clamp(Math.round(gx), 1, roomX);
+      h = clamp(Math.round(gy), 1, roomY);
+    }
+    showPick({ x: right ? ax : ax - w, y: down ? ay : ay - h, w, h });
+  } else {
+    const [x, y] = cellAt(e);
+    if (adImg) {
+      // Drawing with an ad loaded: the ad's shape, as wide as the drag.
+      const p = sized({ x: Math.min(x, bnDrag.x), y: Math.min(y, bnDrag.y) }, Math.abs(x - bnDrag.x) + 1);
+      showPick(p);
+    } else {
+      showPick({ x: Math.min(x, bnDrag.x), y: Math.min(y, bnDrag.y), w: Math.abs(x - bnDrag.x) + 1, h: Math.abs(y - bnDrag.y) + 1 });
+    }
+  }
 });
-bn.addEventListener("pointerup", () => { bnDrag = null; if (spot && !co.hidden) coSummary(); });
-bn.addEventListener("pointercancel", () => { bnDrag = null; });
-// Keyboard: arrows move the spot, shift + arrows resize it.
+const endDrag = () => { bnDrag = null; bn.classList.remove("dragging"); };
+bn.addEventListener("pointerup", endDrag);
+bn.addEventListener("pointercancel", endDrag);
+
+// Keyboard: arrows move the spot, shift + arrows resize it (keeping the ad's shape, if there is one).
 bn.addEventListener("keydown", (e) => {
   const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
   if (!d) return;
   e.preventDefault();
   stopDemo();
-  const p = spot ? { ...spot } : { x: 0, y: 0, w: 1, h: 1 };
-  if (e.shiftKey) {
-    p.w = clamp(p.w + d[0], 1, BANNER.cols - p.x);
-    p.h = clamp(p.h + d[1], 1, BANNER.rows - p.y);
+  let p = spot ? { ...spot } : adImg ? freeSpot(8) : { x: 0, y: 0, w: 1, h: 1 };
+  if (e.shiftKey && spot) {
+    if (adImg) p = sized(p, p.w + (d[0] || -d[1]));
+    else { p.w = clamp(p.w + d[0], 1, BANNER.cols - p.x); p.h = clamp(p.h + d[1], 1, BANNER.rows - p.y); }
   } else if (spot) {
     p.x = clamp(p.x + d[0], 0, BANNER.cols - p.w);
     p.y = clamp(p.y + d[1], 0, BANNER.rows - p.h);
   }
   showPick(p);
 });
+
+// Upload: the ad lands on the banner in its own shape, ready to move and scale.
+bnFile.addEventListener("change", () => {
+  const f = bnFile.files[0];
+  if (!f) return;
+  if (!/^image\/(png|jpeg|webp|gif)$/.test(f.type)) { $("#bn-hint").textContent = "That one won't work. Try a PNG, JPG, WebP or GIF."; return; }
+  const url = URL.createObjectURL(f), img = new Image();
+  img.onload = () => {
+    stopDemo();
+    if (adUrl) URL.revokeObjectURL(adUrl);
+    adImg = img; adUrl = url; adType = f.type; adName = f.name;
+    bnScale.max = maxW();
+    bnSize.hidden = false;
+    bnUpLabel.textContent = "Change image";
+    bnHintText();
+    if (spot) showPick(sized(spot, Math.sqrt(spot.w * spot.h * adAspect())));
+    else showPick(freeSpot(Math.round(BANNER.cols * 0.3)));
+    if (!co.hidden) coSummary();
+    bn.focus({ preventScroll: true });
+  };
+  img.onerror = () => { URL.revokeObjectURL(url); $("#bn-hint").textContent = "That image didn't load. Try another one?"; };
+  img.src = url;
+});
+bnScale.addEventListener("input", () => { if (spot) showPick(sized(spot, +bnScale.value)); });
+
+// jo's cursor keeps out of the way while someone's over the banner: it steps off it and waits.
+let overBn = false, joeParked = false;
+function parkJoe() {
+  if (joeParked || joe.mode !== "follow") return;
+  joeParked = true;
+  const r = R(bn);
+  if (joe.x > r.x - 40 && joe.x < r.x + r.w + 20 && joe.y > r.y - 40 && joe.y < r.y + r.h + 30) {
+    const above = joe.y - r.y < r.y + r.h - joe.y;
+    joe.move(clamp(joe.x, r.x + 10, r.x + r.w - 130), above ? r.y - 46 : r.y + r.h + 14, 420);
+  }
+}
+bn.addEventListener("pointerenter", (e) => {
+  if (e.pointerType !== "mouse") return;
+  overBn = true;
+  joeParked = false;
+  parkJoe();
+});
+bn.addEventListener("pointermove", (e) => { if (overBn && e.pointerType === "mouse") parkJoe(); });
+bn.addEventListener("pointerleave", () => { overBn = false; });
 
 // A potential advertiser drops by, eyes up a spot, and changes their mind. Nobody's bought one yet.
 const ADVERTISER = { name: "Potential advertiser", color: "#ff7a00", ink: "#fff" };
@@ -1464,7 +1626,7 @@ function stopDemo() {
   if (adv) { adv.release(); adv.move(adv.x + 260, adv.y - 120, 600); }
 }
 async function bannerDemo() {
-  if (REDUCE || spot || bnDrag || state) return;
+  if (REDUCE || spot || bnDrag || state || adImg) return;
   const token = ++demoToken, live = () => token === demoToken;
   demoOn = true;
   adv = adv || new Cursor(ADVERTISER);
@@ -1478,10 +1640,8 @@ async function bannerDemo() {
     if (!live()) return;
     const cx = sx + (ex - sx) * p, cy = sy + (ey - sy) * p;
     adv.set(...at(cx, cy));
-    const x = Math.round(cx), y = Math.round(cy);
-    showPick({ x: sx, y: sy, w: x - sx + 1, h: y - sy + 1 }, true);
-    const n = (x - sx + 1) * (y - sy + 1);
-    bnBadge.textContent = `${x - sx + 1} × ${y - sy + 1} block${n === 1 ? "" : "s"}${BANNER.pricePerBlock ? ` · $${fmtFull(n * BANNER.pricePerBlock)}` : ""}`;
+    const x = Math.round(cx), y = Math.round(cy), w = x - sx + 1, h = y - sy + 1;
+    showPick({ x: sx, y: sy, w, h }, `${w} × ${h} · ${squares(w * h)}${BANNER.pricePerBlock ? ` · ${money(w * h * BANNER.pricePerBlock)}` : ""}`);
   });
   if (!live()) return;
   adv.release();
@@ -1503,52 +1663,41 @@ const bnIO = new IntersectionObserver((es) => es.forEach((e) => {
 }), { threshold: 0.9 });
 bnIO.observe(bn);
 
-/* ---------- Banner checkout: pick a spot, upload the ad, pay on Stripe ---------- */
-// With BANNER.checkoutApi set, the form sends the spot and the ad to banner-backend, which sets the price and
-// hands back a Stripe Checkout page. Without it, "Pay" falls back to a LinkedIn DM.
-const co = $("#bn-co"), coPay = $("#co-pay"), coErr = $("#co-err"), coImg = $("#co-img"), bnPreview = $("#bn-preview");
+/* ---------- Banner checkout: their details, then Stripe ---------- */
+// With BANNER.checkoutApi set, the form sends the spot and the ad to banner-backend, which sets the price, saves the
+// order and hands back a Stripe Checkout page. Once they've paid, jo approves it on the server's /admin page and it
+// goes up on the banner. Without checkoutApi, "Pay" falls back to a LinkedIn DM.
+const co = $("#bn-co"), coPay = $("#co-pay"), coErr = $("#co-err");
 const api = (path) => BANNER.checkoutApi.replace(/\/+$/, "") + path;
-const money = (n) => n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: n % 1 ? 2 : 0 });
-let adImg = null, adType = "image/jpeg", adData = null;
-
-function bnHintText() {
-  $("#bn-hint").textContent = "Drag across the banner to pick your spot. It's sold in blocks" + (
-    BANNER.pricePerBlock ? `, ${money(BANNER.pricePerBlock)} each for ${BANNER.termMonths} months.` :
-    BANNER.checkoutApi ? `, for ${BANNER.termMonths} months.` : ". Price on request, which means DM me.");
-}
 bnHintText();
-// Until the server is set up, skip the form: "Pay" just opens a LinkedIn DM.
-for (const el of co.querySelectorAll(".co-grid, .co-file, .co-fine")) el.hidden = !BANNER.checkoutApi;
+// Until the server is set up, skip the form fields: "Pay" just opens a LinkedIn DM.
+for (const el of co.querySelectorAll(".co-grid, .co-fine")) el.hidden = !BANNER.checkoutApi;
 
 function coError(msg) { coErr.textContent = msg || ""; coErr.hidden = !msg; return false; }
 
-// The ad, cropped to fill the spot, shown right on the banner so they see what they're buying.
-function renderAd() {
-  if (!adImg || !spot || co.hidden) { bnPreview.hidden = true; adData = null; return; }
-  const W = spot.w * 100, H = spot.h * 100, c = document.createElement("canvas");
+// The ad, cropped to the spot at 80px a square, the way it'll go up.
+function adFile() {
+  const W = spot.w * 80, H = spot.h * 80, c = document.createElement("canvas");
   c.width = W; c.height = H;
   const g = c.getContext("2d"), s = Math.max(W / adImg.naturalWidth, H / adImg.naturalHeight);
-  const dw = adImg.naturalWidth * s, dh = adImg.naturalHeight * s;
-  const png = adType === "image/png";
+  const dw = adImg.naturalWidth * s, dh = adImg.naturalHeight * s, png = adType === "image/png";
   if (!png) { g.fillStyle = "#fff"; g.fillRect(0, 0, W, H); }
   g.drawImage(adImg, (W - dw) / 2, (H - dh) / 2, dw, dh);
-  adData = c.toDataURL(png ? "image/png" : "image/jpeg", 0.9);
-  if (png && adData.length * 0.75 > 3.5e6) adData = c.toDataURL("image/jpeg", 0.9);
-  bnPreview.src = adData;
-  Object.assign(bnPreview.style, { left: pct(spot.x, BANNER.cols), top: pct(spot.y, BANNER.rows), width: pct(spot.w, BANNER.cols), height: pct(spot.h, BANNER.rows) });
-  bnPreview.hidden = false;
+  let data = c.toDataURL(png ? "image/png" : "image/jpeg", 0.88);
+  if (png && data.length * 0.75 > 3.5e6) data = c.toDataURL("image/jpeg", 0.88);
+  return data;
 }
 
 function coSummary() {
   if (!spot) return;
   const n = spot.w * spot.h, total = BANNER.pricePerBlock ? n * BANNER.pricePerBlock : null;
-  $("#co-spot").textContent = `${spot.w} × ${spot.h} block${n === 1 ? "" : "s"}, starting ${spot.x + 1} across and ${spot.y + 1} down, for ${BANNER.termMonths} months.`;
+  $("#co-spot").textContent = `${spot.w} × ${spot.h}, so ${squares(n)}, starting ${spot.x + 1} across and ${spot.y + 1} down, for ${BANNER.termMonths} months.` +
+    (adImg ? ` Your ad: ${adName}.` : " You haven't uploaded your ad yet. The button's under the banner.");
   $("#co-total").textContent = total ? money(total) : BANNER.checkoutApi ? "…" : "Price on request";
   coPay.textContent = !BANNER.checkoutApi ? "Payments open soon. DM me instead ↗" : total ? `Pay ${money(total)} on Stripe ↗` : "Continue to Stripe ↗";
   const taken = takenSpot(spot);
   coPay.disabled = taken;
   coError(taken ? "Someone already bought part of that spot. Pick another one up top." : "");
-  renderAd();
 }
 
 bnBuy.addEventListener("click", (e) => {
@@ -1558,32 +1707,15 @@ bnBuy.addEventListener("click", (e) => {
   coSummary();
   sizeLabels();
   co.scrollIntoView({ behavior: REDUCE ? "auto" : "smooth", block: "nearest" });
-  setTimeout(() => co.querySelector("input[name=name]").focus({ preventScroll: true }), REDUCE ? 0 : 450);
+  if (BANNER.checkoutApi) setTimeout(() => co.querySelector("input[name=name]").focus({ preventScroll: true }), REDUCE ? 0 : 450);
 });
-$("#co-cancel").addEventListener("click", () => { co.hidden = true; renderAd(); bn.focus({ preventScroll: true }); });
-
-coImg.addEventListener("change", () => {
-  const f = coImg.files[0];
-  if (!f) return;
-  if (!/^image\/(png|jpeg|webp|gif)$/.test(f.type)) { coError("Please pick a PNG, JPG, WebP or GIF."); return; }
-  const img = new Image();
-  img.onload = () => {
-    adImg = img;
-    adType = f.type;
-    $("#co-file-label").textContent = `${f.name}. It's cropped to fill your spot, so check the preview on the banner.`;
-    coImg.closest(".co-file").classList.add("has");
-    coError("");
-    renderAd();
-  };
-  img.onerror = () => coError("That image didn't load. Try another one?");
-  img.src = URL.createObjectURL(f);
-});
+$("#co-cancel").addEventListener("click", () => { co.hidden = true; bn.focus({ preventScroll: true }); });
 
 function bnDM() {
   const n = spot.w * spot.h;
   ask({
     title: "LinkedIn", author: "Joe Meier", url: BANNER.buyUrl || LINKEDIN_PROFILE, c: "var(--paper)", t: "var(--ink)",
-    leaveLine: `You're buying ${n === 1 ? "a block" : `${n} blocks`} of my banner (${spot.w} × ${spot.h}, starting ${spot.x + 1} across, ${spot.y + 1} down). ` +
+    leaveLine: `You're buying ${squares(n)} of my banner (${spot.w} × ${spot.h}, starting ${spot.x + 1} across, ${spot.y + 1} down). ` +
       (BANNER.buyUrl ? "Finish up there, then come straight back." : "DM me that spot on LinkedIn, then come straight back.")
   }, 0);
 }
@@ -1597,7 +1729,7 @@ co.addEventListener("submit", async (e) => {
   if (!customer.name) return coError("Please add your name.");
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customer.email)) return coError("Please add a valid email.");
   if (customer.url && !/^https?:\/\//i.test(customer.url)) customer.url = "https://" + customer.url;
-  if (!adData) return coError("Please upload your ad.");
+  if (!adImg) return coError("Upload your ad first. The button's right under the banner.");
   coError("");
   const label = coPay.textContent;
   coPay.disabled = true;
@@ -1606,7 +1738,7 @@ co.addEventListener("submit", async (e) => {
     const res = await fetch(api("/create-checkout-session"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ customer, selection: { x: spot.x, y: spot.y, width: spot.w, height: spot.h }, image: adData })
+      body: JSON.stringify({ customer, selection: { x: spot.x, y: spot.y, width: spot.w, height: spot.h }, image: adFile() })
     });
     const json = await res.json().catch(() => ({}));
     if (!res.ok || !json.url) throw new Error(json.error || "Checkout is having a moment. Please try again.");
@@ -1647,7 +1779,7 @@ function frame(now) {
     t.update(t.ease(p));
     if (p >= 1) { tweens.delete(t); t.res(); }
   }
-  if (joe.mode === "follow") {
+  if (joe.mode === "follow" && !overBn) {
     const tx = pcx + 22 + scrollX, ty = pcy + 26 + scrollY, k = REDUCE ? 1 : 0.085;
     joe.set(joe.x + (tx - joe.x) * k, joe.y + (ty - joe.y) * k);
   }
