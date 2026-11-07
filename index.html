@@ -257,6 +257,7 @@ main { padding: calc(var(--bar) + 14px) 0 clamp(56px, 9vh, 120px); }
 .post-text b + span { display: block; margin-top: 12px; }
 .post-media { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px; }
 .post-media img { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 6px; background: #eee; }
+.post-media img:only-child { aspect-ratio: auto; }
 .post-meta { margin: 0; font: 500 13px/1.35 var(--ui); letter-spacing: 0; color: var(--grey); }
 .post-meta b { color: var(--ink); font-weight: 600; }
 .post-go { justify-self: start; font: 700 15px/1 var(--font); letter-spacing: -0.01em; color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
@@ -707,6 +708,14 @@ const LI_NUMBERS = [
 // or null to open your recent activity. media: images in posts/. The counts are plain numbers; null skips one.
 const LI_HEADLINE = "Ex Apple | Ex Boyfriend | ACD";
 const POSTS = [
+  {
+    date: null, url: null,
+    text: "Marlboro Mascot walked so Scrub Daddy, Inc. could run.",
+    media: [
+      { src: "posts/marlboro.jpg", alt: "An old photo of a smiling cigarette mascot posing with three kids at a racetrack" }
+    ],
+    impressions: 15777, reactions: 361, comments: 31, reposts: 6
+  },
   {
     date: "Nov 6", url: null,
     text: "Slop em' if you got em'\nMy favorite slop sightings of the week.\n\nGoing to try this as a Friday Series.\nFor now Send me your favorite Slop sightings in my DMs or comments below, I'll set up a submission site this weekend.",
