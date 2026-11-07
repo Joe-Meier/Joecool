@@ -271,19 +271,19 @@ main { padding: calc(var(--bar) + 14px) 0 clamp(56px, 9vh, 120px); }
 .nums-w .sub { min-width: 0; }
 .imp-s { flex: 1.7 1 0; }
 .np-s { flex: 1 1 0; margin-top: clamp(64px, 10vw, 160px); }
-.imp-f { display: grid; gap: clamp(24px, 3vw, 40px); }
+.imp-f { display: grid; gap: clamp(24px, 3vw, 40px); container-type: inline-size; }
 .imp-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px 32px; flex-wrap: wrap; }
-/* The numbers, kept small: a row of stats with a deadpan note under each. */
+/* The numbers, kept small: a row of stats with a label under each. */
 .stats {
   list-style: none; margin: 0; padding: 0 0 clamp(22px, 2.6vw, 36px); border-bottom: 1px solid #e7e7e4;
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 22px clamp(20px, 3vw, 40px);
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px clamp(20px, 3vw, 40px);
 }
 .stats li { display: grid; align-content: start; gap: 8px; }
-.stats b { font-size: clamp(32px, 3.4vw, 52px); font-weight: 700; line-height: .85; letter-spacing: -0.06em; font-variant-numeric: tabular-nums; }
+.stats b { font-size: clamp(28px, 10cqi, 44px); font-weight: 700; line-height: .85; letter-spacing: -0.06em; font-variant-numeric: tabular-nums; }
 .stats span { max-width: 24ch; font: 500 13px/1.35 var(--ui); letter-spacing: 0; color: var(--grey); }
+@container (min-width: 560px) { .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); } .stats b { font-size: clamp(30px, 6.2cqi, 52px); } }
 .imp-head p { margin: 0; }
 .imp-k { font: 500 13px/1.4 var(--ui); letter-spacing: 0; color: var(--grey); }
-.imp-note { max-width: 30ch; font-size: clamp(15px, 1.2vw, 18px); line-height: 1.15; letter-spacing: -0.02em; }
 .imp-chart { position: relative; }
 #imp-svg { display: block; width: 100%; overflow: visible; touch-action: pan-y; }
 #imp-svg:focus { outline: none; }
@@ -550,7 +550,6 @@ body.locked { overflow: hidden; }
         <ul class="stats" id="stats"></ul>
         <div class="imp-head">
           <p class="imp-k" id="imp-k">Impressions, all time</p>
-          <p class="imp-note">Drawn live by me, with the pen tool. The one thing on this site I made myself.</p>
         </div>
         <div class="imp-chart" id="imp-chart">
           <svg id="imp-svg" role="img" tabindex="0"></svg>
@@ -722,11 +721,12 @@ const IMPRESSIONS = {
 };
 
 // The numbers in the LinkedIn section, kept small on purpose. value "impressions" uses the last row above
-// (and counts up while jo's pen draws the chart). says: the line under it.
+// (and counts up while jo's pen draws the chart). says: the label under it.
 const LI_NUMBERS = [
-  { value: "impressions", says: "Impressions. That's when someone scrolls past a post." },
-  { value: "Millions", says: "Likes. Nobody knows what they're for." },
-  { value: "21K", says: "Followers. I've met a few of them." }
+  { value: "impressions", says: "Impressions" },
+  { value: "108K", says: "Engagements" },
+  { value: "Millions", says: "Likes" },
+  { value: "21K", says: "Followers" }
 ];
 
 // Posts that did okay. url: the post's link ("..." menu > Copy link to post). hook: its opening line.
