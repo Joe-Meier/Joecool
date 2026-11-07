@@ -132,13 +132,13 @@ main { padding: calc(var(--bar) + 14px) 0 clamp(56px, 9vh, 120px); }
 .banner-w { --w: 1180px; }
 .banner-f { padding: 0; }
 .bn {
-  position: relative; aspect-ratio: 32 / 10; cursor: crosshair; touch-action: none; user-select: none; -webkit-user-select: none;
+  position: relative; aspect-ratio: 64 / 20; cursor: crosshair; touch-action: none; user-select: none; -webkit-user-select: none;
   background: var(--yellow); color: var(--ink);
 }
 .bn::after {
   content: ""; position: absolute; inset: 0; pointer-events: none;
   background-image: linear-gradient(to right, rgba(13, 13, 13, .09) 1px, transparent 1px), linear-gradient(to bottom, rgba(13, 13, 13, .09) 1px, transparent 1px);
-  background-size: calc(100% / var(--cols, 32)) calc(100% / var(--rows, 10));
+  background-size: calc(100% / var(--cols, 64)) calc(100% / var(--rows, 20));
 }
 .bn:focus { outline: none; }
 .bn:focus-visible { outline: 2px solid var(--guide); outline-offset: 4px; }
@@ -163,7 +163,7 @@ main { padding: calc(var(--bar) + 14px) 0 clamp(56px, 9vh, 120px); }
 /* Once it's theirs, the selection can be grabbed: drag inside to move it, drag a corner to scale it. */
 .bn-sel.live { pointer-events: auto; cursor: move; }
 .bn-sel.live i { pointer-events: auto; }
-.bn-sel.live i::before { content: ""; position: absolute; inset: -9px; }
+.bn-sel.live i::before { content: ""; position: absolute; inset: -5px; }
 .bn-sel.live i[data-h="nw"], .bn-sel.live i[data-h="se"] { cursor: nwse-resize; }
 .bn-sel.live i[data-h="ne"], .bn-sel.live i[data-h="sw"] { cursor: nesw-resize; }
 .bn-sel.has-ad { background: transparent; }
@@ -699,7 +699,7 @@ const LINKEDIN_PROFILE = "https://www.linkedin.com/in/josephlmeier/";
 // Ads you approve on the server's /admin page don't go here: they land in banner/ads.json and show up on their own.
 // checkoutApi: the address of your banner-backend server (e.g. "https://banner-backend.onrender.com"). Once it's set, buyers
 // upload their ad and pay on Stripe, and the server's PRICE_PER_BLOCK sets the price. Until then, "Pay" falls back to a LinkedIn DM.
-const BANNER = { cols: 32, rows: 10, pricePerBlock: 3, termMonths: 6, checkoutApi: null, buyUrl: null, sold: [] };
+const BANNER = { cols: 64, rows: 20, pricePerBlock: 3, termMonths: 6, checkoutApi: null, buyUrl: null, sold: [] };
 
 // LinkedIn impressions: your all-time running total at the end of each month. Add a row each month; the last row is "now".
 // Set sample to false once these are your real numbers.
@@ -1453,6 +1453,9 @@ function showPick(p, demo = null) {
   Object.assign(bnSel.style, { left: pct(p.x, BANNER.cols), top: pct(p.y, BANNER.rows), width: pct(p.w, BANNER.cols), height: pct(p.h, BANNER.rows) });
   const n = p.w * p.h, taken = takenSpot(p), total = BANNER.pricePerBlock ? n * BANNER.pricePerBlock : null;
   bnBadge.textContent = demo || (taken ? "Already taken" : `${p.w} × ${p.h} · ${squares(n)}${total ? ` · ${money(total)}` : ""}`);
+  // Keep the badge on the banner when the spot is near an edge.
+  const W = bn.clientWidth, sl = (p.x / BANNER.cols) * W, half = bnBadge.offsetWidth / 2;
+  bnBadge.style.left = clamp(sl + ((p.w / BANNER.cols) * W) / 2, half, Math.max(half, W - half)) - sl + "px";
   bnSel.classList.toggle("taken", taken && !demo);
   bnSel.classList.toggle("up", p.y + p.h === BANNER.rows && p.y > 0);
   bnBuy.hidden = !!demo || taken;
@@ -1500,14 +1503,24 @@ function cellF(e) {
 }
 const cellAt = (e) => { const [fx, fy] = cellF(e); return [clamp(Math.floor(fx), 0, BANNER.cols - 1), clamp(Math.floor(fy), 0, BANNER.rows - 1)]; };
 
+// Which corner of the spot the pointer is on, if any. The grab zone shrinks with the spot, so small spots can still be moved.
+function cornerAt(e) {
+  const r = bn.getBoundingClientRect(), c = r.width / BANNER.cols;
+  const L = r.left + spot.x * c, T = r.top + spot.y * c, W = spot.w * c, H = spot.h * c;
+  const tol = clamp(Math.min(W, H) * 0.3, 5, 14);
+  for (const [h, x, y] of [["nw", L, T], ["ne", L + W, T], ["sw", L, T + H], ["se", L + W, T + H]]) {
+    if (Math.hypot(e.clientX - x, e.clientY - y) <= tol) return h;
+  }
+  return null;
+}
 bn.addEventListener("pointerdown", (e) => {
   if (e.button !== 0 || e.target.closest(".bn-spot")) return;
   stopDemo();
   e.preventDefault();
   bn.setPointerCapture(e.pointerId);
-  const [fx, fy] = cellF(e), corner = e.target.closest("[data-h]");
-  if (spot && corner) {
-    bnDrag = { mode: "scale", corner: corner.dataset.h, start: { ...spot } };
+  const [fx, fy] = cellF(e), corner = spot && cornerAt(e);
+  if (corner) {
+    bnDrag = { mode: "scale", corner, start: { ...spot } };
   } else if (spot && fx >= spot.x && fx <= spot.x + spot.w && fy >= spot.y && fy <= spot.y + spot.h) {
     bnDrag = { mode: "move", start: { ...spot }, from: [fx, fy] };
   } else {
@@ -1560,7 +1573,7 @@ bn.addEventListener("keydown", (e) => {
   if (!d) return;
   e.preventDefault();
   stopDemo();
-  let p = spot ? { ...spot } : adImg ? freeSpot(8) : { x: 0, y: 0, w: 1, h: 1 };
+  let p = spot ? { ...spot } : adImg ? freeSpot(Math.round(BANNER.cols * 0.3)) : { x: 0, y: 0, w: 1, h: 1 };
   if (e.shiftKey && spot) {
     if (adImg) p = sized(p, p.w + (d[0] || -d[1]));
     else { p.w = clamp(p.w + d[0], 1, BANNER.cols - p.x); p.h = clamp(p.h + d[1], 1, BANNER.rows - p.y); }
@@ -1675,9 +1688,9 @@ for (const el of co.querySelectorAll(".co-grid, .co-fine")) el.hidden = !BANNER.
 
 function coError(msg) { coErr.textContent = msg || ""; coErr.hidden = !msg; return false; }
 
-// The ad, cropped to the spot at 80px a square, the way it'll go up.
+// The ad, cropped to the spot (the whole banner would be 2560px wide), the way it'll go up.
 function adFile() {
-  const W = spot.w * 80, H = spot.h * 80, c = document.createElement("canvas");
+  const px = Math.round(2560 / BANNER.cols), W = spot.w * px, H = spot.h * px, c = document.createElement("canvas");
   c.width = W; c.height = H;
   const g = c.getContext("2d"), s = Math.max(W / adImg.naturalWidth, H / adImg.naturalHeight);
   const dw = adImg.naturalWidth * s, dh = adImg.naturalHeight * s, png = adType === "image/png";
