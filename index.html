@@ -108,6 +108,7 @@ main { padding: calc(var(--bar) + 14px) 0 clamp(56px, 9vh, 120px); }
   .hero-w { --w: 1180px; margin-right: 5vw; margin-left: auto; }
   .work-w { --w: 1360px; }
   .li-w { --w: 1100px; margin-left: 10vw; }
+  .nums-w { margin-right: 8vw; margin-left: auto; }
 }
 
 /* About */
@@ -238,39 +239,29 @@ main { padding: calc(var(--bar) + 14px) 0 clamp(56px, 9vh, 120px); }
 .card .by { font-size: 15px; letter-spacing: -0.01em; }
 @media (hover: none) { .card .go { opacity: 1; transform: none; } }
 
-/* LinkedIn: jo drafts a post, live, in a text box. The crew shoots down the first few drafts. */
-.comp-f {
-  --c: var(--paper); --t: var(--ink);
-  min-height: min(78vh, 760px);
-  display: grid; align-content: space-between; gap: clamp(40px, 6vw, 88px);
-}
-.comp-who { display: flex; align-items: center; gap: 10px; margin: 0; font: 500 13px/1.2 var(--ui); letter-spacing: 0; color: var(--grey); }
-.comp-who b { color: var(--ink); font-weight: 600; }
-.comp-av { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--yellow); color: var(--ink); font: 700 12px/1 var(--ui); }
-.comp-box {
-  margin: 0; min-height: 2.7em; outline: 1px solid transparent; outline-offset: 10px;
-  font-size: clamp(34px, 5.6vw, 96px); font-weight: 700; line-height: .9; letter-spacing: -0.06em;
-  overflow-wrap: anywhere;
-}
-.comp-f:not(.done) .comp-box { outline-color: #0d99ff; }
-.comp-text { box-decoration-break: clone; -webkit-box-decoration-break: clone; }
-.comp-text.hl { background: rgba(13, 153, 255, .28); }
-.comp-caret { display: inline-block; width: max(2px, .035em); height: .8em; margin-left: .03em; vertical-align: -0.07em; background: var(--ink); }
-.comp-box:not(.typing) .comp-caret { animation: blink 1.05s steps(1) infinite; }
-.comp-f.done .comp-caret { display: none; }
-@keyframes blink { 50% { opacity: 0; } }
-.comp-foot { display: flex; justify-content: space-between; align-items: center; gap: 20px 32px; flex-wrap: wrap; }
-.comp-after { margin: 0; font-size: clamp(16px, 1.4vw, 20px); line-height: 1.15; letter-spacing: -0.02em; opacity: 0; transition: opacity .4s; }
-.comp-btns { display: flex; flex-wrap: wrap; gap: 10px; }
-.comp-f:not(.done) #comp-again { visibility: hidden; }
-.comp-f.done .comp-after { opacity: 1; }
+/* LinkedIn: jo's recent posts, newest first, looking more or less like they do on LinkedIn. */
+.posts-f { --c: var(--paper); --t: var(--ink); display: grid; gap: clamp(24px, 3vw, 40px); }
+.posts { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: clamp(16px, 2vw, 28px); align-items: start; }
+.post { display: grid; gap: 14px; padding: clamp(16px, 1.6vw, 22px); border: 1px solid #e3e3e0; border-radius: 10px; }
+.post-who { display: flex; align-items: center; gap: 10px; margin: 0; font: 500 12px/1.35 var(--ui); letter-spacing: 0; color: var(--grey); }
+.post-who b { display: block; color: var(--ink); font-size: 14px; font-weight: 600; }
+.post-av { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--yellow); color: var(--ink); font: 700 13px/1 var(--ui); }
+.post-text { margin: 0; font: 400 15px/1.4 var(--ui); letter-spacing: 0; white-space: pre-line; overflow-wrap: anywhere; }
+.post-text b { display: block; font: 700 clamp(24px, 2.3vw, 34px)/.95 var(--font); letter-spacing: -0.05em; }
+.post-text b + span { display: block; margin-top: 12px; }
+.post-media { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px; }
+.post-media img { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 6px; background: #eee; }
+.post-meta { margin: 0; font: 500 13px/1.35 var(--ui); letter-spacing: 0; color: var(--grey); }
+.post-meta b { color: var(--ink); font-weight: 600; }
+.post-go { justify-self: start; font: 700 15px/1 var(--font); letter-spacing: -0.01em; color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+.post-go:hover { color: var(--blue); }
+.posts-foot { display: flex; justify-content: flex-end; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
-/* LinkedIn numbers: an impressions chart jo draws live with the pen tool, and his notable posts. */
-.nums-w { --w: 1360px; display: flex; align-items: flex-start; gap: clamp(28px, 4vw, 64px); }
+/* LinkedIn numbers: an impressions chart jo draws live with the pen tool. */
+.nums-w { --w: 980px; display: flex; align-items: flex-start; gap: clamp(28px, 4vw, 64px); }
 .nums-w .sub { min-width: 0; }
 .imp-s { flex: 1.7 1 0; }
-.np-s { flex: 1 1 0; margin-top: clamp(64px, 10vw, 160px); }
 .imp-f { display: grid; gap: clamp(24px, 3vw, 40px); container-type: inline-size; }
 .imp-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px 32px; flex-wrap: wrap; }
 /* The numbers, kept small: a row of stats with a label under each. */
@@ -314,19 +305,6 @@ main { padding: calc(var(--bar) + 14px) 0 clamp(56px, 9vh, 120px); }
 .imp-table th { color: var(--grey); }
 .imp-table td + td, .imp-table th + th { text-align: right; padding-right: 0; }
 
-/* Recent posts: instances of one component, like everything else in a design file. */
-.np { list-style: none; margin: 0; padding: 0; display: grid; }
-.np li { display: grid; justify-items: start; gap: 10px; padding: clamp(22px, 2.4vw, 32px) 0; border-top: 1px solid #e7e7e4; }
-.np li:first-child { padding-top: 0; border-top: 0; }
-.np li:last-child { padding-bottom: 0; }
-.np-c { font: 500 11px/1 var(--ui); letter-spacing: 0; color: #9747ff; }
-.np-hook { margin: 0; font-size: clamp(19px, 1.6vw, 24px); font-weight: 700; line-height: 1; letter-spacing: -0.04em; }
-.np-meta { font: 500 13px/1.3 var(--ui); letter-spacing: 0; color: var(--grey); }
-.np-meta b { color: var(--ink); font-weight: 600; }
-.np-bar { justify-self: stretch; height: 6px; }
-.np-bar::before { content: ""; display: block; width: var(--share); height: 100%; border-radius: 0 3px 3px 0; background: var(--blue); }
-.np-go { font: 700 15px/1 var(--font); letter-spacing: -0.01em; color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
-.np-go:hover { color: var(--blue); }
 
 .btn {
   all: unset; box-sizing: border-box; cursor: pointer;
@@ -425,9 +403,7 @@ body.locked { overflow: hidden; }
   .card.big, .card.small { --h: auto; }
   .card .img { aspect-ratio: 4 / 3; }
   .about .notes { margin-left: 0; }
-  .comp-f { min-height: 70vh; }
   .nums-w { flex-direction: column; align-items: stretch; }
-  .np-s { margin-top: 0; }
   .cur .in { transform: scale(.88); }
 }
 @media (max-width: 520px) {
@@ -529,18 +505,11 @@ body.locked { overflow: hidden; }
  <div class="sect li-sect" id="linkedin">
   <span class="sect-name">LinkedIn</span>
   <section class="fw li-w" id="writing">
-    <div class="flabel"><span id="comp-name">Draft 45</span><span class="dim"></span></div>
-    <div class="frame comp-f" id="comp-f">
-      <h2 class="sr" id="comp-h"></h2>
-      <p class="comp-who"><span class="comp-av" aria-hidden="true">JM</span><span><b>Joe Meier</b> · Post to Anyone</span></p>
-      <p class="comp-box" id="comp-box" aria-hidden="true"><span class="comp-text" id="comp-text"></span><span class="comp-caret" id="comp-caret"></span></p>
-      <div class="comp-foot">
-        <p class="comp-after" id="comp-after"></p>
-        <div class="comp-btns">
-          <button class="btn ghost" type="button" id="comp-again">Let me try again</button>
-          <a class="btn" id="follow" href="#" target="_blank" rel="noopener">Read More ↗</a>
-        </div>
-      </div>
+    <div class="flabel"><span>Recent posts</span><span class="dim"></span></div>
+    <div class="frame posts-f">
+      <h2 class="sr">Recent LinkedIn posts</h2>
+      <ol class="posts" id="posts"></ol>
+      <div class="posts-foot"><a class="btn" id="follow" href="#" target="_blank" rel="noopener">Read More ↗</a></div>
     </div>
   </section>
 
@@ -560,12 +529,6 @@ body.locked { overflow: hidden; }
           <span id="imp-asof"></span>
           <details class="imp-table"><summary>See the numbers</summary><table id="imp-table"></table></details>
         </div>
-      </div>
-    </div>
-    <div class="sub np-s">
-      <div class="flabel"><span>Recent posts</span><span class="dim"></span></div>
-      <div class="frame np-f">
-        <ol class="np" id="np"></ol>
       </div>
     </div>
   </section>
@@ -729,11 +692,28 @@ const LI_NUMBERS = [
   { value: "21K", says: "Followers" }
 ];
 
-// Recent posts, newest first (the first three show). url: the post's link ("..." menu > Copy link to post);
-// null opens your recent activity. hook: its opening line. The counts are plain numbers; leave one null to skip it.
-const NOTABLE = [
-  { url: null, hook: "Really proud of LinkedIn for giving so many single mothers a chance.", date: null, impressions: 941132, reactions: 11456, comments: 828, reposts: 122 }
+// Your recent LinkedIn posts, newest first (the first four show). Send a screenshot of a new one and it goes on top.
+// text: the post, with line breaks; its first line is the big one. url: the post's link ("..." menu > Copy link to post),
+// or null to open your recent activity. media: images in posts/. The counts are plain numbers; null skips one.
+const LI_HEADLINE = "Ex Apple | Ex Boyfriend | ACD";
+const POSTS = [
+  {
+    date: "Nov 6", url: null,
+    text: "Slop em' if you got em'\nMy favorite slop sightings of the week.\n\nGoing to try this as a Friday Series.\nFor now Send me your favorite Slop sightings in my DMs or comments below, I'll set up a submission site this weekend.",
+    media: [
+      { src: "posts/slop-1.jpg", alt: "Slop sighting: a deli's breakfast special sign" },
+      { src: "posts/slop-2.jpg", alt: "Slop sighting: a payroll company's ad" }
+    ],
+    impressions: 42221, reactions: 210, comments: 155, reposts: null
+  },
+  {
+    date: null, url: null,
+    text: "Really proud of LinkedIn for giving so many single mothers a chance.",
+    media: [],
+    impressions: 941132, reactions: 11456, comments: 828, reposts: 122
+  }
 ];
+
 if (LINKEDIN_PROFILE) $("#follow").href = LINKEDIN_PROFILE;
 
 $("#people").innerHTML = [...PEOPLE, JOE].map((p) =>
@@ -1053,171 +1033,8 @@ addEventListener("pointermove", (e) => { if (e.pointerType === "mouse") { pcx = 
 addEventListener("pointerdown", (e) => { if (e.pointerType !== "mouse" && !e.target.closest?.("#bn")) { pcx = e.clientX; pcy = e.clientY; } }, { passive: true });
 setTimeout(() => { if (joe.mode === "wait") joe.mode = "follow"; }, REDUCE ? 0 : 1600);
 
-/* ---------- LinkedIn: jo drafts a post, live, and the crew shoots down the first few ---------- */
-// POST is what he always ends up with (it's also the section's headline). DRAFTS are what he tries first,
-// VETOES are what the crew says about them, and AFTER is the line under the post after each go.
-const POST = "I post on LinkedIn. People read it for some reason.";
-const DRAFTS = [
-  "I'm humbled to announce that I'm humbled.",
-  "Agree?",
-  "Here's what my dog taught me about B2B sales 🧵",
-  "Stop scrolling.",
-  "Let that sink in.",
-  "This is the post I was scared to write.",
-  "Unpopular opinion:",
-  "Normally I don't post personal stuff, but",
-  "My barber taught me more about branding than any course.",
-  "Excited to share some exciting news!",
-  "What would you do? 🤔",
-  "I got rejected 200 times. Here's what I learned 👇"
-];
-const VETOES = ["no", "absolutely not", "joe.", "delete that", "please don't", "are you ok", "who is this for", "my eyes", "no ❤️"];
-const AFTER = ["Took me a few drafts.", "Took a few more.", "Same post again.", "It's always this one."];
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const pick = (a) => a[Math.floor(Math.random() * a.length)];
-
-const comp = {
-  frame: $("#comp-f"), box: $("#comp-box"), text: $("#comp-text"), caret: $("#comp-caret"), name: $("#comp-name"),
-  after: $("#comp-after"), again: $("#comp-again"),
-  token: 0, runs: 0, n: 44, running: false, joe: false, crew: new Set(), deck: []
-};
-$("#comp-h").textContent = POST;
-
-const compJoe = () => comp.joe && joe.mode === "script";
-const compLabel = (s) => { comp.name.textContent = s; };
-function compShow(s, hl = false) { comp.text.textContent = s; comp.text.classList.toggle("hl", hl); }
-function nextDraft() {
-  if (!comp.deck.length) comp.deck = DRAFTS.slice().sort(() => Math.random() - 0.5);
-  return comp.deck.pop();
-}
-
-// jo's cursor sits just past the caret while he types.
-function joeAtCaret(dur) {
-  if (!compJoe()) return Promise.resolve(false);
-  const r = R(comp.caret);
-  return joe.move(r.x + 8, r.y + r.h * 0.8, dur, { straight: true });
-}
-
-async function compType(s, live) {
-  comp.box.classList.add("typing");
-  const chars = Array.from(s);
-  for (let i = 1; i <= chars.length; i++) {
-    if (!live()) return false;
-    compShow(chars.slice(0, i).join(""));
-    if (i % 4 === 1 || i === chars.length) joeAtCaret(170);
-    await wait(chars[i - 1] === " " ? rand(70, 140) : rand(30, 80));
-  }
-  comp.box.classList.remove("typing");
-  return live();
-}
-
-// Either drags back across the draft to select it all and deletes it, or just holds backspace.
-async function compErase(live, drag) {
-  if (drag && compJoe()) {
-    const r = R(comp.text);
-    joe.press();
-    await joe.move(r.x + 2, r.y + 12, 420, { straight: true });
-    joe.release();
-    if (!live()) return false;
-    compShow(comp.text.textContent, true);
-    await wait(420);
-    if (!live()) return false;
-    compShow("");
-    joeAtCaret(260);
-    return live();
-  }
-  comp.box.classList.add("typing");
-  const chars = Array.from(comp.text.textContent);
-  while (chars.length) {
-    if (!live()) return false;
-    chars.pop();
-    compShow(chars.join(""));
-    if (chars.length % 6 === 0) joeAtCaret(120);
-    await wait(17);
-  }
-  comp.box.classList.remove("typing");
-  return live();
-}
-
-// Someone from the crew drops in under the draft and says what they think of it.
-async function crewSay(c, line, live, ms) {
-  if (!c || c.mode === "hover" || REDUCE) return null;
-  c.mode = "script";
-  comp.crew.add(c);
-  const r = R(comp.caret), f = R(comp.frame);
-  const x = clamp(r.x - 10, f.x + 24, f.x + f.w - 230), y = Math.min(r.y + r.h + 44, f.y + f.h - 70);
-  if (await c.move(x, y, 750) && live()) c.say(line, ms);
-  return c;
-}
-function crewGo(c) {
-  if (!c) return;
-  c.hush();
-  comp.crew.delete(c);
-  if (c.mode !== "script") return;
-  c.mode = highest >= 3 ? "idle" : "script";
-  // Back up the page, out of the way (in idle, they wander back to their case studies from there).
-  c.move(c.x + rand(-80, 80), Math.min(c.y, scrollY) - rand(160, 320), 1000);
-}
-
-async function compRun(rounds) {
-  if (comp.running || state) return;
-  const token = ++comp.token, live = () => token === comp.token;
-  comp.running = true;
-  comp.frame.classList.remove("done");
-  comp.joe = joe.mode === "follow" || joe.mode === "wait";
-  if (comp.joe) joe.mode = "script";
-  compShow("");
-  compLabel(`Draft ${comp.n + 1}`);
-  await joeAtCaret(700);
-  await wait(250);
-  for (let k = 0; k < rounds; k++) {
-    if (!live()) return;
-    compLabel(`Draft ${++comp.n}`);
-    if (!await compType(nextDraft(), live)) return;
-    await wait(300);
-    const c = await crewSay(crew[(comp.runs + k) % crew.length], pick(VETOES), live, 1800);
-    if (!live()) return;
-    await wait(700);
-    if (!await compErase(live, k % 2 === 1)) return;
-    crewGo(c);
-    await wait(450);
-  }
-  if (!live()) return;
-  compLabel(`Draft ${++comp.n} (final)${comp.runs ? ` (${comp.runs + 1})` : ""}`);
-  if (!await compType(POST, live)) return;
-  const c = await crewSay(crew[(comp.runs + rounds) % crew.length], comp.runs ? pick(["again?", "this one again", "ok"]) : "fine.", live, 1500);
-  if (!live()) return;
-  await wait(1500);
-  crewGo(c);
-  compDone();
-}
-
-// Wraps up: the real post stays, everyone goes back to what they were doing. Also used when they scroll away mid-draft.
-function compDone() {
-  comp.token++;
-  comp.running = false;
-  [...comp.crew].forEach(crewGo);
-  comp.box.classList.remove("typing");
-  compShow(POST);
-  if (!comp.name.textContent.includes("(final)")) compLabel(`Draft ${++comp.n} (final)${comp.runs ? ` (${comp.runs + 1})` : ""}`);
-  comp.after.textContent = AFTER[Math.min(comp.runs, AFTER.length - 1)];
-  comp.runs++;
-  comp.frame.classList.add("done");
-  if (compJoe()) { joe.token++; joe.release(); joe.mode = "follow"; }
-  comp.joe = false;
-  sizeLabels();
-}
-
-if (REDUCE) {
-  compDone();
-  comp.again.hidden = true;
-} else {
-  new IntersectionObserver((es) => es.forEach((e) => {
-    if (e.intersectionRatio >= 0.45 && !comp.runs && !comp.running) compRun(3);
-    else if (e.intersectionRatio < 0.1 && comp.running) compDone();
-  }), { threshold: [0, 0.1, 0.45] }).observe(comp.frame);
-  comp.again.addEventListener("click", () => compRun(2));
-}
 
 /* ---------- LinkedIn numbers: jo draws the impressions chart himself, live, with the pen tool ---------- */
 const fmtBig = (v) => (v >= 1e6 ? +(v / 1e6).toFixed(1) + "M" : v >= 1e3 ? +(v / 1e3).toFixed(v < 1e4 ? 1 : 0) + "K" : String(Math.round(v)));
@@ -1385,19 +1202,18 @@ const penIO = new IntersectionObserver((es) => es.forEach((e) => {
 }), { threshold: 0.7 });
 penIO.observe(imp.svg);
 
-/* ---------- Recent posts ---------- */
-const RECENT = NOTABLE.filter((p) => p.hook).slice(0, 3);
+/* ---------- LinkedIn: recent posts ---------- */
 const ACTIVITY = (LINKEDIN_PROFILE || "https://www.linkedin.com/in/josephlmeier/").replace(/\/?$/, "/recent-activity/all/");
-const npMax = Math.max(0, ...RECENT.map((p) => p.impressions || 0));
-$("#np").innerHTML = RECENT.map((p, i) => {
+$("#posts").innerHTML = POSTS.filter((p) => p.text).slice(0, 4).map((p) => {
+  const [hook, ...rest] = p.text.split("\n"), more = rest.join("\n").trim();
   const n = (v, what) => (v != null ? `<b>${v >= 1e5 ? fmtBig(v) : fmtFull(v)}</b> ${what}` : null);
-  const meta = [n(p.impressions, "impressions"), n(p.reactions, "reactions"), n(p.comments, "comments"), n(p.reposts, "reposts"), p.date ? esc(p.date) : null].filter(Boolean);
-  return `<li>
-    <span class="np-c">◇ ${i ? `Post / ${String(i + 1).padStart(2, "0")}` : "Latest post"}</span>
-    <p class="np-hook">${esc(p.hook)}</p>
-    ${meta.length ? `<span class="np-meta">${meta.join(" · ")}</span>` : ""}
-    ${RECENT.length > 1 && p.impressions && npMax ? `<span class="np-bar" style="--share:${((100 * p.impressions) / npMax).toFixed(1)}%" aria-hidden="true"></span>` : ""}
-    <a class="np-go" href="${esc(p.url || ACTIVITY)}" target="_blank" rel="noopener" data-np="${i}">Read it, then come back ↗</a>
+  const meta = [n(p.reactions, "reactions"), n(p.comments, "comments"), n(p.reposts, "reposts"), n(p.impressions, "impressions")].filter(Boolean);
+  return `<li class="post">
+    <p class="post-who"><span class="post-av" aria-hidden="true">JM</span><span><b>Joe Meier</b>${esc(LI_HEADLINE)}${p.date ? ` · ${esc(p.date)}` : ""}</span></p>
+    <p class="post-text"><b>${esc(hook)}</b>${more ? `<span>${esc(more)}</span>` : ""}</p>
+    ${p.media && p.media.length ? `<div class="post-media">${p.media.map((m) => `<img src="${esc(m.src)}" alt="${esc(m.alt)}" loading="lazy">`).join("")}</div>` : ""}
+    ${meta.length ? `<p class="post-meta">${meta.join(" · ")}</p>` : ""}
+    <a class="post-go" href="${esc(p.url || ACTIVITY)}" target="_blank" rel="noopener">Read it, then come back ↗</a>
   </li>`;
 }).join("");
 sizeLabels();
@@ -2020,9 +1836,9 @@ addEventListener("blur", wentAway);
 addEventListener("focus", cameBack);
 
 $("#stack").addEventListener("click", (e) => {
-  const a = e.target.closest("a.work, #follow, a.np-go");
+  const a = e.target.closest("a.work, #follow, a.post-go");
   if (!a) return;
-  const isPost = a.matches("#follow, a.np-go");
+  const isPost = a.matches("#follow, a.post-go");
   const url = a.id === "follow" ? LINKEDIN_PROFILE : a.href;
   // Placeholder LinkedIn links go nowhere until a real link is filled in.
   if (!url) { e.preventDefault(); return; }
