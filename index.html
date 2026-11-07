@@ -279,7 +279,8 @@ main { padding: calc(var(--bar) + 14px) 0 clamp(56px, 9vh, 120px); }
   display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px clamp(20px, 3vw, 40px);
 }
 .stats li { display: grid; align-content: start; gap: 8px; }
-.stats b { font-size: clamp(28px, 10cqi, 44px); font-weight: 700; line-height: .85; letter-spacing: -0.06em; font-variant-numeric: tabular-nums; }
+.stats[data-n="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.stats b { font-size: clamp(26px, 8.5cqi, 44px); font-weight: 700; line-height: .85; letter-spacing: -0.06em; font-variant-numeric: tabular-nums; }
 .stats span { max-width: 24ch; font: 500 13px/1.35 var(--ui); letter-spacing: 0; color: var(--grey); }
 @container (min-width: 560px) { .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); } .stats b { font-size: clamp(30px, 6.2cqi, 52px); } }
 .imp-head p { margin: 0; }
@@ -313,7 +314,7 @@ main { padding: calc(var(--bar) + 14px) 0 clamp(56px, 9vh, 120px); }
 .imp-table th { color: var(--grey); }
 .imp-table td + td, .imp-table th + th { text-align: right; padding-right: 0; }
 
-/* Notable posts: instances of one component, like everything else in a design file. */
+/* Recent posts: instances of one component, like everything else in a design file. */
 .np { list-style: none; margin: 0; padding: 0; display: grid; }
 .np li { display: grid; justify-items: start; gap: 10px; padding: clamp(22px, 2.4vw, 32px) 0; border-top: 1px solid #e7e7e4; }
 .np li:first-child { padding-top: 0; border-top: 0; }
@@ -562,7 +563,7 @@ body.locked { overflow: hidden; }
       </div>
     </div>
     <div class="sub np-s">
-      <div class="flabel"><span>Posts that did okay</span><span class="dim"></span></div>
+      <div class="flabel"><span>Recent posts</span><span class="dim"></span></div>
       <div class="frame np-f">
         <ol class="np" id="np"></ol>
       </div>
@@ -701,9 +702,9 @@ const LINKEDIN_PROFILE = "https://www.linkedin.com/in/josephlmeier/";
 const BANNER = { cols: 64, rows: 20, pricePerBlock: 1.5, termMonths: 6, checkoutApi: null, buyUrl: null, sold: [] };
 
 // LinkedIn impressions: your all-time running total at the end of each month. Add a row each month; the last row is "now".
-// Set sample to false once these are your real numbers.
+// Set sample to true to flag them as made up.
 const IMPRESSIONS = {
-  sample: true,
+  sample: false,
   months: [
     ["Dec 2025", 2100000],
     ["Jan 2026", 2600000],
@@ -725,16 +726,13 @@ const IMPRESSIONS = {
 const LI_NUMBERS = [
   { value: "impressions", says: "Impressions" },
   { value: "108K", says: "Engagements" },
-  { value: "Millions", says: "Likes" },
   { value: "21K", says: "Followers" }
 ];
 
-// Posts that did okay. url: the post's link ("..." menu > Copy link to post). hook: its opening line.
-// impressions and reactions are plain numbers. Leave anything null and it shows as a placeholder.
+// Recent posts, newest first (the first three show). url: the post's link ("..." menu > Copy link to post);
+// null opens your recent activity. hook: its opening line. The counts are plain numbers; leave one null to skip it.
 const NOTABLE = [
-  { url: null, hook: null, date: null, impressions: null, reactions: null },
-  { url: null, hook: null, date: null, impressions: null, reactions: null },
-  { url: null, hook: null, date: null, impressions: null, reactions: null }
+  { url: null, hook: "Really proud of LinkedIn for giving so many single mothers a chance.", date: null, impressions: 941132, reactions: 11456, comments: 828, reposts: 122 }
 ];
 if (LINKEDIN_PROFILE) $("#follow").href = LINKEDIN_PROFILE;
 
@@ -1232,6 +1230,7 @@ const IMP = IMPRESSIONS.months;
 const imp = { el: $("#imp-chart"), svg: $("#imp-svg"), tip: $("#imp-tip"), drawn: 0, band: null, bandVal: 0, done: false, hot: -1, drawing: false, started: false, joe: false };
 const SVGNS = "http://www.w3.org/2000/svg";
 
+$("#stats").dataset.n = LI_NUMBERS.length;
 $("#stats").innerHTML = LI_NUMBERS.map((n) => n.value === "impressions"
   ? `<li><b id="imp-total">0</b><span>${esc(n.says)}</span></li>`
   : `<li><b>${esc(n.value)}</b><span>${esc(n.says)}</span></li>`).join("");
@@ -1386,20 +1385,19 @@ const penIO = new IntersectionObserver((es) => es.forEach((e) => {
 }), { threshold: 0.7 });
 penIO.observe(imp.svg);
 
-/* ---------- Notable posts ---------- */
-const npMax = Math.max(0, ...NOTABLE.map((p) => p.impressions || 0));
-$("#np").innerHTML = NOTABLE.map((p, i) => {
-  const meta = [
-    p.impressions != null ? `<b>${fmtBig(p.impressions)}</b> impressions` : null,
-    p.reactions != null ? `<b>${fmtFull(p.reactions)}</b> reactions` : null,
-    p.date ? esc(p.date) : null
-  ].filter(Boolean);
+/* ---------- Recent posts ---------- */
+const RECENT = NOTABLE.filter((p) => p.hook).slice(0, 3);
+const ACTIVITY = (LINKEDIN_PROFILE || "https://www.linkedin.com/in/josephlmeier/").replace(/\/?$/, "/recent-activity/all/");
+const npMax = Math.max(0, ...RECENT.map((p) => p.impressions || 0));
+$("#np").innerHTML = RECENT.map((p, i) => {
+  const n = (v, what) => (v != null ? `<b>${v >= 1e5 ? fmtBig(v) : fmtFull(v)}</b> ${what}` : null);
+  const meta = [n(p.impressions, "impressions"), n(p.reactions, "reactions"), n(p.comments, "comments"), n(p.reposts, "reposts"), p.date ? esc(p.date) : null].filter(Boolean);
   return `<li>
-    <span class="np-c">◇ Post that did okay / ${String(i + 1).padStart(2, "0")}</span>
-    <p class="np-hook">${p.hook ? esc(p.hook) : ph("Opening line of a post you send me")}</p>
-    <span class="np-meta">${meta.length ? meta.join(" · ") : ph("Impressions · reactions · date")}</span>
-    ${p.impressions && npMax ? `<span class="np-bar" style="--share:${((100 * p.impressions) / npMax).toFixed(1)}%" aria-hidden="true"></span>` : ""}
-    <a class="np-go" href="${p.url ? esc(p.url) : "#"}" target="_blank" rel="noopener" data-np="${i}">Read it, then come back ↗</a>
+    <span class="np-c">◇ ${i ? `Post / ${String(i + 1).padStart(2, "0")}` : "Latest post"}</span>
+    <p class="np-hook">${esc(p.hook)}</p>
+    ${meta.length ? `<span class="np-meta">${meta.join(" · ")}</span>` : ""}
+    ${RECENT.length > 1 && p.impressions && npMax ? `<span class="np-bar" style="--share:${((100 * p.impressions) / npMax).toFixed(1)}%" aria-hidden="true"></span>` : ""}
+    <a class="np-go" href="${esc(p.url || ACTIVITY)}" target="_blank" rel="noopener" data-np="${i}">Read it, then come back ↗</a>
   </li>`;
 }).join("");
 sizeLabels();
@@ -2025,7 +2023,7 @@ $("#stack").addEventListener("click", (e) => {
   const a = e.target.closest("a.work, #follow, a.np-go");
   if (!a) return;
   const isPost = a.matches("#follow, a.np-go");
-  const url = a.id === "follow" ? LINKEDIN_PROFILE : a.matches(".np-go") ? NOTABLE[+a.dataset.np].url : a.href;
+  const url = a.id === "follow" ? LINKEDIN_PROFILE : a.href;
   // Placeholder LinkedIn links go nowhere until a real link is filled in.
   if (!url) { e.preventDefault(); return; }
   // Let cmd/ctrl/shift/middle clicks open the link straight away.
