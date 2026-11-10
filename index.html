@@ -56,13 +56,15 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--guide); outline
   font: 500 14px/1 var(--ui); letter-spacing: 0;
 }
 .bar a { text-decoration: none; }
+.bar .name { white-space: nowrap; }
 .bar .right { display: flex; align-items: center; gap: clamp(12px, 2vw, 24px); }
-/* Two sections, two tabs: the portfolio and the LinkedIn stuff. */
+/* Tabs in the bar: Portfolio, LinkedIn, Contact, Slop Submissions ("Slop" on phones). */
 .tabs { display: flex; gap: 2px; padding: 3px; border-radius: 9px; background: #2b2b2b; }
-.tabs a { padding: 7px 12px; border-radius: 7px; color: #bdbdbd; }
+.tabs a { padding: 7px 12px; border-radius: 7px; color: #bdbdbd; white-space: nowrap; }
 .tabs a:hover { color: #fff; }
 .tabs a.on { background: #454545; color: #fff; }
 .tabs a.on[data-sect="linkedin"] { background: var(--blue); }
+.tabs a.on[data-sect="slop"] { background: var(--pink); color: var(--ink); }
 .people { display: flex; }
 .av {
   all: unset; cursor: pointer; box-sizing: border-box;
@@ -521,8 +523,13 @@ body.locked { overflow: hidden; }
   .nums-w { flex-direction: column; align-items: stretch; }
   .cur .in { transform: scale(.88); }
 }
+@media (max-width: 760px) { .tab-more { display: none; } }
+@media (max-width: 360px) { .bar { font-size: 13px; } .tabs a { padding: 7px 6px; } }
+@media (max-width: 340px) { .bar { font-size: 12px; } .bar .name { white-space: normal; } .tabs a { padding: 6px 5px; } }
+@media (max-width: 620px) { .people { display: none; } }
 @media (max-width: 520px) {
   .people { display: none; }
+  .tabs a { padding: 7px 9px; }
   .about { min-height: 50vh; }
   .hero { min-height: 44vh; }
 }
@@ -541,7 +548,7 @@ body.locked { overflow: hidden; }
   <a class="name" href="#top" id="top">Joe Meier</a>
   <div class="right">
     <div class="people" id="people"></div>
-    <nav class="tabs" aria-label="Sections"><a href="#portfolio" data-sect="portfolio">Portfolio</a><a href="#linkedin" data-sect="linkedin">LinkedIn</a><a href="#contact" data-sect="contact">Contact</a></nav>
+    <nav class="tabs" aria-label="Sections"><a href="#portfolio" data-sect="portfolio">Portfolio</a><a href="#linkedin" data-sect="linkedin">LinkedIn</a><a href="#contact" data-sect="contact">Contact</a><a href="#slop" data-sect="slop">Slop<span class="tab-more"> Submissions</span></a></nav>
   </div>
 </header>
 
@@ -611,7 +618,7 @@ body.locked { overflow: hidden; }
   </section>
  </div>
 
- <div class="sect slop-sect" id="slop" data-tab="linkedin">
+ <div class="sect slop-sect" id="slop">
   <span class="sect-name">Slop Submissions</span>
   <header class="fw slop-head">
     <h2 class="slop-h">Slop em' if you got em'</h2>
@@ -855,14 +862,15 @@ const LI_NUMBERS = [
 
 // Your recent LinkedIn posts, newest first (the first four show). Send a screenshot of a new one and it goes on top.
 // text: the post, with line breaks; its first line is the big one. url: the post's link ("..." menu > Copy link to post),
-// or null to open your recent activity. media: images in posts/. The counts are plain numbers; null skips one.
+// or null to open your recent activity. media: images in posts/, with w and h (the image size in pixels) so the page saves
+// room for it before it loads. The counts are plain numbers; null skips one.
 const LI_HEADLINE = "Ex Apple | Ex Boyfriend | ACD";
 const POSTS = [
   {
     date: "Nov 9", url: null,
     text: "LinkedIn Are you joking lol",
     media: [
-      { src: "posts/policy.jpg", alt: "LinkedIn's notice that a post was removed for hateful speech. The post: Any recruiter showing interest in you is likely a (scribbled out) spy." }
+      { src: "posts/policy.jpg", w: 1100, h: 940, alt: "LinkedIn's notice that a post was removed for hateful speech. The post: Any recruiter showing interest in you is likely a (scribbled out) spy." }
     ],
     impressions: 25783, reactions: 240, comments: 56, reposts: 2
   },
@@ -870,7 +878,7 @@ const POSTS = [
     date: null, url: null,
     text: "Marlboro Mascot walked so Scrub Daddy, Inc. could run.",
     media: [
-      { src: "posts/marlboro.jpg", alt: "An old photo of a smiling cigarette mascot posing with three kids at a racetrack" }
+      { src: "posts/marlboro.jpg", w: 877, h: 878, alt: "An old photo of a smiling cigarette mascot posing with three kids at a racetrack" }
     ],
     impressions: 15777, reactions: 361, comments: 31, reposts: 6
   },
@@ -878,8 +886,8 @@ const POSTS = [
     date: "Nov 6", url: null,
     text: "Slop em' if you got em'\nMy favorite slop sightings of the week.\n\nGoing to try this as a Friday Series.\nFor now Send me your favorite Slop sightings in my DMs or comments below, I'll set up a submission site this weekend.",
     media: [
-      { src: "posts/slop-1.jpg", alt: "Slop sighting: a deli's breakfast special sign" },
-      { src: "posts/slop-2.jpg", alt: "Slop sighting: a payroll company's ad" }
+      { src: "posts/slop-1.jpg", w: 514, h: 609, alt: "Slop sighting: a deli's breakfast special sign" },
+      { src: "posts/slop-2.jpg", w: 369, h: 613, alt: "Slop sighting: a payroll company's ad" }
     ],
     impressions: 42221, reactions: 210, comments: 155, reposts: null
   },
@@ -1388,7 +1396,7 @@ $("#posts").innerHTML = POSTS.filter((p) => p.text).slice(0, 4).map((p) => {
   return `<li class="post">
     <p class="post-who"><span class="post-av" aria-hidden="true">JM</span><span><b>Joe Meier</b>${esc(LI_HEADLINE)}${p.date ? ` · ${esc(p.date)}` : ""}</span></p>
     <p class="post-text"><b>${esc(hook)}</b>${more ? `<span>${esc(more)}</span>` : ""}</p>
-    ${p.media && p.media.length ? `<div class="post-media">${p.media.map((m) => `<img src="${esc(m.src)}" alt="${esc(m.alt)}" loading="lazy">`).join("")}</div>` : ""}
+    ${p.media && p.media.length ? `<div class="post-media">${p.media.map((m) => `<img src="${esc(m.src)}" alt="${esc(m.alt)}"${p.media.length === 1 && m.w && m.h ? ` style="aspect-ratio: ${m.w} / ${m.h}"` : ""} loading="lazy">`).join("")}</div>` : ""}
     ${meta.length ? `<p class="post-meta">${meta.join(" · ")}</p>` : ""}
     <a class="post-go" href="${esc(p.url || ACTIVITY)}" target="_blank" rel="noopener">Read it, then come back ↗</a>
   </li>`;
