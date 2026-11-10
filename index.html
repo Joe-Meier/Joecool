@@ -92,6 +92,53 @@ main { padding: calc(var(--bar) + 14px) 0 clamp(56px, 9vh, 120px); }
   padding: 7px 11px; border-radius: 7px; background: #2e2e2e; color: #ededed;
   font: 600 13px/1 var(--ui); letter-spacing: 0;
 }
+/* Slop Submissions: people send in a photo of slop they've spotted (and maybe a line about it), emailed to jo. */
+.slop-sect { background: rgba(255, 143, 200, .07); box-shadow: inset 0 0 0 1px rgba(255, 143, 200, .35); }
+.slop-sect .sect-name { background: var(--pink); color: var(--ink); }
+.slop-head { display: grid; gap: 18px; }
+.fw.slop-head + .fw { margin-top: clamp(44px, 7vh, 80px); }
+.slop-h { margin: 0; color: #f4f4f4; font-size: clamp(30px, 4.4vw, 76px); font-weight: 700; line-height: .95; letter-spacing: -0.055em; }
+.slop-head p { margin: 0; max-width: 46ch; color: #c9c9c9; font: 500 clamp(16px, 1.3vw, 19px)/1.35 var(--ui); letter-spacing: 0; }
+.slop-w { --w: 1240px; }
+.slop-f, .slop-done { --c: var(--paper); --t: var(--ink); }
+.slop-f { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: clamp(18px, 3vw, 40px); align-items: start; }
+.slop-drop {
+  position: relative; display: grid; place-items: center; min-height: 280px; padding: 18px; overflow: hidden;
+  border: 1.5px dashed #c4c4bf; border-radius: 12px; background: #fafaf8; cursor: pointer; text-align: center;
+}
+.slop-drop:hover, .slop-drop.over { border-color: var(--ink); }
+.slop-drop:focus-within { outline: 2px solid #0d99ff; outline-offset: 2px; }
+.slop-drop input { position: absolute; inset: 0; z-index: 1; width: 100%; opacity: 0; cursor: pointer; }
+.slop-drop img { display: block; width: 100%; max-height: 460px; object-fit: contain; }
+.slop-pick { display: grid; gap: 8px; }
+.slop-pick b { color: var(--ink); font-size: clamp(24px, 2.2vw, 32px); font-weight: 700; line-height: 1; letter-spacing: -0.04em; }
+.slop-pick small { color: var(--grey); font: 500 14px/1.35 var(--ui); letter-spacing: 0; }
+.slop-change { display: none; position: absolute; left: 12px; bottom: 12px; padding: 8px 12px; border-radius: 999px; background: var(--ink); color: #fff; font: 600 13px/1 var(--ui); font-style: normal; letter-spacing: 0; }
+.slop-drop.has { padding: 0; border-style: solid; border-color: #e3e3e0; background: #111; }
+.slop-drop.has .slop-pick { display: none; }
+.slop-drop.has .slop-change { display: block; }
+.slop-side { display: grid; gap: 16px; justify-items: start; }
+.slop-blurb { display: grid; gap: 8px; width: 100%; font: 600 13px/1.3 var(--ui); letter-spacing: 0; color: var(--ink); }
+.slop-blurb span { font-weight: 400; color: var(--grey); }
+.slop-blurb textarea {
+  resize: vertical; min-height: 140px; padding: 12px; border: 1px solid #d4d4cf; border-radius: 8px;
+  background: #fff; color: var(--ink); font: 400 16px/1.35 var(--ui); letter-spacing: 0;
+}
+.slop-blurb textarea:focus { outline: 2px solid #0d99ff; outline-offset: -1px; border-color: transparent; }
+.slop-f .btn[disabled] { opacity: .45; cursor: not-allowed; }
+.slop-fine { margin: 0; color: var(--grey); font: 400 12px/1.45 var(--ui); letter-spacing: 0; }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.slop-done { display: grid; gap: 22px; justify-items: start; }
+.slop-done h3 { margin: 0; font-size: clamp(36px, 4.4vw, 64px); font-weight: 700; line-height: .9; letter-spacing: -0.06em; }
+
+/* Contact: small, at the very bottom. The Contact tab in the bar jumps here. */
+.contact-w { margin: clamp(40px, 7vh, 88px) clamp(6px, 1.2vw, 16px) 0; padding: 0 clamp(12px, 1.6vw, 20px); }
+.contact { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.contact a {
+  display: inline-flex; padding: 10px 14px; border-radius: 999px; box-shadow: inset 0 0 0 1.5px #3c3c3c;
+  color: #ededed; font: 600 14px/1 var(--ui); letter-spacing: 0; text-decoration: none;
+}
+.contact a:hover { background: #fff; color: var(--ink); box-shadow: none; }
 .li-sect { background: rgba(47, 69, 255, .1); box-shadow: inset 0 0 0 1px rgba(90, 110, 255, .4); }
 .li-sect .sect-name { background: var(--blue); color: #fff; }
 .fw { --w: 1760px; position: relative; width: min(var(--w), calc(100% - 2 * var(--gutter))); margin: 0 auto; }
@@ -293,6 +340,7 @@ body { padding-right: var(--rail); }
 .post-media { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px; }
 .post-media img { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 6px; background: #eee; }
 .post-media img:only-child { aspect-ratio: auto; }
+.post-media img { outline: 1px solid #e3e3e0; outline-offset: -1px; }
 .post-meta { margin: 0; font: 500 13px/1.35 var(--ui); letter-spacing: 0; color: var(--grey); }
 .post-meta b { color: var(--ink); font-weight: 600; }
 .post-go { justify-self: start; font: 700 15px/1 var(--font); letter-spacing: -0.01em; color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
@@ -493,7 +541,7 @@ body.locked { overflow: hidden; }
   <a class="name" href="#top" id="top">Joe Meier</a>
   <div class="right">
     <div class="people" id="people"></div>
-    <nav class="tabs" aria-label="Sections"><a href="#portfolio" data-sect="portfolio">Portfolio</a><a href="#linkedin" data-sect="linkedin">LinkedIn</a></nav>
+    <nav class="tabs" aria-label="Sections"><a href="#portfolio" data-sect="portfolio">Portfolio</a><a href="#linkedin" data-sect="linkedin">LinkedIn</a><a href="#contact" data-sect="contact">Contact</a></nav>
   </div>
 </header>
 
@@ -503,10 +551,9 @@ body.locked { overflow: hidden; }
   <section class="fw about-w" id="about">
     <div class="flabel"><span>About</span><span class="dim"></span></div>
     <div class="frame about">
-      <p class="intro" id="intro">My name is Joe Meier*. I'm currently a <span class="fine" id="assoc">(associate)</span> Creative Director at <s id="s1">Havas Saatchi</s> <s id="s2">Mojo Supermarket</s> Tombras.</p>
+      <p class="intro" id="intro">My name is Joe Meier*. I'm currently a <span class="fine" id="assoc">(associate)</span> Creative Director at <s id="s1">Havas</s> <s id="s1b">Saatchi</s> <s id="s2">Mojo Supermarket</s> Tombras.</p>
       <div class="notes" id="notes">
         <p class="footnote">*Too dumb for NYC, Too ugly for LA. (in nyc though)</p>
-        <p class="contact"><span class="placeholder">Placeholder: how to reach you (email, LinkedIn, Instagram).</span></p>
       </div>
     </div>
   </section>
@@ -563,6 +610,45 @@ body.locked { overflow: hidden; }
     </div>
   </section>
  </div>
+
+ <div class="sect slop-sect" id="slop" data-tab="linkedin">
+  <span class="sect-name">Slop Submissions</span>
+  <header class="fw slop-head">
+    <h2 class="slop-h">Slop em' if you got em'</h2>
+    <p>Spotted some slop out in the world? Send me a photo. I'm collecting them for a Friday series on LinkedIn.</p>
+  </header>
+  <section class="fw slop-w">
+    <div class="flabel"><span>Send in slop</span></div>
+    <form class="frame slop-f" id="slop-f" novalidate>
+      <label class="slop-drop" id="slop-drop">
+        <input type="file" id="slop-img" accept="image/*" aria-label="Your photo">
+        <img id="slop-preview" alt="Your photo" hidden>
+        <span class="slop-pick"><b>Add a photo</b><small>Tap to pick one, or drop it here.</small></span>
+        <em class="slop-change">Change photo</em>
+      </label>
+      <div class="slop-side">
+        <label class="slop-blurb"><b>Where was it, and what's wrong with it? <span>(optional)</span></b><textarea name="blurb" rows="5" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <p class="co-err" id="slop-err" role="alert" hidden></p>
+        <button class="btn" type="submit" id="slop-send">Send it</button>
+        <p class="slop-fine">It goes straight to my inbox.</p>
+      </div>
+    </form>
+    <div class="frame slop-done" id="slop-done" hidden>
+      <h3>Got it. Thanks.</h3>
+      <button class="btn" type="button" id="slop-again">Send another</button>
+    </div>
+  </section>
+ </div>
+
+ <section class="contact-w" id="contact">
+  <div class="flabel"><span>Contact</span></div>
+  <ul class="contact">
+   <li><a href="mailto:joe@joemeier.cool">joe@joemeier.cool</a></li>
+   <li><a class="contact-go" href="https://www.linkedin.com/in/josephlmeier/" target="_blank" rel="noopener" data-site="LinkedIn">LinkedIn ↗</a></li>
+   <li><a class="contact-go" href="https://www.instagram.com/brunch666/" target="_blank" rel="noopener" data-site="Instagram">Instagram @brunch666 ↗</a></li>
+  </ul>
+ </section>
 </main>
 
 <aside class="rail" id="banner" aria-label="Banner ad space for sale">
@@ -773,6 +859,14 @@ const LI_NUMBERS = [
 const LI_HEADLINE = "Ex Apple | Ex Boyfriend | ACD";
 const POSTS = [
   {
+    date: "Nov 9", url: null,
+    text: "LinkedIn Are you joking lol",
+    media: [
+      { src: "posts/policy.jpg", alt: "LinkedIn's notice that a post was removed for hateful speech. The post: Any recruiter showing interest in you is likely a (scribbled out) spy." }
+    ],
+    impressions: 25783, reactions: 240, comments: 56, reposts: 2
+  },
+  {
     date: null, url: null,
     text: "Marlboro Mascot walked so Scrub Daddy, Inc. could run.",
     media: [
@@ -917,7 +1011,7 @@ joe.mode = "wait";
 [[1.04, 0.22], [0.58, -0.06], [-0.04, 0.6], [1.04, 0.9]].forEach(([fx, fy], i) => crew[i].set(innerWidth * fx, scrollY + innerHeight * fy));
 joe.set(innerWidth + 40, scrollY + innerHeight * 0.8);
 
-const intro = $("#intro"), notes = $("#notes"), s1 = $("#s1"), s2 = $("#s2"), assoc = $("#assoc");
+const intro = $("#intro"), notes = $("#notes"), s1 = $("#s1"), s1b = $("#s1b"), s2 = $("#s2"), assoc = $("#assoc");
 const aboutFrame = $("#about .frame"), theirs = $("#theirs");
 
 // Drags a slightly misplaced block into place, then flashes the guides it snapped to.
@@ -969,7 +1063,7 @@ const FINAL = {
   1: () => {
     intro.style.translate = "0px 0px";
     notes.style.translate = "0px 0px";
-    [s1, s2].forEach((s) => { s.classList.remove("hl"); s.classList.add("struck"); });
+    [s1, s1b, s2].forEach((s) => { s.classList.remove("hl"); s.classList.add("struck"); });
   },
   2: () => {},
   3: () => startIdle()
@@ -981,7 +1075,7 @@ const SCENES = {
     const [D, Q, C, S] = crew;
     await Promise.all([
       (async () => { await wait(250); await dragIn(D, intro, aboutFrame, ctx); })(),
-      (async () => { await wait(950); await strike(Q, s1, ctx); await strike(Q, s2, ctx); })(),
+      (async () => { await wait(950); await strike(Q, s1, ctx); await strike(Q, s1b, ctx); await strike(Q, s2, ctx); })(),
       (async () => { await wait(1700); await dragIn(C, notes, aboutFrame, ctx); })(),
       (async () => {
         await wait(2500);
@@ -1745,13 +1839,89 @@ if (BANNER.checkoutApi) {
   }).catch(() => {});
 }
 
+/* ---------- Slop submissions: a photo (and maybe a line about it), emailed to jo ---------- */
+// The photo gets shrunk here first (phone photos are huge), then goes to the banner server, which emails it to jo.
+const slopF = $("#slop-f"), slopDrop = $("#slop-drop"), slopPreview = $("#slop-preview"), slopErr = $("#slop-err"), slopSend = $("#slop-send");
+let slopData = null;
+const slopError = (msg) => { slopErr.textContent = msg || ""; slopErr.hidden = !msg; };
+function slopFile(f) {
+  if (!f) return;
+  if (!/^image\//.test(f.type)) return slopError("That one isn't a photo. Try a JPG or PNG.");
+  const url = URL.createObjectURL(f), img = new Image();
+  img.onload = () => {
+    const k = Math.min(1, 2000 / Math.max(img.naturalWidth, img.naturalHeight)), c = document.createElement("canvas");
+    c.width = Math.round(img.naturalWidth * k);
+    c.height = Math.round(img.naturalHeight * k);
+    const g = c.getContext("2d");
+    g.fillStyle = "#fff";
+    g.fillRect(0, 0, c.width, c.height);
+    g.drawImage(img, 0, 0, c.width, c.height);
+    slopData = c.toDataURL("image/jpeg", 0.85);
+    URL.revokeObjectURL(url);
+    slopPreview.src = slopData;
+    slopPreview.hidden = false;
+    slopDrop.classList.add("has");
+    slopError("");
+  };
+  img.onerror = () => { URL.revokeObjectURL(url); slopError("That photo didn't open here. Try a JPG or PNG."); };
+  img.src = url;
+}
+$("#slop-img").addEventListener("change", (e) => slopFile(e.target.files[0]));
+["dragenter", "dragover"].forEach((t) => slopDrop.addEventListener(t, (e) => { e.preventDefault(); slopDrop.classList.add("over"); }));
+["dragleave", "drop"].forEach((t) => slopDrop.addEventListener(t, () => slopDrop.classList.remove("over")));
+slopDrop.addEventListener("drop", (e) => { e.preventDefault(); slopFile(e.dataTransfer.files[0]); });
+slopF.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (!slopData) return slopError("Add a photo first.");
+  if (!BANNER.checkoutApi) return slopError("Submissions open soon.");
+  const f = new FormData(slopF);
+  slopError("");
+  slopSend.disabled = true;
+  slopSend.textContent = "Sending…";
+  try {
+    const res = await fetch(api("/slop"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ image: slopData, blurb: String(f.get("blurb") || "").trim(), website: String(f.get("website") || "") })
+    });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(json.error || "That didn't send. Please try again in a bit.");
+    slopF.hidden = true;
+    $("#slop-done").hidden = false;
+  } catch (err) {
+    slopError(err instanceof TypeError ? "Couldn't reach my server. Give it a minute and try again." : err.message);
+  } finally {
+    slopSend.disabled = false;
+    slopSend.textContent = "Send it";
+  }
+});
+$("#slop-again").addEventListener("click", () => {
+  slopF.reset();
+  slopData = null;
+  slopPreview.hidden = true;
+  slopPreview.removeAttribute("src");
+  slopDrop.classList.remove("has");
+  $("#slop-done").hidden = true;
+  slopF.hidden = false;
+});
+
 /* ---------- Section tabs in the bar ---------- */
 const tabs = [...document.querySelectorAll(".tabs a")];
-const sectIO = new IntersectionObserver((es) => es.forEach((e) => {
-  if (e.isIntersecting) tabs.forEach((t) => t.classList.toggle("on", t.dataset.sect === e.target.id));
-}), { rootMargin: "-45% 0px -55% 0px" });
-document.querySelectorAll(".sect").forEach((el) => sectIO.observe(el));
+const sects = [...document.querySelectorAll(".sect")], contactEl = $("#contact");
+let tabQueued = false;
+function markTab() {
+  tabQueued = false;
+  const mid = innerHeight * 0.45, cr = contactEl.getBoundingClientRect();
+  let on = null;
+  // The contact block is short and sits at the very bottom, so it's "on" once it's fully in view.
+  if (cr.bottom <= innerHeight + 2) on = "contact";
+  else for (const el of sects) { const r = el.getBoundingClientRect(); if (r.top <= mid && r.bottom > mid) { on = el.dataset.tab || el.id; break; } }
+  if (on) tabs.forEach((t) => t.classList.toggle("on", t.dataset.sect === on));
+}
 tabs[0].classList.add("on");
+addEventListener("scroll", () => { if (!tabQueued) { tabQueued = true; requestAnimationFrame(markTab); } }, { passive: true });
+addEventListener("resize", markTab);
+markTab();
 
 /* ---------- Frame loop ---------- */
 function frame(now) {
@@ -1990,9 +2160,9 @@ addEventListener("blur", wentAway);
 addEventListener("focus", cameBack);
 
 $("#stack").addEventListener("click", (e) => {
-  const a = e.target.closest("a.work, #follow, #collab, a.post-go");
+  const a = e.target.closest("a.work, #follow, #collab, a.post-go, a.contact-go");
   if (!a) return;
-  const isPost = a.matches("#follow, #collab, a.post-go");
+  const isPost = a.matches("#follow, #collab, a.post-go, a.contact-go");
   const url = a.id === "follow" || a.id === "collab" ? LINKEDIN_PROFILE : a.href;
   // Placeholder LinkedIn links go nowhere until a real link is filled in.
   if (!url) { e.preventDefault(); return; }
@@ -2004,8 +2174,12 @@ $("#stack").addEventListener("click", (e) => {
     ask(WORKS[i], i);
   } else {
     ask({
-      title: "LinkedIn", author: "Joe Meier", url, c: "var(--paper)", t: "var(--ink)",
-      leaveLine: a.id === "collab"
+      title: a.dataset.site || "LinkedIn", author: "Joe Meier", url, c: "var(--paper)", t: "var(--ink)",
+      leaveLine: a.dataset.site === "Instagram"
+        ? "You're off to my Instagram. Have a look, then come straight back."
+        : a.dataset.site === "LinkedIn"
+        ? "You're off to my LinkedIn. Message me there, then come straight back."
+        : a.id === "collab"
         ? "You're off to my LinkedIn. Message me there about what you want to make. Then come straight back."
         : a.id === "follow"
         ? "You're off to my LinkedIn. Follow me if you want. Endorse me for Microsoft Excel if you really want. Then come straight back."
