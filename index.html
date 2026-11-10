@@ -65,6 +65,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--guide); outline
 .tabs a.on { background: #454545; color: #fff; }
 .tabs a.on[data-sect="linkedin"] { background: var(--blue); }
 .tabs a.on[data-sect="slop"] { background: var(--pink); color: var(--ink); }
+.tabs a.on[data-sect="contact"] { background: var(--green); color: var(--ink); }
 .people { display: flex; }
 .av {
   all: unset; cursor: pointer; box-sizing: border-box;
@@ -133,14 +134,34 @@ main { padding: calc(var(--bar) + 14px) 0 clamp(56px, 9vh, 120px); }
 .slop-done { display: grid; gap: 22px; justify-items: start; }
 .slop-done h3 { margin: 0; font-size: clamp(36px, 4.4vw, 64px); font-weight: 700; line-height: .9; letter-spacing: -0.06em; }
 
-/* Contact: small, at the very bottom. The Contact tab in the bar jumps here. */
-.contact-w { margin: clamp(40px, 7vh, 88px) clamp(6px, 1.2vw, 16px) 0; padding: 0 clamp(12px, 1.6vw, 20px); }
-.contact { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
-.contact a {
-  display: inline-flex; padding: 10px 14px; border-radius: 999px; box-shadow: inset 0 0 0 1.5px #3c3c3c;
-  color: #ededed; font: 600 14px/1 var(--ui); letter-spacing: 0; text-decoration: none;
-}
-.contact a:hover { background: #fff; color: var(--ink); box-shadow: none; }
+/* Contact: its own section at the bottom, like LinkedIn. The email big, then buttons, then my latest Instagram posts. */
+.ct-sect { background: rgba(0, 179, 107, .08); box-shadow: inset 0 0 0 1px rgba(0, 179, 107, .4); }
+.ct-sect .sect-name { background: var(--green); color: var(--ink); }
+.ct-head { display: grid; gap: clamp(22px, 3vw, 36px); justify-items: start; }
+.fw.ct-head + .fw { margin-top: clamp(44px, 7vh, 80px); }
+.ct-h { margin: 0; max-width: 100%; font-size: clamp(30px, 6.2vw, 112px); font-weight: 700; line-height: .95; letter-spacing: -0.06em; overflow-wrap: anywhere; }
+.ct-h a { color: #f4f4f4; text-decoration: none; background: linear-gradient(var(--green), var(--green)) 0 100% / 0 .08em no-repeat; transition: background-size .3s ease; }
+.ct-h a:hover { background-size: 100% .08em; }
+.ct-links { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+.ct-links .btn { --t: #fff; --c: var(--ink); }
+.ct-links .btn.ghost { --t: #f4f4f4; }
+.ig-f { --c: var(--paper); --t: var(--ink); display: grid; gap: clamp(24px, 3vw, 40px); }
+.ig { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: clamp(14px, 2vw, 28px); }
+.ig a { display: grid; gap: 10px; color: var(--ink); text-decoration: none; }
+.ig-pic { position: relative; display: block; aspect-ratio: 4 / 5; overflow: hidden; border-radius: 8px; background: var(--soft); }
+.ig-pic img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .4s ease; }
+.ig a:hover .ig-pic img { transform: scale(1.03); }
+.ig-kind { position: absolute; top: 10px; right: 10px; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: rgba(13, 13, 13, .7); color: #fff; font: 600 13px/1 var(--ui); font-style: normal; }
+.ig-cap { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font: 500 15px/1.35 var(--ui); letter-spacing: 0; }
+.ig-date { color: var(--grey); font: 400 13px/1 var(--ui); letter-spacing: 0; }
+.ig-wait { aspect-ratio: 4 / 5; border-radius: 8px; background: linear-gradient(100deg, var(--soft) 40%, #fafaf9 50%, var(--soft) 60%) 0 0 / 300% 100%; animation: ig-wait 1.4s linear infinite; }
+@keyframes ig-wait { to { background-position: -150% 0; } }
+.ig-none { display: none; }
+.ig-f.none .ig { display: none; }
+.ig-f.none .ig-none { display: grid; gap: 10px; color: var(--ink); text-decoration: none; }
+.ig-none b { font-size: clamp(36px, 5vw, 80px); font-weight: 700; line-height: .9; letter-spacing: -0.06em; }
+.ig-none span { color: var(--grey); font: 500 clamp(15px, 1.3vw, 18px)/1.35 var(--ui); letter-spacing: 0; }
+.ig-f.none .posts-foot { display: none; }
 .li-sect { background: rgba(47, 69, 255, .1); box-shadow: inset 0 0 0 1px rgba(90, 110, 255, .4); }
 .li-sect .sect-name { background: var(--blue); color: #fff; }
 .fw { --w: 1760px; position: relative; width: min(var(--w), calc(100% - 2 * var(--gutter))); margin: 0 auto; }
@@ -529,6 +550,12 @@ body.locked { overflow: hidden; }
 @media (max-width: 620px) { .people { display: none; } }
 @media (max-width: 520px) {
   .people { display: none; }
+  /* Phones: the Instagram posts sit three across like the profile grid, pictures only. */
+  .ig { grid-template-columns: repeat(3, 1fr); gap: 4px; }
+  .ig-pic { border-radius: 4px; }
+  .ig-cap, .ig-date { display: none; }
+  .ig-kind { top: 5px; right: 5px; width: 20px; height: 20px; font-size: 10px; }
+  .ig-wait { border-radius: 4px; }
   .tabs a { padding: 7px 9px; }
   .about { min-height: 50vh; }
   .hero { min-height: 44vh; }
@@ -648,14 +675,26 @@ body.locked { overflow: hidden; }
   </section>
  </div>
 
- <section class="contact-w" id="contact">
-  <div class="flabel"><span>Contact</span></div>
-  <ul class="contact">
-   <li><a href="mailto:joe@joemeier.cool">joe@joemeier.cool</a></li>
-   <li><a class="contact-go" href="https://www.linkedin.com/in/josephlmeier/" target="_blank" rel="noopener" data-site="LinkedIn">LinkedIn ↗</a></li>
-   <li><a class="contact-go" href="https://www.instagram.com/brunch666/" target="_blank" rel="noopener" data-site="Instagram">Instagram @brunch666 ↗</a></li>
-  </ul>
- </section>
+ <div class="sect ct-sect" id="contact">
+  <span class="sect-name">Contact</span>
+  <header class="fw ct-head">
+    <h2 class="ct-h"><a href="mailto:joe@joemeier.cool">joe@joemeier.cool</a></h2>
+    <ul class="ct-links">
+      <li><button class="btn ghost" type="button" id="copy-email">Copy email</button></li>
+      <li><a class="btn contact-go" href="https://www.linkedin.com/in/josephlmeier/" target="_blank" rel="noopener" data-site="LinkedIn">LinkedIn ↗</a></li>
+      <li><a class="btn contact-go" href="https://www.instagram.com/brunch666/" target="_blank" rel="noopener" data-site="Instagram">Instagram ↗</a></li>
+    </ul>
+  </header>
+  <section class="fw ig-w" id="instagram">
+    <div class="flabel"><span>Instagram</span><span class="dim"></span></div>
+    <div class="frame ig-f">
+      <h2 class="sr">My latest Instagram posts</h2>
+      <ol class="ig" id="ig" aria-busy="true"><li class="ig-wait"></li><li class="ig-wait"></li><li class="ig-wait"></li></ol>
+      <a class="ig-none contact-go" href="https://www.instagram.com/brunch666/" target="_blank" rel="noopener" data-site="Instagram"><b>@brunch666</b><span>See what I've been posting on Instagram ↗</span></a>
+      <div class="posts-foot"><a class="btn contact-go" href="https://www.instagram.com/brunch666/" target="_blank" rel="noopener" data-site="Instagram">More on Instagram ↗</a></div>
+    </div>
+  </section>
+ </div>
 </main>
 
 <aside class="rail" id="banner" aria-label="Banner ad space for sale">
@@ -1912,6 +1951,37 @@ $("#slop-again").addEventListener("click", () => {
   $("#slop-done").hidden = true;
   slopF.hidden = false;
 });
+
+/* ---------- Contact: copy the email, and my latest Instagram posts ---------- */
+const copyBtn = $("#copy-email");
+copyBtn.addEventListener("click", async () => {
+  try { await navigator.clipboard.writeText("joe@joemeier.cool"); copyBtn.textContent = "Copied"; }
+  catch { copyBtn.textContent = "joe@joemeier.cool"; }
+  setTimeout(() => (copyBtn.textContent = "Copy email"), 2200);
+});
+
+// The banner server fetches the posts (at most every half hour) so no keys end up on this page. Until a feed is set
+// up there, or if it can't be reached, the frame just links to the profile.
+const igList = $("#ig"), igFrame = $(".ig-f");
+const igDate = (d) => { const t = new Date(d); return isNaN(t) ? "" : t.toLocaleDateString("en-US", { month: "short", day: "numeric" }); };
+const igNone = () => { igFrame.classList.add("none"); igList.setAttribute("aria-busy", "false"); };
+(async () => {
+  try {
+    const res = await fetch(api("/instagram"));
+    if (!res.ok) throw new Error(res.status);
+    const posts = ((await res.json()).posts || []).filter((p) => /^https:\/\/(www\.)?instagram\.com\//.test(p.url));
+    if (!posts.length) return igNone();
+    igList.innerHTML = posts.map((p) => {
+      const src = p.image.startsWith("/") ? api(p.image) : p.image;
+      const cap = (p.caption || "").split("\n")[0];
+      return `<li><a class="contact-go" href="${esc(p.url)}" target="_blank" rel="noopener" data-site="Instagram">`
+        + `<span class="ig-pic"><img src="${esc(src)}" alt="${esc(p.alt || cap || "A post on my Instagram")}" loading="lazy" referrerpolicy="no-referrer">`
+        + (p.type === "video" ? `<i class="ig-kind" title="Video">▶</i>` : p.type === "carousel" ? `<i class="ig-kind" title="More than one picture">❐</i>` : "")
+        + `</span>${cap ? `<span class="ig-cap">${esc(cap)}</span>` : ""}<span class="ig-date">${esc(igDate(p.date))}</span></a></li>`;
+    }).join("");
+    igList.setAttribute("aria-busy", "false");
+  } catch { igNone(); }
+})();
 
 /* ---------- Section tabs in the bar ---------- */
 const tabs = [...document.querySelectorAll(".tabs a")];
