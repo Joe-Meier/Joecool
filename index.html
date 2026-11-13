@@ -123,11 +123,19 @@ main { padding: calc(var(--bar) + 14px) 0 clamp(56px, 9vh, 120px); }
 .slop-side { display: grid; gap: 16px; justify-items: start; }
 .slop-blurb { display: grid; gap: 8px; width: 100%; font: 600 13px/1.3 var(--ui); letter-spacing: 0; color: var(--ink); }
 .slop-blurb span { font-weight: 400; color: var(--grey); }
-.slop-blurb textarea {
-  resize: vertical; min-height: 140px; padding: 12px; border: 1px solid #d4d4cf; border-radius: 8px;
+.slop-blurb textarea, .slop-credit input {
+  box-sizing: border-box; width: 100%; padding: 12px; border: 1px solid #d4d4cf; border-radius: 8px;
   background: #fff; color: var(--ink); font: 400 16px/1.35 var(--ui); letter-spacing: 0;
 }
-.slop-blurb textarea:focus { outline: 2px solid #0d99ff; outline-offset: -1px; border-color: transparent; }
+.slop-blurb textarea { resize: vertical; min-height: 140px; }
+.slop-blurb textarea:focus, .slop-credit input:focus { outline: 2px solid #0d99ff; outline-offset: -1px; border-color: transparent; }
+.slop-credit input::placeholder { color: #a3a39e; }
+/* Name and LinkedIn, so jo can credit people when a submission gets posted. */
+.slop-credit { width: 100%; min-width: 0; margin: 0; padding: 0; border: 0; }
+.slop-credit legend { margin: 0 0 8px; padding: 0; color: var(--ink); font: 600 13px/1.3 var(--ui); letter-spacing: 0; }
+.slop-credit div { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: 10px 12px; }
+.slop-credit legend span { font-weight: 400; color: var(--grey); }
+.slop-credit label { display: grid; gap: 6px; color: var(--grey); font: 400 12px/1.3 var(--ui); letter-spacing: 0; }
 .slop-f .btn[disabled] { opacity: .45; cursor: not-allowed; }
 .slop-fine { margin: 0; color: var(--grey); font: 400 12px/1.45 var(--ui); letter-spacing: 0; }
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
@@ -662,6 +670,13 @@ body.locked { overflow: hidden; }
       </label>
       <div class="slop-side">
         <label class="slop-blurb"><b>Where was it, and what's wrong with it? <span>(optional)</span></b><textarea name="blurb" rows="5" maxlength="1000"></textarea></label>
+        <fieldset class="slop-credit">
+          <legend>Want credit if I post it? <span>(optional)</span></legend>
+          <div>
+            <label>Your name<input name="name" maxlength="100" autocomplete="name"></label>
+            <label>Your LinkedIn<input name="linkedin" type="url" inputmode="url" maxlength="300" autocomplete="url" placeholder="linkedin.com/in/you"></label>
+          </div>
+        </fieldset>
         <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
         <p class="co-err" id="slop-err" role="alert" hidden></p>
         <button class="btn" type="submit" id="slop-send">Send it</button>
@@ -1929,7 +1944,13 @@ slopF.addEventListener("submit", async (e) => {
     const res = await fetch(api("/slop"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ image: slopData, blurb: String(f.get("blurb") || "").trim(), website: String(f.get("website") || "") })
+      body: JSON.stringify({
+        image: slopData,
+        blurb: String(f.get("blurb") || "").trim(),
+        name: String(f.get("name") || "").trim(),
+        linkedin: String(f.get("linkedin") || "").trim(),
+        website: String(f.get("website") || "")
+      })
     });
     const json = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(json.error || "That didn't send. Please try again in a bit.");
