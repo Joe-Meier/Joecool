@@ -144,7 +144,7 @@ main { padding: calc(var(--bar) + 14px) 0 clamp(56px, 9vh, 120px); }
 .slop-done { display: grid; gap: 22px; justify-items: start; }
 .slop-done h3 { margin: 0; font-size: clamp(36px, 4.4vw, 64px); font-weight: 700; line-height: .9; letter-spacing: -0.06em; }
 
-/* Merch: Printful products sold through Shopify Buy Buttons. Until SHOP is filled in, the cards are placeholders. */
+/* Merch: my Printful products, paid for with Stripe's embedded checkout inside the section. Placeholders until the shop is open. */
 .mx-sect { background: rgba(255, 59, 31, .07); box-shadow: inset 0 0 0 1px rgba(255, 59, 31, .38); }
 .mx-sect .sect-name { background: var(--red); color: var(--ink); }
 .mx-head { display: grid; gap: 18px; }
@@ -161,7 +161,17 @@ main { padding: calc(var(--bar) + 14px) 0 clamp(56px, 9vh, 120px); }
 .mx-price { color: var(--grey); font: 500 15px/1 var(--ui); letter-spacing: 0; }
 .mx .btn { justify-self: start; padding: 13px 20px; font-size: 16px; }
 .mx .btn[aria-disabled="true"] { opacity: .45; cursor: not-allowed; }
-.mx-buy { min-height: 420px; }
+.mx-pick select { width: 100%; padding: 11px 12px; border: 1px solid #d8d8d4; border-radius: 8px; background: #fff; color: var(--ink); font: 500 15px/1.2 var(--ui); letter-spacing: 0; }
+.mx-pick select:focus { outline: 2px solid #0d99ff; outline-offset: -1px; border-color: transparent; }
+.mx .btn[disabled] { opacity: .45; cursor: not-allowed; }
+.mx-co { display: grid; gap: 18px; }
+.mx-co-head { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; font: 600 15px/1.3 var(--ui); letter-spacing: 0; }
+.mx-co-head .btn { --t: var(--ink); padding: 11px 16px; font-size: 15px; }
+#mx-stripe { min-height: 480px; }
+@media (max-width: 520px) { .mx-f.paying { --pad: 10px; } .mx-co-head { padding: 10px 6px 0; } }
+.mx-done { display: grid; gap: 18px; justify-items: start; }
+.mx-done h3 { margin: 0; font-size: clamp(36px, 4.4vw, 64px); font-weight: 700; line-height: .9; letter-spacing: -0.06em; }
+.mx-done p { margin: 0; max-width: 46ch; color: var(--grey); font: 500 16px/1.4 var(--ui); letter-spacing: 0; }
 .mx-fine { margin: 0; color: var(--grey); font: 400 12px/1.45 var(--ui); letter-spacing: 0; }
 
 /* Contact: its own section at the bottom, like LinkedIn. The email big, then buttons, then my latest Instagram posts. */
@@ -722,10 +732,20 @@ body.locked { overflow: hidden; }
   </header>
   <section class="fw mx-w">
     <div class="flabel"><span>Merch</span><span class="dim"></span></div>
-    <div class="frame mx-f">
+    <div class="frame mx-f" id="mx-f">
       <h2 class="sr">Merch for sale</h2>
+      <p class="co-err" id="mx-err" role="alert" hidden></p>
       <ol class="mx" id="mx"></ol>
-      <p class="mx-fine">Printed when you order it, so give it a week or two to show up. Checkout is through Shopify.</p>
+      <p class="mx-fine" id="mx-fine">Printed when you order it, so give it a week or two to show up.</p>
+      <div class="mx-co" id="mx-co" hidden>
+        <div class="mx-co-head"><button class="btn ghost" type="button" id="mx-back">&larr; Back</button><span id="mx-what"></span></div>
+        <div id="mx-stripe"></div>
+      </div>
+      <div class="mx-done" id="mx-done" hidden>
+        <h3>Paid. It's off to the printer.</h3>
+        <p>Stripe is emailing you a receipt now, and you'll get another email when it ships. Thanks for wearing my work.</p>
+        <button class="btn" type="button" id="mx-again">Back to the merch</button>
+      </div>
     </div>
   </section>
  </div>
@@ -2044,62 +2064,100 @@ const igNone = () => { igFrame.classList.add("none"); igList.setAttribute("aria-
   } catch { igNone(); }
 })();
 
-/* ---------- Merch (Printful products in a Shopify store, sold with Buy Buttons) ----------
-   Fill in SHOP.domain (the store's .myshopify.com address), SHOP.token (the Buy Button channel's
-   Storefront access token) and each product's id. Until then the cards show as placeholders. */
-const SHOP = {
-  domain: "",   // e.g. "joe-meier-merch.myshopify.com"
-  token: "",    // Storefront access token from the Buy Button channel
-  products: [
-    { id: "", name: "Product name", price: "$00" },
-    { id: "", name: "Product name", price: "$00" },
-    { id: "", name: "Product name", price: "$00" }
-  ]
-};
-(function merch() {
-  const list = $("#mx");
-  const live = SHOP.domain && SHOP.token && SHOP.products.some((p) => p.id);
-  if (!live) {
-    list.innerHTML = SHOP.products.map((p) =>
-      `<li><span class="mx-pic">Product photo</span><span class="mx-name"><span class="placeholder">${esc(p.name)}</span></span>`
-      + `<span class="mx-price"><span class="placeholder">${esc(p.price)}</span></span>`
-      + `<span class="btn" role="button" aria-disabled="true">Not for sale yet</span></li>`).join("");
-    return;
-  }
-  const items = SHOP.products.filter((p) => p.id);
-  list.innerHTML = items.map((p, i) => `<li class="mx-buy" id="mx-${i}"></li>`).join("");
-  const s = document.createElement("script");
-  s.async = true;
-  s.src = "https://sdks.shopifycdn.com/buy-button/latest/buy-button-storefront.min.js";
-  s.onload = () => {
-    const client = ShopifyBuy.buildClient({ domain: SHOP.domain, storefrontAccessToken: SHOP.token });
-    const font = { "font-family": "Helvetica Neue, Helvetica, Arial, sans-serif" };
-    ShopifyBuy.UI.onReady(client).then((ui) => items.forEach((p, i) => ui.createComponent("product", {
-      id: p.id,
-      node: document.getElementById(`mx-${i}`),
-      moneyFormat: "%24%7B%7Bamount%7D%7D",
-      options: {
-        // Straight to Shopify checkout, no cart drawer (it would sit on top of the banner strip).
-        product: {
-          buttonDestination: "checkout",
-          layout: "vertical",
-          contents: { img: true, title: true, price: true, options: true, quantity: false, button: true },
-          text: { button: "Buy it ↗" },
-          styles: {
-            product: { "text-align": "left", "max-width": "100%", "margin-left": "0", "margin-bottom": "0" },
-            title: { ...font, "font-size": "24px", "font-weight": "700", "letter-spacing": "-0.05em", color: "#0d0d0d" },
-            price: { "font-size": "15px", color: "#6d6d6d" },
-            button: { ...font, "font-size": "16px", "font-weight": "700", "padding-left": "20px", "padding-right": "20px",
-              "border-radius": "999px", "background-color": "#0d0d0d", ":hover": { "background-color": "#333333" }, ":focus": { "background-color": "#333333" } }
-          }
+/* ---------- Merch: my Printful store, paid for with Stripe's checkout right here in the section ----------
+   The banner server (BANNER.checkoutApi) lists the products from Printful and makes the checkout. Until the
+   shop is open there, the cards below show as placeholders. */
+const MERCH_PLACEHOLDERS = 3;
+(async function merch() {
+  const frame = $("#mx-f"), list = $("#mx"), co = $("#mx-co"), done = $("#mx-done"), err = $("#mx-err"), fine = $("#mx-fine");
+  const money = (n) => `$${Number(n).toFixed(Number(n) % 1 ? 2 : 0)}`;
+  list.innerHTML = Array.from({ length: MERCH_PLACEHOLDERS }, () =>
+    `<li><span class="mx-pic">Product photo</span><span class="mx-name"><span class="placeholder">Product name</span></span>`
+    + `<span class="mx-price"><span class="placeholder">$00</span></span>`
+    + `<span class="btn" role="button" aria-disabled="true">Not for sale yet</span></li>`).join("");
+  let shop;
+  try {
+    const res = await fetch(api("/merch"));
+    if (!res.ok) throw new Error(res.status);
+    shop = await res.json();
+  } catch { return; }
+  if (!shop.open || !shop.products || !shop.products.length) return;
+
+  list.innerHTML = shop.products.map((p, i) => {
+    const first = p.variants.find((v) => !v.soldOut) || p.variants[0];
+    const prices = [...new Set(p.variants.map((v) => v.price))];
+    return `<li data-i="${i}">`
+      + `<span class="mx-pic"><img src="${esc(first.image || p.image)}" alt="${esc(p.name)}" loading="lazy"></span>`
+      + `<span class="mx-name">${esc(p.name)}</span>`
+      + `<span class="mx-price">${prices.length > 1 ? "From " : ""}${money(Math.min(...prices))}</span>`
+      + (p.variants.length > 1
+        ? `<label class="mx-pick"><span class="sr">Size</span><select>${p.variants.map((v) =>
+            `<option value="${v.id}"${v.soldOut ? " disabled" : ""}${v === first ? " selected" : ""}>${esc(v.name)}${v.soldOut ? " (sold out)" : ` · ${money(v.price)}`}</option>`).join("")}</select></label>`
+        : "")
+      + `<button class="btn" type="button"${first.soldOut ? " disabled" : ""}>${first.soldOut ? "Sold out" : "Buy it"}</button></li>`;
+  }).join("");
+  fine.textContent = `Printed when you order it, so give it a week or two to show up. Shipping is ${money(shop.shipping)}`
+    + `${shop.countries.length === 1 && shop.countries[0] === "US" ? ", US only" : ""}.`;
+
+  const chosen = (li) => {
+    const p = shop.products[li.dataset.i], sel = li.querySelector("select");
+    return { p, v: sel ? p.variants.find((v) => String(v.id) === sel.value) : p.variants[0] };
+  };
+  list.addEventListener("change", (e) => {
+    const li = e.target.closest("li[data-i]");
+    if (!li) return;
+    const { p, v } = chosen(li);
+    li.querySelector(".mx-pic img").src = v.image || p.image;
+  });
+
+  let stripe = null, checkout = null;
+  const stripeJs = () => window.Stripe ? Promise.resolve() : new Promise((ok, no) => {
+    const s = document.createElement("script");
+    s.src = "https://js.stripe.com/v3/"; s.onload = ok; s.onerror = no;
+    document.head.appendChild(s);
+  });
+  const show = (which) => {
+    frame.classList.toggle("paying", which === "pay");
+    list.hidden = fine.hidden = which !== "list";
+    co.hidden = which !== "pay"; done.hidden = which !== "done";
+  };
+  const close = () => { if (checkout) { checkout.destroy(); checkout = null; } show("list"); };
+
+  list.addEventListener("click", async (e) => {
+    const btn = e.target.closest("button.btn");
+    if (!btn || btn.disabled) return;
+    const { p, v } = chosen(btn.closest("li"));
+    err.hidden = true;
+    btn.disabled = true; btn.textContent = "One sec…";
+    try {
+      const res = await fetch(api("/merch/checkout"), { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ variant: v.id, quantity: 1 }) });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || !json.clientSecret) throw new Error(json.error || "Checkout is having a moment. Please try again.");
+      await stripeJs();
+      stripe = stripe || Stripe(shop.publishableKey);
+      if (checkout) { checkout.destroy(); checkout = null; }
+      $("#mx-what").textContent = `${p.name}${p.variants.length > 1 ? `, ${v.name}` : ""}`;
+      show("pay");
+      checkout = await stripe.initEmbeddedCheckout({
+        fetchClientSecret: async () => json.clientSecret,
+        onComplete: () => {
+          if (checkout) { checkout.destroy(); checkout = null; }
+          show("done");
+          fetch(api("/merch/confirm"), { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ sessionId: json.sessionId }) }).catch(() => {});
         }
-      }
-    })));
-  };
-  s.onerror = () => {
-    list.innerHTML = `<li><span class="mx-name">The shop didn't load.</span><span class="mx-price">Try again in a bit.</span></li>`;
-  };
-  document.head.appendChild(s);
+      });
+      checkout.mount("#mx-stripe");
+      frame.scrollIntoView({ block: "start" });
+    } catch (x) {
+      close();
+      err.textContent = x instanceof Error && x.message && !/^\d+$/.test(x.message) && x.message !== "Failed to fetch" ? x.message : "Checkout didn't load. Please try again.";
+      err.hidden = false;
+    } finally {
+      btn.disabled = false; btn.textContent = "Buy it";
+    }
+  });
+  $("#mx-back").addEventListener("click", close);
+  $("#mx-again").addEventListener("click", close);
 })();
 
 /* ---------- Section tabs in the bar ---------- */
