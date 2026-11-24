@@ -2195,7 +2195,9 @@ function ask(w, i) {
   paint(w);
   leaveWhere.textContent = `Heading to ${host(w.url)}`;
   leaveH.textContent = "Please come back.";
-  leaveP.textContent = w.leaveLine || `You're off to read ${first(w.author)}'s case study for ${w.title}. ${PLEAS[i % PLEAS.length]}`;
+  // Case studies get just the headline (jo, 2026-11-24). Other links still say where they're going.
+  leaveP.textContent = w.leaveLine || "";
+  leaveP.hidden = !w.leaveLine;
   leaveActions.innerHTML = `
     <a class="btn" id="promise" href="${esc(w.url)}"${w.sameTab ? "" : ' target="_blank" rel="noopener"'}>I promise ↗</a>
     <button class="btn ghost" type="button" id="stay">Never mind, I'll stay</button>`;
