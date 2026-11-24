@@ -106,7 +106,11 @@ main { padding: calc(var(--bar) + 14px) 0 clamp(56px, 9vh, 120px); }
 .mx-done { display: grid; gap: 18px; justify-items: start; }
 .mx-done h3 { margin: 0; font-size: clamp(36px, 4.4vw, 64px); font-weight: 700; line-height: .9; letter-spacing: -0.06em; }
 .mx-done p { margin: 0; max-width: 46ch; color: var(--grey); font: 500 16px/1.4 var(--ui); letter-spacing: 0; }
-.mx-fine { margin: 0; color: var(--grey); font: 400 12px/1.45 var(--ui); letter-spacing: 0; }
+/* While the server wakes up (Render's free plan sleeps), blank cards shimmer in place of the products. */
+.mx-wait .mx-pic, .mx-wait i { background: linear-gradient(100deg, var(--soft) 40%, #fafaf9 50%, var(--soft) 60%) 0 0 / 300% 100%; animation: mx-wait 1.4s linear infinite; }
+.mx-wait i { display: block; height: 18px; width: 70%; border-radius: 4px; }
+.mx-wait i + i { width: 30%; height: 14px; }
+@keyframes mx-wait { to { background-position: -150% 0; } }
 .fw { --w: 1760px; position: relative; width: min(var(--w), calc(100% - 2 * var(--gutter))); margin: 0 auto; }
 .fw + .fw { margin-top: clamp(110px, 18vh, 220px); }
 .flabel {
@@ -165,7 +169,6 @@ main { padding-bottom: clamp(40px, 6vh, 72px); }
       <h2 class="sr">Merch for sale</h2>
       <p class="co-err" id="mx-err" role="alert" hidden></p>
       <ol class="mx" id="mx"></ol>
-      <p class="mx-fine" id="mx-fine">Printed when you order it, so give it a week or two to show up.</p>
       <div class="mx-co" id="mx-co" hidden>
         <div class="mx-co-head"><button class="btn ghost" type="button" id="mx-back">&larr; Back</button><span id="mx-what"></span></div>
         <div id="mx-stripe"></div>
@@ -193,39 +196,67 @@ const CHECKOUT_API = "https://joe-meier-banner.onrender.com";
 const api = (path) => CHECKOUT_API.replace(/\/+$/, "") + path;
 
 /* ---------- Merch: my Printful store, paid for with Stripe's checkout right here in the section ----------
-   The banner server (BANNER.checkoutApi) lists the products from Printful and makes the checkout. Until the
+   The banner server (CHECKOUT_API) lists the products from Printful and makes the checkout. Until the
    shop is open there, the cards below show as placeholders. */
 const MERCH_PLACEHOLDERS = 3;
 (async function merch() {
-  const frame = $("#mx-f"), list = $("#mx"), co = $("#mx-co"), done = $("#mx-done"), err = $("#mx-err"), fine = $("#mx-fine");
+  const frame = $("#mx-f"), list = $("#mx"), co = $("#mx-co"), done = $("#mx-done"), err = $("#mx-err");
   const money = (n) => `$${Number(n).toFixed(Number(n) % 1 ? 2 : 0)}`;
-  list.innerHTML = Array.from({ length: MERCH_PLACEHOLDERS }, () =>
-    `<li><span class="mx-pic">Product photo</span><span class="mx-name"><span class="placeholder">Product name</span></span>`
-    + `<span class="mx-price"><span class="placeholder">$00</span></span>`
-    + `<span class="btn" role="button" aria-disabled="true">Not for sale yet</span></li>`).join("");
-  let shop;
+  const placeholders = () => {
+    list.innerHTML = Array.from({ length: MERCH_PLACEHOLDERS }, () =>
+      `<li><span class="mx-pic">Product photo</span><span class="mx-name"><span class="placeholder">Product name</span></span>`
+      + `<span class="mx-price"><span class="placeholder">$00</span></span>`
+      + `<span class="btn" role="button" aria-disabled="true">Not for sale yet</span></li>`).join("");
+  };
+  const render = () => {
+    list.setAttribute("aria-busy", "false");
+    list.innerHTML = shop.products.map((p, i) => {
+      const first = p.variants.find((v) => !v.soldOut) || p.variants[0];
+      const prices = [...new Set(p.variants.map((v) => v.price))];
+      return `<li data-i="${i}">`
+        + `<span class="mx-pic"><img src="${esc(first.image || p.image)}" alt="${esc(p.name)}"></span>`
+        + `<span class="mx-name">${esc(p.name)}</span>`
+        + `<span class="mx-price">${prices.length > 1 ? "From " : ""}${money(Math.min(...prices))}</span>`
+        + (p.variants.length > 1
+          ? `<label class="mx-pick"><span class="sr">Size</span><select>${p.variants.map((v) =>
+              `<option value="${v.id}"${v.soldOut ? " disabled" : ""}${v === first ? " selected" : ""}>${esc(v.name)}${v.soldOut ? " (sold out)" : ` · ${money(v.price)}`}</option>`).join("")}</select></label>`
+          : "")
+        + `<button class="btn" type="button"${first.soldOut ? " disabled" : ""}>${first.soldOut ? "Sold out" : "Buy it"}</button></li>`;
+    }).join("");
+  };
+  const usable = (x) => x && x.open && x.products && x.products.length;
+
+  // The last product list this browser saw shows straight away, so repeat visitors don't wait on the server waking up.
+  const SAVED = "merch-products";
+  let shop = null;
+  try { const saved = JSON.parse(localStorage.getItem(SAVED)); if (usable(saved)) shop = saved; } catch {}
+  if (shop) render();
+  else {
+    list.setAttribute("aria-busy", "true");
+    list.innerHTML = Array.from({ length: MERCH_PLACEHOLDERS }, () => `<li class="mx-wait"><span class="mx-pic"></span><i></i><i></i></li>`).join("");
+  }
+
+  let fresh = null;
   try {
     const res = await fetch(api("/merch"));
     if (!res.ok) throw new Error(res.status);
-    shop = await res.json();
-  } catch { return; }
-  if (!shop.open || !shop.products || !shop.products.length) return;
-
-  list.innerHTML = shop.products.map((p, i) => {
-    const first = p.variants.find((v) => !v.soldOut) || p.variants[0];
-    const prices = [...new Set(p.variants.map((v) => v.price))];
-    return `<li data-i="${i}">`
-      + `<span class="mx-pic"><img src="${esc(first.image || p.image)}" alt="${esc(p.name)}" loading="lazy"></span>`
-      + `<span class="mx-name">${esc(p.name)}</span>`
-      + `<span class="mx-price">${prices.length > 1 ? "From " : ""}${money(Math.min(...prices))}</span>`
-      + (p.variants.length > 1
-        ? `<label class="mx-pick"><span class="sr">Size</span><select>${p.variants.map((v) =>
-            `<option value="${v.id}"${v.soldOut ? " disabled" : ""}${v === first ? " selected" : ""}>${esc(v.name)}${v.soldOut ? " (sold out)" : ` · ${money(v.price)}`}</option>`).join("")}</select></label>`
-        : "")
-      + `<button class="btn" type="button"${first.soldOut ? " disabled" : ""}>${first.soldOut ? "Sold out" : "Buy it"}</button></li>`;
-  }).join("");
-  fine.textContent = `Printed when you order it, so give it a week or two to show up. Shipping is ${money(shop.shipping)}`
-    + `${shop.countries.length === 1 && shop.countries[0] === "US" ? ", US only" : ""}.`;
+    fresh = await res.json();
+  } catch {}
+  if (usable(fresh)) {
+    try { localStorage.setItem(SAVED, JSON.stringify(fresh)); } catch {}
+    const changed = JSON.stringify(fresh) !== JSON.stringify(shop);
+    shop = fresh;
+    if (changed && co.hidden && done.hidden) render();
+  } else if (fresh) {
+    // The server answered and the shop is closed.
+    try { localStorage.removeItem(SAVED); } catch {}
+    shop = null;
+    placeholders();
+    return;
+  } else if (!shop) {
+    placeholders();
+    return;
+  }
 
   const chosen = (li) => {
     const p = shop.products[li.dataset.i], sel = li.querySelector("select");
@@ -246,7 +277,7 @@ const MERCH_PLACEHOLDERS = 3;
   });
   const show = (which) => {
     frame.classList.toggle("paying", which === "pay");
-    list.hidden = fine.hidden = which !== "list";
+    list.hidden = which !== "list";
     co.hidden = which !== "pay"; done.hidden = which !== "done";
   };
   const close = () => { if (checkout) { checkout.destroy(); checkout = null; } show("list"); };
