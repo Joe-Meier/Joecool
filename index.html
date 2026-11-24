@@ -144,35 +144,6 @@ main { padding: calc(var(--bar) + 14px) 0 clamp(56px, 9vh, 120px); }
 .slop-done { display: grid; gap: 22px; justify-items: start; }
 .slop-done h3 { margin: 0; font-size: clamp(36px, 4.4vw, 64px); font-weight: 700; line-height: .9; letter-spacing: -0.06em; }
 
-/* Merch: my Printful products, paid for with Stripe's embedded checkout inside the section. Placeholders until the shop is open. */
-.mx-sect { background: rgba(255, 59, 31, .07); box-shadow: inset 0 0 0 1px rgba(255, 59, 31, .38); }
-.mx-sect .sect-name { background: var(--red); color: var(--ink); }
-.mx-head { display: grid; gap: 18px; }
-.fw.mx-head + .fw { margin-top: clamp(44px, 7vh, 80px); }
-.mx-h { margin: 0; max-width: 18ch; color: #f4f4f4; font-size: clamp(30px, 4.4vw, 76px); font-weight: 700; line-height: .95; letter-spacing: -0.055em; }
-.mx-head p { margin: 0; max-width: 46ch; color: #c9c9c9; font: 500 clamp(16px, 1.3vw, 19px)/1.35 var(--ui); letter-spacing: 0; }
-.mx-w { --w: 1240px; }
-.mx-f { --c: var(--paper); --t: var(--ink); display: grid; gap: clamp(24px, 3vw, 40px); }
-.mx { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 170px), 1fr)); gap: clamp(22px, 3vw, 36px) clamp(14px, 2vw, 28px); align-items: start; }
-.mx li { display: grid; gap: 10px; min-width: 0; max-width: 240px; }
-.mx-pic { display: grid; place-items: center; aspect-ratio: 4 / 5; overflow: hidden; border-radius: 8px; background: var(--soft); color: #a3a39e; font: 600 13px/1.3 var(--ui); letter-spacing: 0; text-align: center; }
-.mx-pic img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.mx-name { font-size: clamp(17px, 1.4vw, 22px); font-weight: 700; line-height: .95; letter-spacing: -0.05em; }
-.mx-price { color: var(--grey); font: 500 15px/1 var(--ui); letter-spacing: 0; }
-.mx .btn { justify-self: start; padding: 11px 16px; font-size: 15px; }
-.mx .btn[aria-disabled="true"] { opacity: .45; cursor: not-allowed; }
-.mx-pick select { width: 100%; padding: 9px 10px; border: 1px solid #d8d8d4; border-radius: 8px; background: #fff; color: var(--ink); font: 500 15px/1.2 var(--ui); letter-spacing: 0; }
-.mx-pick select:focus { outline: 2px solid #0d99ff; outline-offset: -1px; border-color: transparent; }
-.mx .btn[disabled] { opacity: .45; cursor: not-allowed; }
-.mx-co { display: grid; gap: 18px; }
-.mx-co-head { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; font: 600 15px/1.3 var(--ui); letter-spacing: 0; }
-.mx-co-head .btn { --t: var(--ink); padding: 11px 16px; font-size: 15px; }
-#mx-stripe { min-height: 480px; }
-@media (max-width: 520px) { .mx { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 12px; } .mx-f.paying { --pad: 10px; } .mx-co-head { padding: 10px 6px 0; } }
-.mx-done { display: grid; gap: 18px; justify-items: start; }
-.mx-done h3 { margin: 0; font-size: clamp(36px, 4.4vw, 64px); font-weight: 700; line-height: .9; letter-spacing: -0.06em; }
-.mx-done p { margin: 0; max-width: 46ch; color: var(--grey); font: 500 16px/1.4 var(--ui); letter-spacing: 0; }
-.mx-fine { margin: 0; color: var(--grey); font: 400 12px/1.45 var(--ui); letter-spacing: 0; }
 
 /* Contact: its own section at the bottom, like LinkedIn. The email big, then buttons, then my latest Instagram posts. */
 .ct-sect { background: rgba(0, 179, 107, .08); box-shadow: inset 0 0 0 1px rgba(0, 179, 107, .4); }
@@ -617,7 +588,7 @@ body.locked { overflow: hidden; }
   <a class="name" href="#top" id="top" aria-label="Joe Meier"><span class="nm-full">Joe Meier</span><span class="nm-short" aria-hidden="true">JM</span></a>
   <div class="right">
     <div class="people" id="people"></div>
-    <nav class="tabs" aria-label="Sections"><a href="#portfolio" data-sect="portfolio">Portfolio</a><a href="#linkedin" data-sect="linkedin">LinkedIn</a><a href="#contact" data-sect="contact">Contact</a><a href="#slop" data-sect="slop">Slop<span class="tab-more"> Submissions</span></a><a href="#merch" data-sect="merch">Merch</a></nav>
+    <nav class="tabs" aria-label="Sections"><a href="#portfolio" data-sect="portfolio">Portfolio</a><a href="#linkedin" data-sect="linkedin">LinkedIn</a><a href="#contact" data-sect="contact">Contact</a><a href="#slop" data-sect="slop">Slop<span class="tab-more"> Submissions</span></a><a href="/merch/" data-sect="merch">Merch</a></nav>
   </div>
 </header>
 
@@ -720,32 +691,6 @@ body.locked { overflow: hidden; }
     <div class="frame slop-done" id="slop-done" hidden>
       <h3>Got it. Thanks.</h3>
       <button class="btn" type="button" id="slop-again">Send another</button>
-    </div>
-  </section>
- </div>
-
- <div class="sect mx-sect" id="merch">
-  <span class="sect-name">Merch</span>
-  <header class="fw mx-head">
-    <h2 class="mx-h">Finally, something on this site I made myself.</h2>
-    <p>Everything above was written up by someone more talented. The merch is all me, so set your expectations accordingly.</p>
-  </header>
-  <section class="fw mx-w">
-    <div class="flabel"><span>Merch</span><span class="dim"></span></div>
-    <div class="frame mx-f" id="mx-f">
-      <h2 class="sr">Merch for sale</h2>
-      <p class="co-err" id="mx-err" role="alert" hidden></p>
-      <ol class="mx" id="mx"></ol>
-      <p class="mx-fine" id="mx-fine">Printed when you order it, so give it a week or two to show up.</p>
-      <div class="mx-co" id="mx-co" hidden>
-        <div class="mx-co-head"><button class="btn ghost" type="button" id="mx-back">&larr; Back</button><span id="mx-what"></span></div>
-        <div id="mx-stripe"></div>
-      </div>
-      <div class="mx-done" id="mx-done" hidden>
-        <h3>Paid. It's off to the printer.</h3>
-        <p>Stripe is emailing you a receipt now, and you'll get another email when it ships. Thanks for wearing my work.</p>
-        <button class="btn" type="button" id="mx-again">Back to the merch</button>
-      </div>
     </div>
   </section>
  </div>
@@ -2062,102 +2007,6 @@ const igNone = () => { igFrame.classList.add("none"); igList.setAttribute("aria-
     }).join("");
     igList.setAttribute("aria-busy", "false");
   } catch { igNone(); }
-})();
-
-/* ---------- Merch: my Printful store, paid for with Stripe's checkout right here in the section ----------
-   The banner server (BANNER.checkoutApi) lists the products from Printful and makes the checkout. Until the
-   shop is open there, the cards below show as placeholders. */
-const MERCH_PLACEHOLDERS = 3;
-(async function merch() {
-  const frame = $("#mx-f"), list = $("#mx"), co = $("#mx-co"), done = $("#mx-done"), err = $("#mx-err"), fine = $("#mx-fine");
-  const money = (n) => `$${Number(n).toFixed(Number(n) % 1 ? 2 : 0)}`;
-  list.innerHTML = Array.from({ length: MERCH_PLACEHOLDERS }, () =>
-    `<li><span class="mx-pic">Product photo</span><span class="mx-name"><span class="placeholder">Product name</span></span>`
-    + `<span class="mx-price"><span class="placeholder">$00</span></span>`
-    + `<span class="btn" role="button" aria-disabled="true">Not for sale yet</span></li>`).join("");
-  let shop;
-  try {
-    const res = await fetch(api("/merch"));
-    if (!res.ok) throw new Error(res.status);
-    shop = await res.json();
-  } catch { return; }
-  if (!shop.open || !shop.products || !shop.products.length) return;
-
-  list.innerHTML = shop.products.map((p, i) => {
-    const first = p.variants.find((v) => !v.soldOut) || p.variants[0];
-    const prices = [...new Set(p.variants.map((v) => v.price))];
-    return `<li data-i="${i}">`
-      + `<span class="mx-pic"><img src="${esc(first.image || p.image)}" alt="${esc(p.name)}" loading="lazy"></span>`
-      + `<span class="mx-name">${esc(p.name)}</span>`
-      + `<span class="mx-price">${prices.length > 1 ? "From " : ""}${money(Math.min(...prices))}</span>`
-      + (p.variants.length > 1
-        ? `<label class="mx-pick"><span class="sr">Size</span><select>${p.variants.map((v) =>
-            `<option value="${v.id}"${v.soldOut ? " disabled" : ""}${v === first ? " selected" : ""}>${esc(v.name)}${v.soldOut ? " (sold out)" : ` · ${money(v.price)}`}</option>`).join("")}</select></label>`
-        : "")
-      + `<button class="btn" type="button"${first.soldOut ? " disabled" : ""}>${first.soldOut ? "Sold out" : "Buy it"}</button></li>`;
-  }).join("");
-  fine.textContent = `Printed when you order it, so give it a week or two to show up. Shipping is ${money(shop.shipping)}`
-    + `${shop.countries.length === 1 && shop.countries[0] === "US" ? ", US only" : ""}.`;
-
-  const chosen = (li) => {
-    const p = shop.products[li.dataset.i], sel = li.querySelector("select");
-    return { p, v: sel ? p.variants.find((v) => String(v.id) === sel.value) : p.variants[0] };
-  };
-  list.addEventListener("change", (e) => {
-    const li = e.target.closest("li[data-i]");
-    if (!li) return;
-    const { p, v } = chosen(li);
-    li.querySelector(".mx-pic img").src = v.image || p.image;
-  });
-
-  let stripe = null, checkout = null;
-  const stripeJs = () => window.Stripe ? Promise.resolve() : new Promise((ok, no) => {
-    const s = document.createElement("script");
-    s.src = "https://js.stripe.com/v3/"; s.onload = ok; s.onerror = no;
-    document.head.appendChild(s);
-  });
-  const show = (which) => {
-    frame.classList.toggle("paying", which === "pay");
-    list.hidden = fine.hidden = which !== "list";
-    co.hidden = which !== "pay"; done.hidden = which !== "done";
-  };
-  const close = () => { if (checkout) { checkout.destroy(); checkout = null; } show("list"); };
-
-  list.addEventListener("click", async (e) => {
-    const btn = e.target.closest("button.btn");
-    if (!btn || btn.disabled) return;
-    const { p, v } = chosen(btn.closest("li"));
-    err.hidden = true;
-    btn.disabled = true; btn.textContent = "One sec…";
-    try {
-      const res = await fetch(api("/merch/checkout"), { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ variant: v.id, quantity: 1 }) });
-      const json = await res.json().catch(() => ({}));
-      if (!res.ok || !json.clientSecret) throw new Error(json.error || "Checkout is having a moment. Please try again.");
-      await stripeJs();
-      stripe = stripe || Stripe(shop.publishableKey);
-      if (checkout) { checkout.destroy(); checkout = null; }
-      $("#mx-what").textContent = `${p.name}${p.variants.length > 1 ? `, ${v.name}` : ""}`;
-      show("pay");
-      checkout = await stripe.initEmbeddedCheckout({
-        fetchClientSecret: async () => json.clientSecret,
-        onComplete: () => {
-          if (checkout) { checkout.destroy(); checkout = null; }
-          show("done");
-          fetch(api("/merch/confirm"), { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ sessionId: json.sessionId }) }).catch(() => {});
-        }
-      });
-      checkout.mount("#mx-stripe");
-      frame.scrollIntoView({ block: "start" });
-    } catch (x) {
-      close();
-      err.textContent = x instanceof Error && x.message && !/^\d+$/.test(x.message) && x.message !== "Failed to fetch" ? x.message : "Checkout didn't load. Please try again.";
-      err.hidden = false;
-    } finally {
-      btn.disabled = false; btn.textContent = "Buy it";
-    }
-  });
-  $("#mx-back").addEventListener("click", close);
-  $("#mx-again").addEventListener("click", close);
 })();
 
 /* ---------- Section tabs in the bar ---------- */
