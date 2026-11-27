@@ -2112,7 +2112,7 @@ function unplead() { pleadToken++; joe.token++; joe.mode = "follow"; }
 /* ---------- Tab show: the title and icon keep talking while they're on the other site ---------- */
 // at = seconds after leaving. Each beat counts as one "message" in the welcome-back line.
 const BEATS = [
-  { at: 0,   title: "Come back pls",                       face: "happy" },
+  { at: 0,   title: "Come back please",                    face: "happy" },
   { at: 15,  title: "I'll wait.",                          face: "look" },
   { at: 40,  title: "Still reading? Good sign.",           face: "look" },
   { at: 75,  title: "Joe misses you",                      face: "sad" },
@@ -2163,22 +2163,47 @@ function drawFav(face, bg, fg, blink = false) {
 }
 const drawMark = () => drawFav("mark", "#1d1d1d", JOE.color);
 
-let showTimer = null;
+// Ten seconds after they leave, the icon starts flashing (jo, 2026-11-27): during the link show, and when they just switch tabs.
+// Background tabs slow page timers to about once a second, so the fast tick comes from a small worker, which they leave alone.
+const FLASH_AFTER = 10000, FLASH_MS = 250;
+let hiddenAt = 0, flashTick = 0, ticker = null;
+function startTicker() {
+  if (ticker) return;
+  try {
+    const src = URL.createObjectURL(new Blob([`setInterval(() => postMessage(0), ${FLASH_MS})`], { type: "text/javascript" }));
+    const wk = new Worker(src);
+    wk.onmessage = tick;
+    ticker = () => { wk.terminate(); URL.revokeObjectURL(src); };
+  } catch (e) {
+    const id = setInterval(tick, FLASH_MS);
+    ticker = () => clearInterval(id);
+  }
+}
+function stopTicker() { if (ticker) ticker(); ticker = null; }
+const flashing = (ms) => !REDUCE && ms >= FLASH_AFTER && ++flashTick % 2 === 0;
+
 function tabShow() {
   if (!state || state.phase !== "away") return;
-  const secs = (Date.now() - state.leftAt) / 1000;
+  const ms = Date.now() - state.leftAt;
+  const secs = ms / 1000;
   let n = 0;
   while (n < BEATS.length && BEATS[n].at <= secs) n++;
   state.sent = n;
   const beat = BEATS[Math.max(0, n - 1)];
   document.title = n > 1 ? `(${n}) ${beat.title}` : beat.title;
-  // Blink about every third tick. Browsers slow timers in background tabs, so this is a rough rhythm.
+  // Blink about every third second. Past ten seconds the face and its color swap places on every other tick.
   const blink = Math.floor(secs) % 3 === 0;
-  drawFav(beat.face, cssColor(state.w.c), cssColor(state.w.t), blink);
+  const bg = cssColor(state.w.c), fg = cssColor(state.w.t);
+  flashing(ms) ? drawFav(beat.face, fg, bg, blink) : drawFav(beat.face, bg, fg, blink);
 }
-function startShow() { stopShow(); tabShow(); showTimer = setInterval(tabShow, 1000); }
+function tick() {
+  if (state && state.phase === "away") return tabShow();
+  if (!document.hidden || !hiddenAt) return stopTicker();
+  flashing(Date.now() - hiddenAt) ? drawFav("mark", JOE.color, "#1d1d1d") : drawMark();
+}
+function startShow() { stopShow(); tabShow(); startTicker(); }
 function stopShow() {
-  clearInterval(showTimer); showTimer = null;
+  stopTicker();
   document.title = baseTitle;
   drawMark();
 }
@@ -2261,7 +2286,17 @@ function wentAway() { if (state && state.phase === "away") state.wentAway = true
 function cameBack() {
   if (state && state.phase === "away" && state.wentAway && !document.hidden) welcomeBack();
 }
-document.addEventListener("visibilitychange", () => (document.hidden ? wentAway() : cameBack()));
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    hiddenAt = Date.now();
+    startTicker();
+    wentAway();
+  } else {
+    hiddenAt = 0;
+    if (!(state && state.phase === "away")) { stopTicker(); drawMark(); }
+    cameBack();
+  }
+});
 addEventListener("blur", wentAway);
 addEventListener("focus", cameBack);
 
